@@ -9,19 +9,24 @@ CTrade trade;
 input string InpWatchlist1 = "XAUUSD,EURUSD,GBPUSD,USDJPY,USDCHF,USDCAD,AUDUSD,NZDUSD,EURJPY,GBPJPY,EURGBP,AUDJPY,CADJPY,CHFJPY,EURCHF,EURAUD,GBPAUD";
 input string InpWatchlist2 = "AUDCAD,NZDJPY,XAGUSD,EURNZD,EURCAD,GBPCAD,GBPNZD,GBPCHF,AUDNZD,AUDCHF,NZDCAD,NZDCHF,CADCHF,USDNOK,USDSEK,USDDKK";
 input string InpWatchlist3 = "USDZAR,USDHKD,USDSGD,EURSEK,EURNOK,EURDKK,EURPLN,EURTRY,GBPTRY,USDTRY,USDMXN,USDPLN,USDHUF,USDTHB,USDCNH,XPTUSD,XPDUSD";
-input string InpBlockedSymbols = "USDHUF,USDMXN";
+input string InpBlockedSymbols = "";
 input ENUM_TIMEFRAMES InpEntryTimeframe = PERIOD_M1;
 input ENUM_TIMEFRAMES InpTrendTimeframe = PERIOD_M5;
 input double InpVolume = 0.01;
 input double InpMaxVolume = 0.01;
 input int InpMagic = 260514;
 input int InpDeviationPoints = 20;
+input bool InpAllowNewEntries = true;
+input bool InpResetMemoryOnStart = true;
 
-input double InpEntryThreshold = 68.0;
+input double InpEntryThreshold = 55.0;
 input int InpMaxNewPositionsPerScan = 3;
 input int InpMaxTradesPerDay = 0;
 input int InpMaxOpenPositions = 0;
 input int InpMaxOpenPositionsPerSymbol = 0;
+input double InpGridMinDistancePercent = 0.0;
+input int InpMaxGridPositionsPerSide = 0;
+input bool InpAllowMinVolumeGridFallback = true;
 
 input double InpMaxDailyLossMoney = 25.0;
 input double InpMaxDailyLossPercent = 20.0;
@@ -29,7 +34,9 @@ input double InpDailyLossHalfThreshold = 80.0;
 input double InpDailyLossThreeQuarterThreshold = 88.0;
 
 input double InpMaxCandleRangePercent = 1.5;
-input double InpVolumeMinRatio = 1.0;
+input double InpVolumeMinRatio = 0.50;
+input double InpMaxSpreadPercent = 0.08;
+input double InpSpreadScorePenaltyMultiplier = 200.0;
 input double InpStopLossPercent = 0.75;
 input double InpBreakevenTriggerPercent = 0.50;
 input double InpTakeProfitPercent = 1.00;
@@ -46,6 +53,9 @@ input double InpMicroProfitFadeScore = 60.0;
 input double InpMicroProfitGivebackPercent = 0.01;
 input double InpMicroProfitGivebackMoney = 0.01;
 input bool InpCloseOnAnyProfitDrop = true;
+input double InpGroupTakeProfitMoney = 0.01;
+input double InpGroupProfitGivebackMoney = 0.01;
+input bool InpCloseGroupOnAnyProfitDrop = true;
 
 input int InpPositionCheckSeconds = 1;
 input int InpEntryScanSeconds = 2;
@@ -89,10 +99,23 @@ bool SymbolInCsv(string symbol, string csv)
    return false;
 }
 
+void ClearAllBotGlobals()
+{
+   for(int i = GlobalVariablesTotal() - 1; i >= 0; i--)
+   {
+      string name = GlobalVariableName(i);
+      if(StringFind(name, "TradingBot") == 0)
+         GlobalVariableDel(name);
+   }
+   Print("TradingBot memory reset complete.");
+}
+
 int OnInit()
 {
    trade.SetExpertMagicNumber(InpMagic);
    trade.SetDeviationInPoints(InpDeviationPoints);
+   if(InpResetMemoryOnStart)
+      ClearAllBotGlobals();
 
    string watchlist = InpWatchlist1 + "," + InpWatchlist2 + "," + InpWatchlist3;
    string raw[];
@@ -203,6 +226,187 @@ int CountBotPositions(string symbol = "")
    return count;
 }
 
+int CountBotPositionsBySide(string symbol, ENUM_POSITION_TYPE type)
+{
+   int count = 0;
+   for(int i = PositionsTotal() - 1; i >= 0; i--)
+   {
+      ulong ticket = PositionGetTicket(i);
+      if(ticket == 0 || !PositionSelectByTicket(ticket))
+         continue;
+      if((int)PositionGetInteger(POSITION_MAGIC) != InpMagic)
+         continue;
+      if(PositionGetString(POSITION_SYMBOL) != symbol)
+         continue;
+      if((ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE) != type)
+         continue;
+      count++;
+   }
+   return count;
+}
+
+bool SymbolSideStats(string symbol, ENUM_POSITION_TYPE type, int &count, double &totalVolume, double &averagePrice, double &totalProfit, double &lowestEntry, double &highestEntry)
+{
+   count = 0;
+   totalVolume = 0.0;
+   averagePrice = 0.0;
+   totalProfit = 0.0;
+   lowestEntry = DBL_MAX;
+   highestEntry = 0.0;
+
+   for(int i = PositionsTotal() - 1; i >= 0; i--)
+   {
+      ulong ticket = PositionGetTicket(i);
+      if(ticket == 0 || !PositionSelectByTicket(ticket))
+         continue;
+      if((int)PositionGetInteger(POSITION_MAGIC) != InpMagic)
+         continue;
+      if(PositionGetString(POSITION_SYMBOL) != symbol)
+         continue;
+      if((ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE) != type)
+         continue;
+
+      double volume = PositionGetDouble(POSITION_VOLUME);
+      double entry = PositionGetDouble(POSITION_PRICE_OPEN);
+      count++;
+      totalVolume += volume;
+      averagePrice += entry * volume;
+      totalProfit += PositionGetDouble(POSITION_PROFIT);
+      lowestEntry = MathMin(lowestEntry, entry);
+      highestEntry = MathMax(highestEntry, entry);
+   }
+
+   if(totalVolume <= 0.0)
+      return false;
+   averagePrice /= totalVolume;
+   return true;
+}
+
+double GroupPeakMoney(string symbol, ENUM_POSITION_TYPE type, double currentProfit)
+{
+   string key = GroupPeakMoneyKey(symbol, type);
+   if(!GlobalVariableCheck(key))
+      GlobalVariableSet(key, currentProfit);
+   double peak = GlobalVariableGet(key);
+   if(currentProfit > peak)
+   {
+      peak = currentProfit;
+      GlobalVariableSet(key, peak);
+   }
+   return peak;
+}
+
+void SetGroupLastMoney(string symbol, ENUM_POSITION_TYPE type, double currentProfit)
+{
+   GlobalVariableSet(GroupLastMoneyKey(symbol, type), currentProfit);
+}
+
+bool GetGroupLastMoney(string symbol, ENUM_POSITION_TYPE type, double &lastProfit)
+{
+   string key = GroupLastMoneyKey(symbol, type);
+   if(!GlobalVariableCheck(key))
+      return false;
+   lastProfit = GlobalVariableGet(key);
+   return true;
+}
+
+void ClearGroupState(string symbol, ENUM_POSITION_TYPE type)
+{
+   string peakKey = GroupPeakMoneyKey(symbol, type);
+   string lastKey = GroupLastMoneyKey(symbol, type);
+   if(GlobalVariableCheck(peakKey))
+      GlobalVariableDel(peakKey);
+   if(GlobalVariableCheck(lastKey))
+      GlobalVariableDel(lastKey);
+}
+
+bool CloseSymbolSidePositions(string symbol, ENUM_POSITION_TYPE type, string reason)
+{
+   bool closedAny = false;
+   double realized = 0.0;
+
+   for(int i = PositionsTotal() - 1; i >= 0; i--)
+   {
+      ulong ticket = PositionGetTicket(i);
+      if(ticket == 0 || !PositionSelectByTicket(ticket))
+         continue;
+      if((int)PositionGetInteger(POSITION_MAGIC) != InpMagic)
+         continue;
+      if(PositionGetString(POSITION_SYMBOL) != symbol)
+         continue;
+      if((ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE) != type)
+         continue;
+
+      double before = PositionGetDouble(POSITION_PROFIT);
+      if(trade.PositionClose(ticket))
+      {
+         realized += before;
+         DailyTradeCount++;
+         ClearPositionState(ticket);
+         closedAny = true;
+         Print("Closed group leg ", symbol, " ticket=", ticket, " reason=", reason, " pnl=", DoubleToString(before, 2));
+      }
+      else
+         Print("Group close failed ", symbol, " ticket=", ticket, " error=", GetLastError());
+   }
+
+   if(closedAny)
+   {
+      DailyRealizedPnl += realized;
+      ClearGroupState(symbol, type);
+      Print("Closed group ", symbol, " ", EnumToString(type), " reason=", reason, " totalPnl=", DoubleToString(realized, 2));
+   }
+   return closedAny;
+}
+
+void ManageSymbolSideGroup(string symbol, ENUM_POSITION_TYPE type)
+{
+   int count = 0;
+   double volume = 0.0;
+   double averagePrice = 0.0;
+   double totalProfit = 0.0;
+   double lowestEntry = 0.0;
+   double highestEntry = 0.0;
+   if(!SymbolSideStats(symbol, type, count, volume, averagePrice, totalProfit, lowestEntry, highestEntry))
+   {
+      ClearGroupState(symbol, type);
+      return;
+   }
+
+   double peakMoney = GroupPeakMoney(symbol, type, totalProfit);
+   double lastMoney = totalProfit;
+   bool hasLastMoney = GetGroupLastMoney(symbol, type, lastMoney);
+   double basis = MathMax(averagePrice * volume * SymbolInfoDouble(symbol, SYMBOL_TRADE_CONTRACT_SIZE), 0.01);
+   double groupPnlPercent = totalProfit / basis * 100.0;
+   string reason = "";
+
+   if(groupPnlPercent <= -InpStopLossPercent)
+      reason = "GROUP_STOP_LOSS";
+   else if(totalProfit >= InpGroupTakeProfitMoney)
+   {
+      if(InpCloseGroupOnAnyProfitDrop && hasLastMoney && totalProfit < lastMoney)
+         reason = "GROUP_PROFIT_DROP";
+      else if(peakMoney >= InpGroupTakeProfitMoney && totalProfit <= peakMoney - InpGroupProfitGivebackMoney)
+         reason = "GROUP_PROFIT_GIVEBACK";
+   }
+   else if(peakMoney >= InpGroupTakeProfitMoney && totalProfit <= 0.0)
+      reason = "GROUP_PROFIT_ERASED";
+
+   if(reason != "")
+      CloseSymbolSidePositions(symbol, type, reason);
+   else
+      SetGroupLastMoney(symbol, type, totalProfit);
+}
+
+void ManagePositionGroups()
+{
+   for(int i = 0; i < ArraySize(Symbols); i++)
+   {
+      ManageSymbolSideGroup(Symbols[i], POSITION_TYPE_BUY);
+      ManageSymbolSideGroup(Symbols[i], POSITION_TYPE_SELL);
+   }
+}
+
 double PositionProfitPercent()
 {
    string symbol = PositionGetString(POSITION_SYMBOL);
@@ -236,6 +440,37 @@ string PeakMoneyKey(ulong ticket)
 string LastMoneyKey(ulong ticket)
 {
    return "TradingBotLastMoney_" + IntegerToString((long)ticket);
+}
+
+string GroupPeakMoneyKey(string symbol, ENUM_POSITION_TYPE type)
+{
+   return "TradingBotGroupPeakMoney_" + symbol + "_" + IntegerToString((int)type);
+}
+
+string GroupLastMoneyKey(string symbol, ENUM_POSITION_TYPE type)
+{
+   return "TradingBotGroupLastMoney_" + symbol + "_" + IntegerToString((int)type);
+}
+
+double SpreadPercent(string symbol)
+{
+   double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+   double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+   double mid = (ask + bid) / 2.0;
+   if(ask <= 0.0 || bid <= 0.0 || mid <= 0.0)
+      return 100.0;
+   return (ask - bid) / mid * 100.0;
+}
+
+bool SpreadAllowed(string symbol)
+{
+   double spread = SpreadPercent(symbol);
+   if(spread > InpMaxSpreadPercent)
+   {
+      Print("Entry blocked by spread ", symbol, " spread%=", DoubleToString(spread, 4), " max%=", DoubleToString(InpMaxSpreadPercent, 4));
+      return false;
+   }
+   return true;
 }
 
 double GetPeak(ulong ticket, double currentPnlPercent)
@@ -287,6 +522,8 @@ void ClearPositionState(ulong ticket)
 
 void ManagePositions()
 {
+   ManagePositionGroups();
+
    for(int i = PositionsTotal() - 1; i >= 0; i--)
    {
       ulong ticket = PositionGetTicket(i);
@@ -297,6 +534,7 @@ void ManagePositions()
 
       string symbol = PositionGetString(POSITION_SYMBOL);
       ENUM_POSITION_TYPE type = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
+      EnsureBrokerStop(symbol, ticket, type);
       double pnlPercent = PositionProfitPercent();
       double peak = GetPeak(ticket, pnlPercent);
       double profitMoney = PositionGetDouble(POSITION_PROFIT);
@@ -352,16 +590,7 @@ void ManagePositions()
 
       if(reason != "")
       {
-         double before = PositionGetDouble(POSITION_PROFIT);
-         if(trade.PositionClose(ticket))
-         {
-            DailyRealizedPnl += before;
-            DailyTradeCount++;
-            ClearPositionState(ticket);
-            Print("Closed ", symbol, " ticket=", ticket, " reason=", reason, " pnl=", DoubleToString(before, 2), " pnl%=", DoubleToString(pnlPercent, 4));
-         }
-         else
-            Print("Close failed ticket=", ticket, " error=", GetLastError());
+         CloseSymbolSidePositions(symbol, type, reason);
       }
       else
       {
@@ -388,8 +617,34 @@ void MoveStopToBreakeven(string symbol, ulong ticket, ENUM_POSITION_TYPE type)
       Print("Breakeven SL failed ", symbol, " ticket=", ticket, " error=", GetLastError());
 }
 
+void EnsureBrokerStop(string symbol, ulong ticket, ENUM_POSITION_TYPE type)
+{
+   if(!PositionSelectByTicket(ticket))
+      return;
+   double currentSl = PositionGetDouble(POSITION_SL);
+   if(currentSl != 0.0)
+      return;
+
+   double openPrice = PositionGetDouble(POSITION_PRICE_OPEN);
+   double currentTp = PositionGetDouble(POSITION_TP);
+   int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+   double distance = InpStopLossPercent / 100.0;
+   double stopLoss = type == POSITION_TYPE_BUY
+      ? NormalizeDouble(openPrice * (1.0 - distance), digits)
+      : NormalizeDouble(openPrice * (1.0 + distance), digits);
+
+   if(!trade.PositionModify(ticket, stopLoss, currentTp))
+      Print("Initial broker SL failed ", symbol, " ticket=", ticket, " error=", GetLastError());
+}
+
 void ScanAndTrade()
 {
+   if(!InpAllowNewEntries)
+   {
+      Print("New entries paused by InpAllowNewEntries=false. Existing positions are still managed.");
+      return;
+   }
+
    double threshold = ActiveEntryThreshold();
    if(threshold < 0.0)
    {
@@ -413,10 +668,10 @@ void ScanAndTrade()
 
       Print("Scan ", symbol, " buy=", DoubleToString(buyScore, 2), " sell=", DoubleToString(sellScore, 2), " threshold=", DoubleToString(threshold, 2));
 
-      if(buyOk && buyScore >= threshold && EntryAllowed(symbol))
-         AddSetup(setups, symbol, ORDER_TYPE_BUY, buyScore, TradeVolume(symbol));
-      if(sellOk && sellScore >= threshold && EntryAllowed(symbol))
-         AddSetup(setups, symbol, ORDER_TYPE_SELL, sellScore, TradeVolume(symbol));
+      if(buyOk && buyScore >= threshold && EntryAllowed(symbol, ORDER_TYPE_BUY))
+         AddSetup(setups, symbol, ORDER_TYPE_BUY, buyScore, TradeVolume(symbol, ORDER_TYPE_BUY));
+      if(sellOk && sellScore >= threshold && EntryAllowed(symbol, ORDER_TYPE_SELL))
+         AddSetup(setups, symbol, ORDER_TYPE_SELL, sellScore, TradeVolume(symbol, ORDER_TYPE_SELL));
    }
 
    int total = ArraySize(setups);
@@ -433,10 +688,11 @@ void ScanAndTrade()
          continue;
 
       bool ok = false;
+      double stopLoss = InitialStopLoss(best.symbol, best.side);
       if(best.side == ORDER_TYPE_BUY)
-         ok = trade.Buy(best.volume, best.symbol, 0.0, 0.0, 0.0, "TradingBot BUY");
+         ok = trade.Buy(best.volume, best.symbol, 0.0, stopLoss, 0.0, "TradingBot BUY");
       else
-         ok = trade.Sell(best.volume, best.symbol, 0.0, 0.0, 0.0, "TradingBot SELL");
+         ok = trade.Sell(best.volume, best.symbol, 0.0, stopLoss, 0.0, "TradingBot SELL");
 
       if(ok)
       {
@@ -475,9 +731,40 @@ void SortSetupsByScore(Setup &setups[])
    }
 }
 
-bool EntryAllowed(string symbol)
+bool GridDistanceAllowed(string symbol, ENUM_ORDER_TYPE side)
+{
+   if(InpGridMinDistancePercent <= 0.0)
+      return true;
+
+   ENUM_POSITION_TYPE type = side == ORDER_TYPE_BUY ? POSITION_TYPE_BUY : POSITION_TYPE_SELL;
+   int count = 0;
+   double totalVolume = 0.0;
+   double averagePrice = 0.0;
+   double totalProfit = 0.0;
+   double lowestEntry = 0.0;
+   double highestEntry = 0.0;
+   if(!SymbolSideStats(symbol, type, count, totalVolume, averagePrice, totalProfit, lowestEntry, highestEntry))
+      return true;
+
+   if(InpMaxGridPositionsPerSide > 0 && count >= InpMaxGridPositionsPerSide)
+      return false;
+
+   double distance = InpGridMinDistancePercent / 100.0;
+   if(side == ORDER_TYPE_BUY)
+   {
+      double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+      return ask <= lowestEntry * (1.0 - distance);
+   }
+
+   double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+   return bid >= highestEntry * (1.0 + distance);
+}
+
+bool EntryAllowed(string symbol, ENUM_ORDER_TYPE side)
 {
    if(SymbolInCsv(symbol, InpBlockedSymbols))
+      return false;
+   if(!SpreadAllowed(symbol))
       return false;
    if(InpMaxTradesPerDay > 0 && DailyTradeCount >= InpMaxTradesPerDay)
       return false;
@@ -485,22 +772,44 @@ bool EntryAllowed(string symbol)
       return false;
    if(InpMaxOpenPositionsPerSymbol > 0 && CountBotPositions(symbol) >= InpMaxOpenPositionsPerSymbol)
       return false;
+   if(!GridDistanceAllowed(symbol, side))
+      return false;
    if(DailyLossLimit() > 0.0 && DailyRealizedPnl <= -DailyLossLimit())
       return false;
    return true;
 }
 
-double TradeVolume(string symbol)
+double TradeVolume(string symbol, ENUM_ORDER_TYPE side)
 {
    double minVol = SymbolInfoDouble(symbol, SYMBOL_VOLUME_MIN);
    double maxVol = SymbolInfoDouble(symbol, SYMBOL_VOLUME_MAX);
    double step = SymbolInfoDouble(symbol, SYMBOL_VOLUME_STEP);
    double volume = MathMin(InpVolume, InpMaxVolume);
+   ENUM_POSITION_TYPE type = side == ORDER_TYPE_BUY ? POSITION_TYPE_BUY : POSITION_TYPE_SELL;
+   int sameSideCount = CountBotPositionsBySide(symbol, type);
+   if(sameSideCount > 0)
+      volume *= MathPow(0.5, sameSideCount);
+
+   if(volume < minVol && !InpAllowMinVolumeGridFallback)
+      return 0.0;
    volume = MathMax(volume, minVol);
    volume = MathMin(volume, maxVol);
    if(step > 0.0)
       volume = MathFloor(volume / step) * step;
    return NormalizeDouble(volume, 2);
+}
+
+double InitialStopLoss(string symbol, ENUM_ORDER_TYPE side)
+{
+   double distance = InpStopLossPercent / 100.0;
+   int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+   if(side == ORDER_TYPE_BUY)
+   {
+      double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+      return NormalizeDouble(ask * (1.0 - distance), digits);
+   }
+   double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+   return NormalizeDouble(bid * (1.0 + distance), digits);
 }
 
 bool EntryScore(string symbol, ENUM_ORDER_TYPE side, double &score)
@@ -535,8 +844,10 @@ bool EntryScore(string symbol, ENUM_ORDER_TYPE side, double &score)
    else
       trendScore = trend == "BEARISH" ? 100.0 : (trend == "UNKNOWN" ? 65.0 : 0.0);
    double volumeScore = Clamp(35.0 + (volumeRatio - 1.0) * 45.0);
+   double spreadPenalty = SpreadPercent(symbol) * InpSpreadScorePenaltyMultiplier;
 
-   score = rsiScore * 0.25 + macdScore * 0.25 + bbScore * 0.20 + volumeScore * 0.15 + trendScore * 0.15;
+   score = rsiScore * 0.25 + macdScore * 0.25 + bbScore * 0.20 + volumeScore * 0.15 + trendScore * 0.15 - spreadPenalty;
+   score = Clamp(score);
    return true;
 }
 
