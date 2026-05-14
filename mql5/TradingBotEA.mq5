@@ -15,6 +15,7 @@ input int InpMagic = 260514;
 input int InpDeviationPoints = 30;
 input bool InpAllowNewEntries = true;
 input bool InpResetMemoryOnStart = true;
+input bool InpSingleInstance = true;
 
 input double InpMinimumUsableScore = 35.0;
 input double InpMinimumDirectionalEdge = 18.0;
@@ -28,24 +29,20 @@ input double InpMaxSpreadPercent = 0.012;
 input double InpMaxCandleRangePercent = 1.2;
 input double InpMinVolumeRatio = 0.50;
 
-input double InpMicroProfitMinMoney = 0.03;
-input double InpMicroProfitGivebackMoney = 0.01;
-input double InpTightGivebackMoney = 0.01;
-input double InpMaxLossMoneyPerPosition = 0.15;
+input double InpMicroProfitMinMoney = 0.10;
+input double InpMicroProfitGivebackMoney = 0.04;
+input double InpMaxLossMoneyPerPosition = 0.12;
 input double InpMaxBrokerStopLossMoney = 0.25;
-input int InpMaxHoldSeconds = 90;
-input int InpRollingCheckSeconds = 30;
-input int InpRollingLookbackChecks = 10;
+input int InpMaxHoldSeconds = 180;
+input int InpMinimumProfitHoldSeconds = 30;
 
 input double InpMaxDailyLossMoney = 25.0;
 input double InpMaxDailyLossPercent = 20.0;
 
 string Symbols[];
 datetime LastEntryScan = 0;
-datetime LastRollingCheck = 0;
 datetime CurrentDay = 0;
 double DailyRealizedPnl = 0.0;
-double OpenProfitHistory[];
 
 struct Setup
 {
@@ -71,6 +68,8 @@ int OnInit()
 {
    trade.SetExpertMagicNumber(InpMagic);
    trade.SetDeviationInPoints(InpDeviationPoints);
+   if(InpSingleInstance && !AcquireInstanceLock())
+      return INIT_FAILED;
    if(InpResetMemoryOnStart)
       ClearAllBotGlobals();
 
@@ -96,6 +95,7 @@ int OnInit()
 
 void OnDeinit(const int reason)
 {
+   ReleaseInstanceLock();
    EventKillTimer();
 }
 
@@ -133,7 +133,6 @@ void ResetDailyIfNeeded()
    {
       CurrentDay = today;
       DailyRealizedPnl = 0.0;
-      ArrayResize(OpenProfitHistory, 0);
    }
 }
 
@@ -157,10 +156,46 @@ void ClearAllBotGlobals()
    for(int i = GlobalVariablesTotal() - 1; i >= 0; i--)
    {
       string name = GlobalVariableName(i);
+      if(name == InstanceLockKey())
+         continue;
       if(StringFind(name, "TradingBotV2") == 0 || StringFind(name, "TradingBot") == 0)
          GlobalVariableDel(name);
    }
    Print("TradingBot memory reset complete.");
+}
+
+string InstanceLockKey()
+{
+   return "TradingBotV2InstanceLock_" + IntegerToString(InpMagic);
+}
+
+bool AcquireInstanceLock()
+{
+   string key = InstanceLockKey();
+   double thisChart = (double)ChartID();
+   if(GlobalVariableCheck(key))
+   {
+      double owner = GlobalVariableGet(key);
+      if(owner != thisChart)
+      {
+         Print("TradingBot blocked: another EA instance is already active. Remove the duplicate EA from other charts first. ownerChart=", DoubleToString(owner, 0), " thisChart=", DoubleToString(thisChart, 0));
+         return false;
+      }
+   }
+   GlobalVariableSet(key, thisChart);
+   return true;
+}
+
+void ReleaseInstanceLock()
+{
+   if(!InpSingleInstance)
+      return;
+   string key = InstanceLockKey();
+   if(!GlobalVariableCheck(key))
+      return;
+   double owner = GlobalVariableGet(key);
+   if(owner == (double)ChartID())
+      GlobalVariableDel(key);
 }
 
 string PeakMoneyKey(ulong ticket)
@@ -191,10 +226,6 @@ void ClearPositionState(ulong ticket)
 
 void ManagePositions()
 {
-   UpdateOpenProfitHistory();
-   bool tight = RollingProfitWeakening();
-   double giveback = tight ? InpTightGivebackMoney : InpMicroProfitGivebackMoney;
-
    for(int i = PositionsTotal() - 1; i >= 0; i--)
    {
       ulong ticket = PositionGetTicket(i);
@@ -210,15 +241,17 @@ void ManagePositions()
       double profit = PositionGetDouble(POSITION_PROFIT);
       double peak = GetPeakMoney(ticket, profit);
       datetime openTime = (datetime)PositionGetInteger(POSITION_TIME);
+      int ageSeconds = (int)(TimeCurrent() - openTime);
+      bool profitExitAllowed = ageSeconds >= InpMinimumProfitHoldSeconds;
       string reason = "";
 
       if(profit <= -InpMaxLossMoneyPerPosition)
          reason = "MONEY_STOP";
       else if(InpMaxHoldSeconds > 0 && TimeCurrent() - openTime >= InpMaxHoldSeconds && peak < InpMicroProfitMinMoney)
          reason = "MAX_HOLD_NO_PROFIT";
-      else if(peak >= InpMicroProfitMinMoney && profit <= peak - giveback)
-         reason = tight ? "TIGHT_PEAK_GIVEBACK" : "PEAK_GIVEBACK";
-      else if(peak >= InpMicroProfitMinMoney && profit <= 0.0)
+      else if(profitExitAllowed && peak >= InpMicroProfitMinMoney && profit <= peak - InpMicroProfitGivebackMoney)
+         reason = "PEAK_GIVEBACK";
+      else if(profitExitAllowed && peak >= InpMicroProfitMinMoney && profit <= 0.0)
          reason = "PROFIT_ERASED";
 
       if(reason != "")
@@ -241,49 +274,6 @@ bool ClosePosition(ulong ticket, string reason)
    }
    Print("Close failed ", symbol, " ticket=", ticket, " reason=", reason, " error=", GetLastError());
    return false;
-}
-
-double TotalOpenBotProfit()
-{
-   double total = 0.0;
-   for(int i = PositionsTotal() - 1; i >= 0; i--)
-   {
-      ulong ticket = PositionGetTicket(i);
-      if(ticket == 0 || !PositionSelectByTicket(ticket))
-         continue;
-      if((int)PositionGetInteger(POSITION_MAGIC) != InpMagic)
-         continue;
-      total += PositionGetDouble(POSITION_PROFIT);
-   }
-   return total;
-}
-
-void UpdateOpenProfitHistory()
-{
-   datetime now = TimeCurrent();
-   if(now - LastRollingCheck < InpRollingCheckSeconds)
-      return;
-   LastRollingCheck = now;
-
-   int size = ArraySize(OpenProfitHistory);
-   ArrayResize(OpenProfitHistory, size + 1);
-   OpenProfitHistory[size] = TotalOpenBotProfit();
-
-   int maxSize = MathMax(2, InpRollingLookbackChecks);
-   if(ArraySize(OpenProfitHistory) > maxSize)
-   {
-      for(int i = 1; i < ArraySize(OpenProfitHistory); i++)
-         OpenProfitHistory[i - 1] = OpenProfitHistory[i];
-      ArrayResize(OpenProfitHistory, maxSize);
-   }
-}
-
-bool RollingProfitWeakening()
-{
-   int size = ArraySize(OpenProfitHistory);
-   if(size < 2)
-      return false;
-   return OpenProfitHistory[size - 1] <= OpenProfitHistory[0];
 }
 
 void ScanAndTrade()
