@@ -1,0 +1,8 @@
+ccxt
+MetaTrader5
+numpy
+pandas
+python-dotenv
+requests
+schedule
+websocket-client

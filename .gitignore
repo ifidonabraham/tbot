@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+
+# Logs
+*.log
+
+# Trading data
+trading_state.json
+trades.csv
+
+# IDEs
+.vscode/
+.idea/
