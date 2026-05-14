@@ -52,6 +52,7 @@ class MT5Broker:
             raise RuntimeError(f"Could not select MT5 symbol {SYMBOL}: {mt5.last_error()}")
 
     def fetch_ohlcv(self, symbol, timeframe, limit=100):
+        self.ensure_symbol(symbol)
         mt5_timeframe_name = TIMEFRAMES.get(timeframe)
         if mt5_timeframe_name is None:
             raise ValueError(f"Unsupported MT5 timeframe: {timeframe}")
@@ -75,6 +76,7 @@ class MT5Broker:
         return rows
 
     def fetch_ticker(self, symbol):
+        self.ensure_symbol(symbol)
         tick = mt5.symbol_info_tick(symbol)
         if tick is None:
             raise RuntimeError(f"No MT5 tick data for {symbol}: {mt5.last_error()}")
@@ -104,15 +106,27 @@ class MT5Broker:
         }
 
     def create_market_buy_order(self, symbol, amount):
+        self.ensure_symbol(symbol)
         return self._send_market_order(symbol, amount, mt5.ORDER_TYPE_BUY)
 
     def create_market_sell_order(self, symbol, amount):
+        self.ensure_symbol(symbol)
         closed = self._close_long_positions(symbol, amount)
         if closed:
             return {"closed_positions": closed}
         return self._send_market_order(symbol, amount, mt5.ORDER_TYPE_SELL)
 
+    def close_position(self, symbol, amount, position_ticket):
+        self.ensure_symbol(symbol)
+        return self._send_market_order(
+            symbol,
+            amount,
+            mt5.ORDER_TYPE_SELL,
+            position_ticket=position_ticket,
+        )
+
     def _send_market_order(self, symbol, amount, order_type, position_ticket=None):
+        self.ensure_symbol(symbol)
         tick = mt5.symbol_info_tick(symbol)
         if tick is None:
             raise RuntimeError(f"No MT5 tick data for {symbol}: {mt5.last_error()}")
@@ -128,17 +142,22 @@ class MT5Broker:
             "magic": MT5_MAGIC,
             "comment": "TradingBot Python",
             "type_time": mt5.ORDER_TIME_GTC,
-            "type_filling": self._filling_mode(symbol),
         }
         if position_ticket is not None:
             request["position"] = int(position_ticket)
 
-        result = mt5.order_send(request)
-        if result is None:
-            raise RuntimeError(f"MT5 order_send returned None: {mt5.last_error()}")
-        if result.retcode != mt5.TRADE_RETCODE_DONE:
-            raise RuntimeError(f"MT5 order failed: retcode={result.retcode}, comment={result.comment}")
-        return result._asdict()
+        errors = []
+        for filling_mode in self._filling_modes(symbol):
+            request["type_filling"] = filling_mode
+            result = mt5.order_send(request)
+            if result is None:
+                errors.append(f"None result: {mt5.last_error()}")
+                continue
+            if result.retcode == mt5.TRADE_RETCODE_DONE:
+                return result._asdict()
+            errors.append(f"filling={filling_mode}, retcode={result.retcode}, comment={result.comment}")
+
+        raise RuntimeError(f"MT5 order failed after filling retries: {' | '.join(errors)}")
 
     def _close_long_positions(self, symbol, amount):
         positions = mt5.positions_get(symbol=symbol)
@@ -166,16 +185,30 @@ class MT5Broker:
         return results
 
     def _filling_mode(self, symbol):
+        return self._filling_modes(symbol)[0]
+
+    def _filling_modes(self, symbol):
         info = mt5.symbol_info(symbol)
         if info is None:
-            return mt5.ORDER_FILLING_IOC
+            return [mt5.ORDER_FILLING_IOC, mt5.ORDER_FILLING_FOK, mt5.ORDER_FILLING_RETURN]
 
         filling_mode = int(info.filling_mode)
+        modes = []
         if filling_mode & mt5.ORDER_FILLING_FOK:
-            return mt5.ORDER_FILLING_FOK
+            modes.append(mt5.ORDER_FILLING_FOK)
         if filling_mode & mt5.ORDER_FILLING_IOC:
-            return mt5.ORDER_FILLING_IOC
-        return mt5.ORDER_FILLING_RETURN
+            modes.append(mt5.ORDER_FILLING_IOC)
+        modes.append(mt5.ORDER_FILLING_RETURN)
+
+        fallback_modes = [mt5.ORDER_FILLING_IOC, mt5.ORDER_FILLING_FOK, mt5.ORDER_FILLING_RETURN]
+        for mode in fallback_modes:
+            if mode not in modes:
+                modes.append(mode)
+        return modes
+
+    def ensure_symbol(self, symbol):
+        if not mt5.symbol_select(symbol, True):
+            raise RuntimeError(f"Could not select MT5 symbol {symbol}: {mt5.last_error()}")
 
     def open_position_volume(self, symbol):
         positions = mt5.positions_get(symbol=symbol)
@@ -189,3 +222,10 @@ class MT5Broker:
             elif position.type == mt5.POSITION_TYPE_SELL:
                 volume -= float(position.volume)
         return volume
+
+    def contract_size(self, symbol):
+        self.ensure_symbol(symbol)
+        info = mt5.symbol_info(symbol)
+        if info is None:
+            raise RuntimeError(f"No MT5 symbol info for {symbol}: {mt5.last_error()}")
+        return float(info.trade_contract_size)

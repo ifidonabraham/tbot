@@ -3,9 +3,9 @@ import pandas as pd
 from config import SYMBOL, TIMEFRAME
 
 
-def fetch_candles(exchange, limit=100):
+def fetch_candles(exchange, limit=100, timeframe=TIMEFRAME, symbol=SYMBOL):
     """Fetch historical OHLCV candles."""
-    ohlcv = exchange.fetch_ohlcv(SYMBOL, TIMEFRAME, limit=limit)
+    ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
     df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
     return df

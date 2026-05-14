@@ -1,33 +1,175 @@
-def generate_signal(df):
-    """
-    Strategy: Momentum Scalping
-    BUY when:  RSI < 40 AND MACD crosses above signal AND price near lower Bollinger Band
-    SELL when: RSI > 65 AND MACD crosses below signal AND price near upper Bollinger Band
-    """
+from config import ENTRY_SCORE_THRESHOLD
+
+
+def _clamp(value, low=0.0, high=100.0):
+    return max(low, min(high, value))
+
+
+def get_trend_status(trend_df):
+    if trend_df is None or len(trend_df) < 2:
+        return "UNKNOWN"
+
+    latest = trend_df.iloc[-1]
+    prev = trend_df.iloc[-2]
+
+    required = ["ema_9", "ema_21", "close"]
+    if latest[required].isna().any() or prev[required].isna().any():
+        return "UNKNOWN"
+
+    if (
+        latest["ema_9"] > latest["ema_21"]
+        and latest["close"] > latest["ema_21"]
+        and latest["ema_9"] >= prev["ema_9"]
+    ):
+        return "BULLISH"
+
+    return "BEARISH"
+
+
+def _rsi_entry_score(df):
     latest = df.iloc[-1]
-    prev   = df.iloc[-2]
-    
-    rsi         = latest['rsi']
-    macd        = latest['macd']
-    macd_signal = latest['macd_signal']
-    prev_macd   = prev['macd']
-    prev_signal = prev['macd_signal']
-    price       = latest['close']
-    bb_lower    = latest['bb_lower']
-    bb_upper    = latest['bb_upper']
-    ema_9       = latest['ema_9']
-    ema_21      = latest['ema_21']
-    
-    # MACD crossover detection
-    macd_crossed_up   = (prev_macd < prev_signal) and (macd > macd_signal)
-    macd_crossed_down = (prev_macd > prev_signal) and (macd < macd_signal)
-    
-    # BUY signal
-    if rsi < 40 and macd_crossed_up and price <= bb_lower * 1.01 and ema_9 > ema_21:
+    prev = df.iloc[-2]
+    older = df.iloc[-3]
+
+    rsi = float(latest["rsi"])
+    prev_rsi = float(prev["rsi"])
+    older_rsi = float(older["rsi"])
+
+    oversold_depth = _clamp((45 - rsi) * 2.2)
+    turning_up = 25.0 if rsi > prev_rsi else 0.0
+    rebound_speed = _clamp((rsi - older_rsi) * 3.0, 0.0, 25.0)
+    return _clamp(oversold_depth + turning_up + rebound_speed)
+
+
+def _macd_entry_score(df):
+    latest = df.iloc[-1]
+    prev = df.iloc[-2]
+
+    macd = float(latest["macd"])
+    signal = float(latest["macd_signal"])
+    hist = float(latest["macd_hist"])
+    prev_hist = float(prev["macd_hist"])
+    price = max(float(latest["close"]), 1.0)
+
+    crossed_up = prev_hist <= 0 < hist
+    histogram_turn = hist > prev_hist
+    strength = _clamp(abs(macd - signal) / price * 100000)
+    return _clamp((35 if crossed_up else 0) + (25 if histogram_turn else 0) + strength)
+
+
+def _bollinger_entry_score(df):
+    latest = df.iloc[-1]
+
+    price = float(latest["close"])
+    lower = float(latest["bb_lower"])
+    middle = float(latest["bb_middle"])
+    if middle <= lower:
+        return 0.0
+
+    band_width = middle - lower
+    breach_depth = (lower - price) / band_width
+    near_band = (lower * 1.01 - price) / band_width
+
+    if breach_depth > 0:
+        return _clamp(70 + breach_depth * 60)
+    return _clamp(near_band * 70)
+
+
+def _volume_entry_score(df):
+    if len(df) < 22:
+        return 50.0
+
+    latest_volume = float(df.iloc[-1]["volume"])
+    avg_volume = float(df["volume"].iloc[-21:-1].mean())
+    if avg_volume <= 0:
+        return 50.0
+
+    ratio = latest_volume / avg_volume
+    return _clamp(35 + (ratio - 1.0) * 45)
+
+
+def _trend_entry_score(trend_status):
+    if trend_status == "BULLISH":
+        return 100.0
+    if trend_status == "UNKNOWN":
+        return 65.0
+    return 0.0
+
+
+def entry_score(df, trend_df=None):
+    if len(df) < 30:
+        return 0.0, {"reason": "not enough candles"}
+
+    latest = df.iloc[-1]
+    required = ["rsi", "macd", "macd_signal", "macd_hist", "bb_lower", "bb_middle", "ema_9", "ema_21", "close"]
+    if latest[required].isna().any():
+        return 0.0, {"reason": "indicator warmup"}
+
+    trend_status = get_trend_status(trend_df)
+    components = {
+        "rsi": _rsi_entry_score(df),
+        "macd": _macd_entry_score(df),
+        "bollinger": _bollinger_entry_score(df),
+        "volume": _volume_entry_score(df),
+        "trend": _trend_entry_score(trend_status),
+    }
+    score = (
+        components["rsi"] * 0.25
+        + components["macd"] * 0.25
+        + components["bollinger"] * 0.20
+        + components["volume"] * 0.15
+        + components["trend"] * 0.15
+    )
+    components["trend_status"] = trend_status
+    return round(score, 2), components
+
+
+def exit_momentum_score(df, trend_df=None):
+    if len(df) < 22:
+        return 50.0, {"reason": "not enough candles"}
+
+    latest = df.iloc[-1]
+    prev = df.iloc[-2]
+    trend_status = get_trend_status(trend_df)
+
+    rsi = float(latest["rsi"])
+    prev_rsi = float(prev["rsi"])
+    hist = float(latest["macd_hist"])
+    prev_hist = float(prev["macd_hist"])
+    price = float(latest["close"])
+    ema_9 = float(latest["ema_9"])
+    ema_21 = float(latest["ema_21"])
+
+    components = {
+        "rsi": _clamp(50 + (rsi - 50) * 1.3 + (rsi - prev_rsi) * 4),
+        "macd": _clamp(50 + (hist - prev_hist) * 800 + hist * 800),
+        "ema": 75.0 if ema_9 > ema_21 and price > ema_9 else 35.0,
+        "trend": _trend_entry_score(trend_status),
+        "volume": _volume_entry_score(df),
+    }
+    score = (
+        components["rsi"] * 0.20
+        + components["macd"] * 0.30
+        + components["ema"] * 0.20
+        + components["trend"] * 0.15
+        + components["volume"] * 0.15
+    )
+    components["trend_status"] = trend_status
+    return round(score, 2), components
+
+
+def generate_signal(df, trend_df=None):
+    score, details = entry_score(df, trend_df)
+    if score >= ENTRY_SCORE_THRESHOLD:
         return "BUY"
-    
-    # SELL signal
-    if rsi > 65 and macd_crossed_down and price >= bb_upper * 0.99:
+
+    latest = df.iloc[-1]
+    prev = df.iloc[-2]
+    if (
+        latest["rsi"] > 65
+        and prev["macd_hist"] >= 0 > latest["macd_hist"]
+        and latest["close"] >= latest["bb_upper"] * 0.99
+    ):
         return "SELL"
-    
+
     return "HOLD"
