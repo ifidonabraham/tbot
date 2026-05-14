@@ -15,18 +15,17 @@ from config import (
     WATCHLIST,
 )
 from exchange import get_balance, get_current_price, get_exchange
-from execution import buy, sell_position
+from execution import open_trade, sell_position
 from indicators import compute_indicators, fetch_candles
 from risk import (
     active_entry_threshold_for_state,
     buy_blockers,
     calculate_trade_amount,
-    estimate_sell_proceeds,
-    net_profit_percent,
+    position_pnl,
     sell_reason_for_position,
 )
 from stat_arb import find_stat_arb_setups, stat_arb_exit_reason
-from strategy import confirmed_entry_score, exit_momentum_score, generate_signal, get_trend_status
+from strategy import confirmed_entry_score, directional_exit_momentum_score, generate_signal, get_trend_status
 from trading_state import TradingState
 
 logging.basicConfig(
@@ -40,15 +39,10 @@ logging.basicConfig(
 
 
 def _position_snapshot(position, price):
-    proceeds = estimate_sell_proceeds(
-        price,
-        position["amount"],
-        position["entry_contract_size"],
-    )
-    pnl = proceeds - position["entry_total_cost"]
-    pnl_percent = net_profit_percent(position["entry_total_cost"], proceeds)
+    pnl, pnl_percent, _ = position_pnl(position, price)
+    side = position.get("side", "BUY")
     return (
-        f"Position: {position['symbol']} {position['amount']:.8f} {BASE_ASSET} @ "
+        f"Position: {side} {position['symbol']} {position['amount']:.8f} {BASE_ASSET} @ "
         f"${position['entry_price']:,.5f} | Unrealized PnL: {pnl:.4f} {QUOTE_ASSET} ({pnl_percent:.3f}%)"
     )
 
@@ -63,7 +57,10 @@ def _market_context(exchange, symbol):
 
     price = float(get_current_price(exchange, symbol))
     trend_status = get_trend_status(trend_df)
-    score, details = confirmed_entry_score(df, trend_df)
+    buy_score, buy_details = confirmed_entry_score(df, trend_df, "BUY")
+    sell_score, sell_details = confirmed_entry_score(df, trend_df, "SELL")
+    score = max(buy_score, sell_score)
+    details = buy_details if buy_score >= sell_score else sell_details
     signal = generate_signal(df, trend_df)
     return {
         "symbol": symbol,
@@ -72,6 +69,10 @@ def _market_context(exchange, symbol):
         "price": price,
         "trend_status": trend_status,
         "score": score,
+        "buy_score": buy_score,
+        "sell_score": sell_score,
+        "buy_details": buy_details,
+        "sell_details": sell_details,
         "details": details,
         "signal": signal,
     }
@@ -103,7 +104,11 @@ def _manage_positions(exchange, state):
             except Exception as exc:
                 logging.warning("Could not move breakeven SL for %s: %s", symbol, exc)
         state.update_position(position)
-        exit_score, _ = exit_momentum_score(context["df"], context["trend_df"])
+        exit_score, _ = directional_exit_momentum_score(
+            context["df"],
+            context["trend_df"],
+            position.get("side", "BUY"),
+        )
 
         logging.info(
             "Manage %s | Price: $%.5f | Exit momentum: %.2f | Peak PnL: %.3f%% | %s",
@@ -116,7 +121,7 @@ def _manage_positions(exchange, state):
 
         if reason:
             result = sell_position(exchange, state, position, price, reason)
-            logging.info("SELL executed for %s: %s", symbol, result)
+            logging.info("Close executed for %s: %s", symbol, result)
 
 
 def _scan_markets(exchange, state, quote_balance):
@@ -134,19 +139,18 @@ def _scan_markets(exchange, state, quote_balance):
             amount = calculate_trade_amount(context["price"], quote_balance, contract_size)
             blocker_df = context["df"].iloc[:-1].copy() if len(context["df"]) > 1 else context["df"]
             blockers = buy_blockers(state, blocker_df, quote_balance, amount, contract_size, symbol)
-            if not context["details"].get("confirmed", False):
-                blockers.append("confirmation candle not valid")
             context["amount"] = amount
             context["blockers"] = blockers
             context["contract_size"] = contract_size
             candidates.append(context)
 
             logging.info(
-                "Scan %s | Price: $%.5f | Signal: %s | Score: %.2f | Active threshold: %.2f | 5m Trend: %s | Amount: %.8f | Contract: %s | Blockers: %s",
+                "Scan %s | Price: $%.5f | Signal: %s | Buy score: %.2f | Sell score: %.2f | Active threshold: %.2f | 5m Trend: %s | Amount: %.8f | Contract: %s | Blockers: %s",
                 symbol,
                 context["price"],
                 context["signal"],
-                context["score"],
+                context["buy_score"],
+                context["sell_score"],
                 active_threshold,
                 context["trend_status"],
                 amount,
@@ -158,10 +162,28 @@ def _scan_markets(exchange, state, quote_balance):
             logging.exception("Scan failed for %s: %s", symbol, exc)
 
     candidates.extend(find_stat_arb_setups(candidates))
+    directional_candidates = []
+    for item in candidates:
+        if item.get("strategy_type") == "STAT_ARB":
+            item["side"] = "BUY"
+            directional_candidates.append(item)
+            continue
+        for side in ("BUY", "SELL"):
+            details = item["buy_details"] if side == "BUY" else item["sell_details"]
+            score = item["buy_score"] if side == "BUY" else item["sell_score"]
+            side_item = {
+                **item,
+                "side": side,
+                "score": score,
+                "details": details,
+            }
+            if not details.get("confirmed", False):
+                side_item["blockers"] = [*item["blockers"], f"{side.lower()} confirmation candle not valid"]
+            directional_candidates.append(side_item)
 
     tradable = [
         item
-        for item in candidates
+        for item in directional_candidates
         if item["score"] >= active_threshold
         and item["details"].get("confirmed", True)
         and not item["blockers"]
@@ -200,12 +222,12 @@ def run_bot():
             for best in best_setups:
                 if opened >= MAX_NEW_POSITIONS_PER_LOOP:
                     break
-                result = buy(
+                result = open_trade(
                     exchange,
                     state,
                     best["price"],
                     best["amount"],
-                    f"{best.get('strategy_type', 'MOMENTUM')}_BUY_{best['symbol']}_SCORE_{best['score']:.2f}",
+                    f"{best.get('strategy_type', 'MOMENTUM')}_{best['side']}_{best['symbol']}_SCORE_{best['score']:.2f}",
                     best["score"],
                     symbol=best["symbol"],
                     contract_size=best["contract_size"],
@@ -215,8 +237,9 @@ def run_bot():
                         "stat_arb_pair": best["details"].get("stat_arb_pair"),
                         "entry_divergence_percent": best["details"].get("divergence_percent", 0.0),
                     } if best.get("strategy_type") == "STAT_ARB" else None,
+                    side=best["side"],
                 )
-                logging.info("BUY executed for %s: %s", best["symbol"], result)
+                logging.info("%s executed for %s: %s", best["side"], best["symbol"], result)
                 opened += 1
 
             logging.info(

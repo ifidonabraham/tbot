@@ -116,12 +116,17 @@ class MT5Broker:
             return {"closed_positions": closed}
         return self._send_market_order(symbol, amount, mt5.ORDER_TYPE_SELL)
 
-    def close_position(self, symbol, amount, position_ticket):
+    def open_market_sell_order(self, symbol, amount):
         self.ensure_symbol(symbol)
+        return self._send_market_order(symbol, amount, mt5.ORDER_TYPE_SELL)
+
+    def close_position(self, symbol, amount, position_ticket, side="BUY"):
+        self.ensure_symbol(symbol)
+        order_type = mt5.ORDER_TYPE_SELL if side == "BUY" else mt5.ORDER_TYPE_BUY
         return self._send_market_order(
             symbol,
             amount,
-            mt5.ORDER_TYPE_SELL,
+            order_type,
             position_ticket=position_ticket,
         )
 
@@ -242,14 +247,18 @@ class MT5Broker:
         return volume
 
     def latest_buy_position_ticket(self, symbol):
+        return self.latest_position_ticket(symbol, "BUY")
+
+    def latest_position_ticket(self, symbol, side="BUY"):
         positions = mt5.positions_get(symbol=symbol)
         if not positions:
             return None
 
-        buys = [position for position in positions if position.type == mt5.POSITION_TYPE_BUY]
-        if not buys:
+        position_type = mt5.POSITION_TYPE_SELL if side == "SELL" else mt5.POSITION_TYPE_BUY
+        matches = [position for position in positions if position.type == position_type]
+        if not matches:
             return None
-        latest = max(buys, key=lambda position: position.time_msc)
+        latest = max(matches, key=lambda position: position.time_msc)
         return int(latest.ticket)
 
     def contract_size(self, symbol):

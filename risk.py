@@ -34,7 +34,7 @@ from config import (
     MT5_ACCOUNT_MODE,
     VOLUME_MIN_RATIO,
 )
-from strategy import exit_momentum_score, volume_ratio
+from strategy import directional_exit_momentum_score, exit_momentum_score, volume_ratio
 
 
 def live_trading_unlocked():
@@ -59,6 +59,29 @@ def estimate_sell_proceeds(price, amount, contract_size=CONTRACT_SIZE):
     fee = gross * TAKER_FEE_RATE
     slippage = gross * SLIPPAGE_RATE
     return gross - fee - slippage
+
+
+def estimate_entry_cost(price, amount, contract_size=CONTRACT_SIZE):
+    return estimate_buy_total(price, amount, contract_size)
+
+
+def estimate_close_value(position, current_price):
+    side = position.get("side", "BUY")
+    amount = position["amount"]
+    contract_size = position["entry_contract_size"]
+    if side == "SELL":
+        gross_entry = position["entry_price"] * amount * contract_size
+        gross_close = current_price * amount * contract_size
+        close_fee_slippage = estimate_buy_total(current_price, amount, contract_size) - gross_close
+        return gross_entry + (position["entry_price"] - current_price) * amount * contract_size - close_fee_slippage
+    return estimate_sell_proceeds(current_price, amount, contract_size)
+
+
+def position_pnl(position, current_price):
+    close_value = estimate_close_value(position, current_price)
+    pnl = close_value - position["entry_total_cost"]
+    pnl_percent = net_profit_percent(position["entry_total_cost"], close_value)
+    return pnl, pnl_percent, close_value
 
 
 def position_value(price, amount, contract_size=CONTRACT_SIZE):
@@ -203,12 +226,7 @@ def sell_reason(state, current_price, df=None, trend_df=None):
 
 
 def sell_reason_for_position(position, current_price, df=None, trend_df=None):
-    proceeds = estimate_sell_proceeds(
-        current_price,
-        position["amount"],
-        position["entry_contract_size"],
-    )
-    pnl_percent = net_profit_percent(position["entry_total_cost"], proceeds)
+    _, pnl_percent, _ = position_pnl(position, current_price)
     position["peak_pnl_percent"] = max(position.get("peak_pnl_percent", 0.0), pnl_percent)
 
     if pnl_percent <= -STOP_LOSS_PERCENT:
@@ -216,7 +234,7 @@ def sell_reason_for_position(position, current_price, df=None, trend_df=None):
 
     momentum_score = 50.0
     if df is not None:
-        momentum_score, _ = exit_momentum_score(df, trend_df)
+        momentum_score, _ = directional_exit_momentum_score(df, trend_df, position.get("side", "BUY"))
 
     if pnl_percent >= BREAKEVEN_TRIGGER_PERCENT:
         position["breakeven_armed"] = True

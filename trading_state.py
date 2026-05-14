@@ -80,6 +80,7 @@ class TradingState:
         broker_ticket=None,
         strategy_type="MOMENTUM",
         metadata=None,
+        side="BUY",
     ):
         metadata = metadata or {}
         position = {
@@ -90,6 +91,7 @@ class TradingState:
             "entry_total_cost": total_cost,
             "entry_contract_size": contract_size,
             "entry_score": entry_score,
+            "side": side,
             "peak_pnl_percent": 0.0,
             "broker_ticket": broker_ticket,
             "breakeven_armed": False,
@@ -134,6 +136,7 @@ class TradingState:
             position.setdefault("breakeven_sl_set", False)
             position.setdefault("momentum_fade_count", 0)
             position.setdefault("strategy_type", "MOMENTUM")
+            position.setdefault("side", "BUY")
 
     def _sync_legacy_position(self):
         if not self.positions:
