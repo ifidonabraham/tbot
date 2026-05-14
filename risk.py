@@ -9,6 +9,10 @@ from config import (
     EXIT_MOMENTUM_FADE_SCORE,
     EXTENDED_TP_HOLD_SCORE,
     EXTENDED_TAKE_PROFIT_PERCENT,
+    MICRO_PROFIT_EXIT_ENABLED,
+    MICRO_PROFIT_FADE_SCORE,
+    MICRO_PROFIT_LOCK_GIVEBACK_PERCENT,
+    MICRO_PROFIT_MIN_PERCENT,
     MIN_RESERVE_AMOUNT,
     MAX_CANDLE_RANGE_PERCENT,
     MAX_DAILY_LOSS_PERCENT,
@@ -247,6 +251,15 @@ def sell_reason_for_position(position, current_price, df=None, trend_df=None):
 
     if position.get("strategy_type") == "STAT_ARB":
         return None
+
+    if MICRO_PROFIT_EXIT_ENABLED and pnl_percent >= MICRO_PROFIT_MIN_PERCENT:
+        if momentum_score <= MICRO_PROFIT_FADE_SCORE:
+            return "MICRO_PROFIT_MOMENTUM_FADE"
+        if (
+            position.get("peak_pnl_percent", 0.0) >= MICRO_PROFIT_MIN_PERCENT
+            and pnl_percent <= position["peak_pnl_percent"] - MICRO_PROFIT_LOCK_GIVEBACK_PERCENT
+        ):
+            return "MICRO_PROFIT_GIVEBACK"
 
     if pnl_percent > 0 and momentum_score <= EXIT_MOMENTUM_FADE_SCORE:
         position["momentum_fade_count"] = position.get("momentum_fade_count", 0) + 1

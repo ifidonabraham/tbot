@@ -8,6 +8,8 @@ from config import (
     MAX_NEW_POSITIONS_PER_LOOP,
     MAX_TRADE_AMOUNT,
     PAPER_TRADING,
+    ENTRY_SCAN_SECONDS,
+    POSITION_CHECK_SECONDS,
     QUOTE_ASSET,
     TRADE_AMOUNT,
     TREND_TIMEFRAME,
@@ -207,57 +209,60 @@ def run_bot():
         MAX_TRADE_AMOUNT,
     )
 
+    last_entry_scan = 0.0
     while True:
         try:
             state.reset_daily_if_needed()
 
-            exchange_quote = get_balance(exchange, QUOTE_ASSET)
-            quote_balance = state.paper_usdt if PAPER_TRADING else exchange_quote
-
             if state.positions:
                 _manage_positions(exchange, state)
 
-            best_setups = _scan_markets(exchange, state, quote_balance)
-            opened = 0
-            for best in best_setups:
-                if opened >= MAX_NEW_POSITIONS_PER_LOOP:
-                    break
-                result = open_trade(
-                    exchange,
-                    state,
-                    best["price"],
-                    best["amount"],
-                    f"{best.get('strategy_type', 'MOMENTUM')}_{best['side']}_{best['symbol']}_SCORE_{best['score']:.2f}",
-                    best["score"],
-                    symbol=best["symbol"],
-                    contract_size=best["contract_size"],
-                    strategy_type=best.get("strategy_type", "MOMENTUM"),
-                    metadata={
-                        "leader_symbol": best["details"].get("leader"),
-                        "stat_arb_pair": best["details"].get("stat_arb_pair"),
-                        "entry_divergence_percent": best["details"].get("divergence_percent", 0.0),
-                    } if best.get("strategy_type") == "STAT_ARB" else None,
-                    side=best["side"],
-                )
-                logging.info("%s executed for %s: %s", best["side"], best["symbol"], result)
-                opened += 1
+            now = time.monotonic()
+            if now - last_entry_scan >= ENTRY_SCAN_SECONDS:
+                exchange_quote = get_balance(exchange, QUOTE_ASSET)
+                quote_balance = state.paper_usdt if PAPER_TRADING else exchange_quote
+                best_setups = _scan_markets(exchange, state, quote_balance)
+                opened = 0
+                for best in best_setups:
+                    if opened >= MAX_NEW_POSITIONS_PER_LOOP:
+                        break
+                    result = open_trade(
+                        exchange,
+                        state,
+                        best["price"],
+                        best["amount"],
+                        f"{best.get('strategy_type', 'MOMENTUM')}_{best['side']}_{best['symbol']}_SCORE_{best['score']:.2f}",
+                        best["score"],
+                        symbol=best["symbol"],
+                        contract_size=best["contract_size"],
+                        strategy_type=best.get("strategy_type", "MOMENTUM"),
+                        metadata={
+                            "leader_symbol": best["details"].get("leader"),
+                            "stat_arb_pair": best["details"].get("stat_arb_pair"),
+                            "entry_divergence_percent": best["details"].get("divergence_percent", 0.0),
+                        } if best.get("strategy_type") == "STAT_ARB" else None,
+                        side=best["side"],
+                    )
+                    logging.info("%s executed for %s: %s", best["side"], best["symbol"], result)
+                    opened += 1
 
-            logging.info(
-                "Balances | Exchange %s: %.2f | Paper %s: %.2f %s: %.8f | Tracked positions: %s | Daily PnL: %.4f %s | Trades today: %s",
-                QUOTE_ASSET,
-                exchange_quote,
-                QUOTE_ASSET,
-                state.paper_usdt,
-                BASE_ASSET,
-                state.paper_btc,
-                len(state.positions),
-                state.daily_pnl_usdt,
-                QUOTE_ASSET,
-                state.daily_trade_count,
-            )
+                logging.info(
+                    "Balances | Exchange %s: %.2f | Paper %s: %.2f %s: %.8f | Tracked positions: %s | Daily PnL: %.4f %s | Trades today: %s",
+                    QUOTE_ASSET,
+                    exchange_quote,
+                    QUOTE_ASSET,
+                    state.paper_usdt,
+                    BASE_ASSET,
+                    state.paper_btc,
+                    len(state.positions),
+                    state.daily_pnl_usdt,
+                    QUOTE_ASSET,
+                    state.daily_trade_count,
+                )
+                last_entry_scan = now
 
             state.save()
-            time.sleep(LOOP_SECONDS)
+            time.sleep(POSITION_CHECK_SECONDS)
 
         except KeyboardInterrupt:
             logging.info("Bot stopped by user.")
