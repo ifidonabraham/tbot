@@ -9,6 +9,7 @@ CTrade trade;
 input string InpWatchlist1 = "XAUUSD,EURUSD,GBPUSD,USDJPY,USDCHF,USDCAD,AUDUSD,NZDUSD,EURJPY,GBPJPY,EURGBP,AUDJPY,CADJPY,CHFJPY,EURCHF,EURAUD,GBPAUD";
 input string InpWatchlist2 = "AUDCAD,NZDJPY,XAGUSD,EURNZD,EURCAD,GBPCAD,GBPNZD,GBPCHF,AUDNZD,AUDCHF,NZDCAD,NZDCHF,CADCHF,USDNOK,USDSEK,USDDKK";
 input string InpWatchlist3 = "USDZAR,USDHKD,USDSGD,EURSEK,EURNOK,EURDKK,EURPLN,EURTRY,GBPTRY,USDTRY,USDMXN,USDPLN,USDHUF,USDTHB,USDCNH,XPTUSD,XPDUSD";
+input string InpBlockedSymbols = "USDHUF,USDMXN";
 input ENUM_TIMEFRAMES InpEntryTimeframe = PERIOD_M1;
 input ENUM_TIMEFRAMES InpTrendTimeframe = PERIOD_M5;
 input double InpVolume = 0.01;
@@ -16,8 +17,8 @@ input double InpMaxVolume = 0.01;
 input int InpMagic = 260514;
 input int InpDeviationPoints = 20;
 
-input double InpEntryThreshold = 72.0;
-input int InpMaxNewPositionsPerScan = 1;
+input double InpEntryThreshold = 68.0;
+input int InpMaxNewPositionsPerScan = 3;
 input int InpMaxTradesPerDay = 0;
 input int InpMaxOpenPositions = 0;
 input int InpMaxOpenPositionsPerSymbol = 0;
@@ -39,12 +40,15 @@ input double InpTrailingGivebackPercent = 0.35;
 input double InpExitMomentumFadeScore = 42.0;
 
 input bool InpMicroProfitExitEnabled = true;
-input double InpMicroProfitMinPercent = 0.05;
-input double InpMicroProfitFadeScore = 55.0;
-input double InpMicroProfitGivebackPercent = 0.03;
+input double InpMicroProfitMinPercent = 0.01;
+input double InpMicroProfitMinMoney = 0.01;
+input double InpMicroProfitFadeScore = 60.0;
+input double InpMicroProfitGivebackPercent = 0.01;
+input double InpMicroProfitGivebackMoney = 0.01;
+input bool InpCloseOnAnyProfitDrop = true;
 
-input int InpPositionCheckSeconds = 2;
-input int InpEntryScanSeconds = 10;
+input int InpPositionCheckSeconds = 1;
+input int InpEntryScanSeconds = 2;
 
 string Symbols[];
 datetime LastEntryScan = 0;
@@ -71,6 +75,18 @@ string Trim(string value)
    StringTrimLeft(value);
    StringTrimRight(value);
    return value;
+}
+
+bool SymbolInCsv(string symbol, string csv)
+{
+   string raw[];
+   int count = StringSplit(csv, ',', raw);
+   for(int i = 0; i < count; i++)
+   {
+      if(Trim(raw[i]) == symbol)
+         return true;
+   }
+   return false;
 }
 
 int OnInit()
@@ -207,6 +223,21 @@ string FadeKey(ulong ticket)
    return "TradingBotFade_" + IntegerToString((long)ticket);
 }
 
+string LastPnlKey(ulong ticket)
+{
+   return "TradingBotLastPnl_" + IntegerToString((long)ticket);
+}
+
+string PeakMoneyKey(ulong ticket)
+{
+   return "TradingBotPeakMoney_" + IntegerToString((long)ticket);
+}
+
+string LastMoneyKey(ulong ticket)
+{
+   return "TradingBotLastMoney_" + IntegerToString((long)ticket);
+}
+
 double GetPeak(ulong ticket, double currentPnlPercent)
 {
    string key = PeakKey(ticket);
@@ -221,14 +252,37 @@ double GetPeak(ulong ticket, double currentPnlPercent)
    return peak;
 }
 
+double GetPeakMoney(ulong ticket, double currentProfit)
+{
+   string key = PeakMoneyKey(ticket);
+   if(!GlobalVariableCheck(key))
+      GlobalVariableSet(key, currentProfit);
+   double peak = GlobalVariableGet(key);
+   if(currentProfit > peak)
+   {
+      peak = currentProfit;
+      GlobalVariableSet(key, peak);
+   }
+   return peak;
+}
+
 void ClearPositionState(ulong ticket)
 {
    string peak = PeakKey(ticket);
    string fade = FadeKey(ticket);
+   string lastPnl = LastPnlKey(ticket);
+   string peakMoney = PeakMoneyKey(ticket);
+   string lastMoney = LastMoneyKey(ticket);
    if(GlobalVariableCheck(peak))
       GlobalVariableDel(peak);
    if(GlobalVariableCheck(fade))
       GlobalVariableDel(fade);
+   if(GlobalVariableCheck(lastPnl))
+      GlobalVariableDel(lastPnl);
+   if(GlobalVariableCheck(peakMoney))
+      GlobalVariableDel(peakMoney);
+   if(GlobalVariableCheck(lastMoney))
+      GlobalVariableDel(lastMoney);
 }
 
 void ManagePositions()
@@ -245,7 +299,19 @@ void ManagePositions()
       ENUM_POSITION_TYPE type = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
       double pnlPercent = PositionProfitPercent();
       double peak = GetPeak(ticket, pnlPercent);
+      double profitMoney = PositionGetDouble(POSITION_PROFIT);
+      double peakMoney = GetPeakMoney(ticket, profitMoney);
       double exitScore = ExitMomentumScore(symbol, type);
+      string lastPnlKey = LastPnlKey(ticket);
+      double lastPnlPercent = pnlPercent;
+      bool hasLastPnl = GlobalVariableCheck(lastPnlKey);
+      if(hasLastPnl)
+         lastPnlPercent = GlobalVariableGet(lastPnlKey);
+      string lastMoneyKey = LastMoneyKey(ticket);
+      double lastProfitMoney = profitMoney;
+      bool hasLastMoney = GlobalVariableCheck(lastMoneyKey);
+      if(hasLastMoney)
+         lastProfitMoney = GlobalVariableGet(lastMoneyKey);
       string reason = "";
 
       if(pnlPercent <= -InpStopLossPercent)
@@ -257,13 +323,23 @@ void ManagePositions()
       if(reason == "" && pnlPercent <= 0.0 && peak >= InpBreakevenTriggerPercent)
          reason = "BREAKEVEN_STOP";
 
-      if(reason == "" && InpMicroProfitExitEnabled && pnlPercent >= InpMicroProfitMinPercent)
+      bool protectedMicroProfit = pnlPercent >= InpMicroProfitMinPercent || profitMoney >= InpMicroProfitMinMoney;
+      if(reason == "" && InpMicroProfitExitEnabled && protectedMicroProfit)
       {
-         if(exitScore <= InpMicroProfitFadeScore)
+         if(InpCloseOnAnyProfitDrop && hasLastMoney && profitMoney < lastProfitMoney)
+            reason = "MICRO_PROFIT_MONEY_DROP";
+         else if(InpCloseOnAnyProfitDrop && hasLastPnl && pnlPercent < lastPnlPercent)
+            reason = "MICRO_PROFIT_TICK_DROP";
+         else if(exitScore <= InpMicroProfitFadeScore)
             reason = "MICRO_PROFIT_MOMENTUM_FADE";
+         else if(peakMoney >= InpMicroProfitMinMoney && profitMoney <= peakMoney - InpMicroProfitGivebackMoney)
+            reason = "MICRO_PROFIT_MONEY_GIVEBACK";
          else if(peak >= InpMicroProfitMinPercent && pnlPercent <= peak - InpMicroProfitGivebackPercent)
             reason = "MICRO_PROFIT_GIVEBACK";
       }
+
+      if(reason == "" && InpMicroProfitExitEnabled && peakMoney >= InpMicroProfitMinMoney && profitMoney <= 0.0)
+         reason = "MICRO_PROFIT_ERASED";
 
       if(reason == "" && peak >= InpTrailingActivationPercent && pnlPercent <= peak - InpTrailingGivebackPercent)
          reason = "TRAILING_GIVEBACK";
@@ -286,6 +362,11 @@ void ManagePositions()
          }
          else
             Print("Close failed ticket=", ticket, " error=", GetLastError());
+      }
+      else
+      {
+         GlobalVariableSet(lastPnlKey, pnlPercent);
+         GlobalVariableSet(lastMoneyKey, profitMoney);
       }
    }
 }
@@ -316,11 +397,8 @@ void ScanAndTrade()
       return;
    }
 
-   Setup best;
-   best.symbol = "";
-   best.score = -1.0;
-   best.volume = 0.0;
-   best.side = ORDER_TYPE_BUY;
+   Setup setups[];
+   ArrayResize(setups, 0);
 
    for(int i = 0; i < ArraySize(Symbols); i++)
    {
@@ -335,28 +413,25 @@ void ScanAndTrade()
 
       Print("Scan ", symbol, " buy=", DoubleToString(buyScore, 2), " sell=", DoubleToString(sellScore, 2), " threshold=", DoubleToString(threshold, 2));
 
-      if(buyOk && buyScore >= threshold && buyScore > best.score && EntryAllowed(symbol))
-      {
-         best.symbol = symbol;
-         best.side = ORDER_TYPE_BUY;
-         best.score = buyScore;
-         best.volume = TradeVolume(symbol);
-      }
-      if(sellOk && sellScore >= threshold && sellScore > best.score && EntryAllowed(symbol))
-      {
-         best.symbol = symbol;
-         best.side = ORDER_TYPE_SELL;
-         best.score = sellScore;
-         best.volume = TradeVolume(symbol);
-      }
+      if(buyOk && buyScore >= threshold && EntryAllowed(symbol))
+         AddSetup(setups, symbol, ORDER_TYPE_BUY, buyScore, TradeVolume(symbol));
+      if(sellOk && sellScore >= threshold && EntryAllowed(symbol))
+         AddSetup(setups, symbol, ORDER_TYPE_SELL, sellScore, TradeVolume(symbol));
    }
 
-   if(best.symbol == "" || best.volume <= 0.0)
+   int total = ArraySize(setups);
+   if(total <= 0)
       return;
 
+   SortSetupsByScore(setups);
+
    int opened = 0;
-   if(opened < InpMaxNewPositionsPerScan)
+   for(int i = 0; i < total && opened < InpMaxNewPositionsPerScan; i++)
    {
+      Setup best = setups[i];
+      if(best.symbol == "" || best.volume <= 0.0)
+         continue;
+
       bool ok = false;
       if(best.side == ORDER_TYPE_BUY)
          ok = trade.Buy(best.volume, best.symbol, 0.0, 0.0, 0.0, "TradingBot BUY");
@@ -373,8 +448,37 @@ void ScanAndTrade()
    }
 }
 
+void AddSetup(Setup &setups[], string symbol, ENUM_ORDER_TYPE side, double score, double volume)
+{
+   int size = ArraySize(setups);
+   ArrayResize(setups, size + 1);
+   setups[size].symbol = symbol;
+   setups[size].side = side;
+   setups[size].score = score;
+   setups[size].volume = volume;
+}
+
+void SortSetupsByScore(Setup &setups[])
+{
+   int total = ArraySize(setups);
+   for(int i = 0; i < total - 1; i++)
+   {
+      for(int j = i + 1; j < total; j++)
+      {
+         if(setups[j].score > setups[i].score)
+         {
+            Setup tmp = setups[i];
+            setups[i] = setups[j];
+            setups[j] = tmp;
+         }
+      }
+   }
+}
+
 bool EntryAllowed(string symbol)
 {
+   if(SymbolInCsv(symbol, InpBlockedSymbols))
+      return false;
    if(InpMaxTradesPerDay > 0 && DailyTradeCount >= InpMaxTradesPerDay)
       return false;
    if(InpMaxOpenPositions > 0 && CountBotPositions("") >= InpMaxOpenPositions)
