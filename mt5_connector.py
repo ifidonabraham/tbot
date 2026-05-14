@@ -125,6 +125,24 @@ class MT5Broker:
             position_ticket=position_ticket,
         )
 
+    def move_stop_loss(self, symbol, position_ticket, stop_loss, take_profit=0.0):
+        self.ensure_symbol(symbol)
+        request = {
+            "action": mt5.TRADE_ACTION_SLTP,
+            "symbol": symbol,
+            "position": int(position_ticket),
+            "sl": float(stop_loss),
+            "tp": float(take_profit),
+            "magic": MT5_MAGIC,
+            "comment": "TradingBot breakeven",
+        }
+        result = mt5.order_send(request)
+        if result is None:
+            raise RuntimeError(f"MT5 stop-loss update returned None: {mt5.last_error()}")
+        if result.retcode != mt5.TRADE_RETCODE_DONE:
+            raise RuntimeError(f"MT5 stop-loss update failed: retcode={result.retcode}, comment={result.comment}")
+        return result._asdict()
+
     def _send_market_order(self, symbol, amount, order_type, position_ticket=None):
         self.ensure_symbol(symbol)
         tick = mt5.symbol_info_tick(symbol)
@@ -222,6 +240,17 @@ class MT5Broker:
             elif position.type == mt5.POSITION_TYPE_SELL:
                 volume -= float(position.volume)
         return volume
+
+    def latest_buy_position_ticket(self, symbol):
+        positions = mt5.positions_get(symbol=symbol)
+        if not positions:
+            return None
+
+        buys = [position for position in positions if position.type == mt5.POSITION_TYPE_BUY]
+        if not buys:
+            return None
+        latest = max(buys, key=lambda position: position.time_msc)
+        return int(latest.ticket)
 
     def contract_size(self, symbol):
         self.ensure_symbol(symbol)

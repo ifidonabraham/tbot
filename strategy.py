@@ -88,6 +88,17 @@ def _volume_entry_score(df):
     return _clamp(35 + (ratio - 1.0) * 45)
 
 
+def volume_ratio(df):
+    if len(df) < 22:
+        return 0.0
+
+    latest_volume = float(df.iloc[-1]["volume"])
+    avg_volume = float(df["volume"].iloc[-21:-1].mean())
+    if avg_volume <= 0:
+        return 0.0
+    return latest_volume / avg_volume
+
+
 def _trend_entry_score(trend_status):
     if trend_status == "BULLISH":
         return 100.0
@@ -121,7 +132,29 @@ def entry_score(df, trend_df=None):
         + components["trend"] * 0.15
     )
     components["trend_status"] = trend_status
+    components["volume_ratio"] = round(volume_ratio(df), 4)
     return round(score, 2), components
+
+
+def confirmed_entry_score(df, trend_df=None):
+    if len(df) < 31:
+        return 0.0, {"reason": "not enough candles for confirmation", "confirmed": False}
+
+    signal_df = df.iloc[:-1].copy()
+    score, details = entry_score(signal_df, trend_df)
+    signal_level = float(signal_df.iloc[-1]["close"])
+    confirmation_open = float(df.iloc[-1]["open"])
+    confirmed = confirmation_open >= signal_level
+
+    details = {
+        **details,
+        "confirmed": confirmed,
+        "signal_level": round(signal_level, 5),
+        "confirmation_open": round(confirmation_open, 5),
+    }
+    if not confirmed:
+        details["reason"] = "confirmation candle opened below signal level"
+    return score, details
 
 
 def exit_momentum_score(df, trend_df=None):

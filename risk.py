@@ -2,8 +2,14 @@ from config import (
     LIVE_TRADING_CONFIRMATION,
     LIVE_TRADING_UNLOCK_PHRASE,
     CONTRACT_SIZE,
+    ACTIVE_ENTRY_SCORE_THRESHOLD,
+    BREAKEVEN_TRIGGER_PERCENT,
+    DAILY_LOSS_HALF_THRESHOLD,
+    DAILY_LOSS_THREE_QUARTER_THRESHOLD,
     EXIT_MOMENTUM_FADE_SCORE,
+    EXTENDED_TP_HOLD_SCORE,
     EXTENDED_TAKE_PROFIT_PERCENT,
+    MIN_RESERVE_AMOUNT,
     MAX_CANDLE_RANGE_PERCENT,
     MAX_DAILY_LOSS_PERCENT,
     MAX_DAILY_LOSS_USDT,
@@ -14,19 +20,21 @@ from config import (
     MIN_POSITION_VALUE,
     MIN_TRADE_AMOUNT,
     MIN_PROFIT_PERCENT,
-    MIN_USDT_RESERVE,
     PAPER_TRADING,
     POSITION_RISK_FRACTION,
+    RESERVE_PERCENT,
     SLIPPAGE_RATE,
     STOP_LOSS_PERCENT,
     TAKER_FEE_RATE,
     TAKE_PROFIT_PERCENT,
     TRAILING_PROFIT_GIVEBACK_PERCENT,
+    TRAILING_ACTIVATION_PERCENT,
     TRADE_VOLUME_STEP,
     QUOTE_ASSET,
     MT5_ACCOUNT_MODE,
+    VOLUME_MIN_RATIO,
 )
-from strategy import exit_momentum_score
+from strategy import exit_momentum_score, volume_ratio
 
 
 def live_trading_unlocked():
@@ -64,8 +72,12 @@ def _round_down_to_step(amount):
     return steps * TRADE_VOLUME_STEP
 
 
+def reserve_amount(quote_balance):
+    return max(MIN_RESERVE_AMOUNT, quote_balance * (RESERVE_PERCENT / 100))
+
+
 def calculate_trade_amount(price, quote_balance, contract_size=CONTRACT_SIZE):
-    deployable_quote = max(0.0, quote_balance - MIN_USDT_RESERVE)
+    deployable_quote = max(0.0, quote_balance - reserve_amount(quote_balance))
     risk_quote = deployable_quote * POSITION_RISK_FRACTION
     cost_per_unit = price * contract_size * (1 + TAKER_FEE_RATE + SLIPPAGE_RATE)
     if cost_per_unit <= 0:
@@ -102,6 +114,21 @@ def daily_loss_limit(quote_balance):
     return percent_limit
 
 
+def active_entry_threshold_for_state(state, quote_balance):
+    loss_limit = daily_loss_limit(quote_balance)
+    if loss_limit <= 0:
+        return ACTIVE_ENTRY_SCORE_THRESHOLD
+
+    daily_loss = max(0.0, -state.daily_pnl_usdt)
+    if daily_loss >= loss_limit:
+        return None
+    if daily_loss >= loss_limit * 0.75:
+        return DAILY_LOSS_THREE_QUARTER_THRESHOLD
+    if daily_loss >= loss_limit * 0.50:
+        return DAILY_LOSS_HALF_THRESHOLD
+    return ACTIVE_ENTRY_SCORE_THRESHOLD
+
+
 def round_trip_cost_percent():
     buy_cost = TAKER_FEE_RATE + SLIPPAGE_RATE
     sell_cost = TAKER_FEE_RATE + SLIPPAGE_RATE
@@ -110,7 +137,8 @@ def round_trip_cost_percent():
 
 def buy_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE, symbol=None):
     price = float(df.iloc[-1]["close"])
-    required_quote = estimate_buy_total(price, amount, contract_size) + MIN_USDT_RESERVE
+    dynamic_reserve = reserve_amount(quote_balance)
+    required_quote = estimate_buy_total(price, amount, contract_size) + dynamic_reserve
     real_position_value = position_value(price, amount, contract_size)
     loss_limit = daily_loss_limit(quote_balance)
     blockers = []
@@ -133,6 +161,8 @@ def buy_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE, 
             blockers.append("max open positions for symbol reached")
     if candle_range_percent(df) > MAX_CANDLE_RANGE_PERCENT:
         blockers.append("latest candle range is too volatile")
+    if volume_ratio(df) < VOLUME_MIN_RATIO:
+        blockers.append(f"volume below {VOLUME_MIN_RATIO:.2f}x 20-candle average")
     if TAKE_PROFIT_PERCENT <= round_trip_cost_percent() + MIN_PROFIT_PERCENT:
         blockers.append("take-profit target does not clear fees/slippage plus minimum profit")
 
@@ -188,17 +218,35 @@ def sell_reason_for_position(position, current_price, df=None, trend_df=None):
     if df is not None:
         momentum_score, _ = exit_momentum_score(df, trend_df)
 
+    if pnl_percent >= BREAKEVEN_TRIGGER_PERCENT:
+        position["breakeven_armed"] = True
+
+    if position.get("breakeven_armed") and pnl_percent <= 0:
+        return "BREAKEVEN_STOP"
+
+    if pnl_percent <= -STOP_LOSS_PERCENT:
+        return "STOP_LOSS"
+
+    if position.get("strategy_type") == "STAT_ARB":
+        return None
+
     if pnl_percent > 0 and momentum_score <= EXIT_MOMENTUM_FADE_SCORE:
-        return "MOMENTUM_FADE"
+        position["momentum_fade_count"] = position.get("momentum_fade_count", 0) + 1
+        if position["momentum_fade_count"] >= 2:
+            return "MOMENTUM_FADE"
+    else:
+        position["momentum_fade_count"] = 0
 
     if (
-        position["peak_pnl_percent"] >= TAKE_PROFIT_PERCENT
+        position["peak_pnl_percent"] >= TRAILING_ACTIVATION_PERCENT
         and pnl_percent <= position["peak_pnl_percent"] - TRAILING_PROFIT_GIVEBACK_PERCENT
     ):
         return "TRAILING_GIVEBACK"
 
     if pnl_percent >= EXTENDED_TAKE_PROFIT_PERCENT:
-        return "EXTENDED_TAKE_PROFIT"
+        if momentum_score < EXTENDED_TP_HOLD_SCORE:
+            return "EXTENDED_TAKE_PROFIT"
+        return None
 
     if pnl_percent >= TAKE_PROFIT_PERCENT and momentum_score < 65:
         return "TAKE_PROFIT"

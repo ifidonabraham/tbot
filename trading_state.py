@@ -35,7 +35,7 @@ class TradingState:
             state.save()
             return state
 
-        with STATE_FILE.open("r", encoding="utf-8") as file:
+        with STATE_FILE.open("r", encoding="utf-8-sig") as file:
             data = json.load(file)
 
         state = cls(**{**asdict(cls()), **data})
@@ -53,6 +53,7 @@ class TradingState:
                 "peak_pnl_percent": state.peak_pnl_percent,
                 "broker_ticket": None,
             })
+        state._normalize_positions()
         state.reset_daily_if_needed()
         state._sync_legacy_position()
         return state
@@ -68,7 +69,19 @@ class TradingState:
             self.daily_pnl_usdt = 0.0
             self.daily_trade_count = 0
 
-    def open_position(self, symbol, price, amount, total_cost, entry_score=0.0, contract_size=1.0, broker_ticket=None):
+    def open_position(
+        self,
+        symbol,
+        price,
+        amount,
+        total_cost,
+        entry_score=0.0,
+        contract_size=1.0,
+        broker_ticket=None,
+        strategy_type="MOMENTUM",
+        metadata=None,
+    ):
+        metadata = metadata or {}
         position = {
             "id": str(uuid4()),
             "symbol": symbol,
@@ -79,6 +92,11 @@ class TradingState:
             "entry_score": entry_score,
             "peak_pnl_percent": 0.0,
             "broker_ticket": broker_ticket,
+            "breakeven_armed": False,
+            "breakeven_sl_set": False,
+            "momentum_fade_count": 0,
+            "strategy_type": strategy_type,
+            **metadata,
         }
         self.positions.append(position)
         self._sync_legacy_position()
@@ -109,6 +127,13 @@ class TradingState:
                 self.positions[index] = position
                 self._sync_legacy_position()
                 return
+
+    def _normalize_positions(self):
+        for position in self.positions:
+            position.setdefault("breakeven_armed", False)
+            position.setdefault("breakeven_sl_set", False)
+            position.setdefault("momentum_fade_count", 0)
+            position.setdefault("strategy_type", "MOMENTUM")
 
     def _sync_legacy_position(self):
         if not self.positions:

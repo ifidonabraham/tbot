@@ -3,7 +3,6 @@ import time
 
 from config import (
     BASE_ASSET,
-    ACTIVE_ENTRY_SCORE_THRESHOLD,
     BROKER,
     LOOP_SECONDS,
     MAX_NEW_POSITIONS_PER_LOOP,
@@ -19,13 +18,15 @@ from exchange import get_balance, get_current_price, get_exchange
 from execution import buy, sell_position
 from indicators import compute_indicators, fetch_candles
 from risk import (
+    active_entry_threshold_for_state,
     buy_blockers,
     calculate_trade_amount,
     estimate_sell_proceeds,
     net_profit_percent,
     sell_reason_for_position,
 )
-from strategy import entry_score, exit_momentum_score, generate_signal, get_trend_status
+from stat_arb import find_stat_arb_setups, stat_arb_exit_reason
+from strategy import confirmed_entry_score, exit_momentum_score, generate_signal, get_trend_status
 from trading_state import TradingState
 
 logging.basicConfig(
@@ -62,7 +63,7 @@ def _market_context(exchange, symbol):
 
     price = float(get_current_price(exchange, symbol))
     trend_status = get_trend_status(trend_df)
-    score, details = entry_score(df, trend_df)
+    score, details = confirmed_entry_score(df, trend_df)
     signal = generate_signal(df, trend_df)
     return {
         "symbol": symbol,
@@ -81,7 +82,26 @@ def _manage_positions(exchange, state):
         symbol = position["symbol"]
         context = _market_context(exchange, symbol)
         price = context["price"]
-        reason = sell_reason_for_position(position, price, context["df"], context["trend_df"])
+        reason = None
+        if position.get("strategy_type") == "STAT_ARB" and position.get("leader_symbol"):
+            try:
+                leader_context = _market_context(exchange, position["leader_symbol"])
+                reason = stat_arb_exit_reason(position, context["df"], leader_context["df"])
+            except Exception as exc:
+                logging.warning("Stat-arb exit check failed for %s: %s", symbol, exc)
+        reason = reason or sell_reason_for_position(position, price, context["df"], context["trend_df"])
+        if (
+            position.get("breakeven_armed")
+            and not position.get("breakeven_sl_set")
+            and hasattr(exchange, "move_stop_loss")
+            and position.get("broker_ticket")
+        ):
+            try:
+                exchange.move_stop_loss(symbol, position["broker_ticket"], position["entry_price"])
+                position["breakeven_sl_set"] = True
+                logging.info("Breakeven SL moved for %s ticket %s", symbol, position["broker_ticket"])
+            except Exception as exc:
+                logging.warning("Could not move breakeven SL for %s: %s", symbol, exc)
         state.update_position(position)
         exit_score, _ = exit_momentum_score(context["df"], context["trend_df"])
 
@@ -101,24 +121,33 @@ def _manage_positions(exchange, state):
 
 def _scan_markets(exchange, state, quote_balance):
     candidates = []
+    active_threshold = active_entry_threshold_for_state(state, quote_balance)
+
+    if active_threshold is None:
+        logging.warning("Daily loss limit reached. New entries are stopped for today.")
+        return []
 
     for symbol in WATCHLIST:
         try:
             context = _market_context(exchange, symbol)
             contract_size = exchange.contract_size(symbol) if hasattr(exchange, "contract_size") else 1.0
             amount = calculate_trade_amount(context["price"], quote_balance, contract_size)
-            blockers = buy_blockers(state, context["df"], quote_balance, amount, contract_size, symbol)
+            blocker_df = context["df"].iloc[:-1].copy() if len(context["df"]) > 1 else context["df"]
+            blockers = buy_blockers(state, blocker_df, quote_balance, amount, contract_size, symbol)
+            if not context["details"].get("confirmed", False):
+                blockers.append("confirmation candle not valid")
             context["amount"] = amount
             context["blockers"] = blockers
             context["contract_size"] = contract_size
             candidates.append(context)
 
             logging.info(
-                "Scan %s | Price: $%.5f | Signal: %s | Score: %.2f | 5m Trend: %s | Amount: %.8f | Contract: %s | Blockers: %s",
+                "Scan %s | Price: $%.5f | Signal: %s | Score: %.2f | Active threshold: %.2f | 5m Trend: %s | Amount: %.8f | Contract: %s | Blockers: %s",
                 symbol,
                 context["price"],
                 context["signal"],
                 context["score"],
+                active_threshold,
                 context["trend_status"],
                 amount,
                 contract_size,
@@ -128,10 +157,15 @@ def _scan_markets(exchange, state, quote_balance):
         except Exception as exc:
             logging.exception("Scan failed for %s: %s", symbol, exc)
 
+    candidates.extend(find_stat_arb_setups(candidates))
+
     tradable = [
         item
         for item in candidates
-        if item["score"] >= ACTIVE_ENTRY_SCORE_THRESHOLD and not item["blockers"] and item["amount"] > 0
+        if item["score"] >= active_threshold
+        and item["details"].get("confirmed", True)
+        and not item["blockers"]
+        and item["amount"] > 0
     ]
     return sorted(tradable, key=lambda item: item["score"], reverse=True)
 
@@ -171,10 +205,16 @@ def run_bot():
                     state,
                     best["price"],
                     best["amount"],
-                    f"STRATEGY_BUY_{best['symbol']}_SCORE_{best['score']:.2f}",
+                    f"{best.get('strategy_type', 'MOMENTUM')}_BUY_{best['symbol']}_SCORE_{best['score']:.2f}",
                     best["score"],
                     symbol=best["symbol"],
                     contract_size=best["contract_size"],
+                    strategy_type=best.get("strategy_type", "MOMENTUM"),
+                    metadata={
+                        "leader_symbol": best["details"].get("leader"),
+                        "stat_arb_pair": best["details"].get("stat_arb_pair"),
+                        "entry_divergence_percent": best["details"].get("divergence_percent", 0.0),
+                    } if best.get("strategy_type") == "STAT_ARB" else None,
                 )
                 logging.info("BUY executed for %s: %s", best["symbol"], result)
                 opened += 1

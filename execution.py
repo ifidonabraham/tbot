@@ -44,7 +44,18 @@ def _ticket_from_order(order):
     return None
 
 
-def buy(exchange, state, price, amount, reason, entry_score=0.0, symbol=SYMBOL, contract_size=CONTRACT_SIZE):
+def buy(
+    exchange,
+    state,
+    price,
+    amount,
+    reason,
+    entry_score=0.0,
+    symbol=SYMBOL,
+    contract_size=CONTRACT_SIZE,
+    strategy_type="MOMENTUM",
+    metadata=None,
+):
     total_cost = estimate_buy_total(price, amount, contract_size)
     gross = price * amount * contract_size
     fee_slippage = total_cost - gross
@@ -52,7 +63,16 @@ def buy(exchange, state, price, amount, reason, entry_score=0.0, symbol=SYMBOL, 
     if PAPER_TRADING:
         state.paper_usdt -= total_cost
         state.paper_btc += amount
-        position = state.open_position(symbol, price, amount, total_cost, entry_score, contract_size)
+        position = state.open_position(
+            symbol,
+            price,
+            amount,
+            total_cost,
+            entry_score,
+            contract_size,
+            strategy_type=strategy_type,
+            metadata=metadata,
+        )
         state.save()
         _append_trade(_trade_row(symbol, "paper", "BUY", price, amount, fee_slippage, reason=reason, ticket=position["id"]))
         return {"mode": "paper", "side": "BUY", "total_cost": total_cost, "position_id": position["id"]}
@@ -62,7 +82,19 @@ def buy(exchange, state, price, amount, reason, entry_score=0.0, symbol=SYMBOL, 
 
     order = exchange.create_market_buy_order(symbol, amount)
     broker_ticket = _ticket_from_order(order)
-    position = state.open_position(symbol, price, amount, total_cost, entry_score, contract_size, broker_ticket)
+    if hasattr(exchange, "latest_buy_position_ticket"):
+        broker_ticket = exchange.latest_buy_position_ticket(symbol) or broker_ticket
+    position = state.open_position(
+        symbol,
+        price,
+        amount,
+        total_cost,
+        entry_score,
+        contract_size,
+        broker_ticket,
+        strategy_type=strategy_type,
+        metadata=metadata,
+    )
     state.save()
     _append_trade(_trade_row(symbol, "live", "BUY", price, amount, fee_slippage, reason=reason, ticket=broker_ticket or position["id"]))
     return order

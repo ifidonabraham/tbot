@@ -1,10 +1,14 @@
-import ccxt
 from config import BINANCE_API_KEY, BINANCE_SECRET, BROKER, SYMBOL, USE_TESTNET
 from mt5_connector import MT5Broker
 
 def get_exchange():
     if BROKER == "exness_mt5":
         return MT5Broker()
+
+    try:
+        import ccxt
+    except ImportError as exc:
+        raise RuntimeError("ccxt is required for BROKER=binance. Run: pip install ccxt") from exc
 
     exchange = ccxt.binance({
         'apiKey': BINANCE_API_KEY,
