@@ -17,7 +17,7 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 from fundamentals import evaluate_fundamentals
-from gemini_ai import ai_enabled, evaluate_candle_pattern, summarize_funnel_status
+from gemini_ai import ai_enabled, evaluate_candle_pattern, evaluate_fundamental_bias, summarize_funnel_status
 
 try:
     import MetaTrader5 as mt5
@@ -1439,6 +1439,32 @@ def apply_layer7(candidate: Candidate) -> Candidate:
         candidate.layer7_score = 50.0
         candidate.layer7_reason = f"Fundamental layer error: {exc}"
         return candidate
+
+    use_ai_for_layer7 = ai_enabled() and env_bool("AI_USE_FOR_LAYER7", True)
+    if use_ai_for_layer7:
+        min_ai_score = env_float("AI_LAYER7_MIN_PRE_AI_SCORE", 60.0)
+        if result.score < min_ai_score and env_bool("AI_LAYER7_SKIP_WEAK_CANDIDATES", True):
+            use_ai_for_layer7 = False
+    if use_ai_for_layer7:
+        ai_result = evaluate_fundamental_bias(
+            {
+                "symbol": candidate.symbol,
+                "side": side,
+                "computed_bias": result.bias,
+                "computed_score": result.score,
+                "computed_reason": result.reason,
+                "evidence": result.evidence,
+            }
+        )
+        if ai_result.enabled and ai_result.decision not in {"ERROR", ""}:
+            result.bias = ai_result.decision if ai_result.decision in {"BULLISH", "BEARISH", "NEUTRAL"} else result.bias
+            result.score = ai_result.score
+            result.reason = f"AI+API: {ai_result.reason}"
+            candidate.ai_decision = ai_result.decision
+            candidate.ai_score = ai_result.score
+            candidate.ai_reason = ai_result.reason
+            candidate.ai_pattern = ai_result.pattern
+
     candidate.layer7_bias = result.bias
     candidate.layer7_score = result.score
     candidate.layer7_reason = result.reason
@@ -1733,6 +1759,10 @@ def validate_env() -> int:
         "AI_ENABLED",
         "AI_PROVIDER",
         "AI_USE_FOR_LAYER6",
+        "AI_USE_FOR_LAYER7",
+        "AI_LAYER7_SKIP_WEAK_CANDIDATES",
+        "AI_LAYER7_MIN_PRE_AI_SCORE",
+        "AI_MAX_CALLS_PER_RUN",
         "NVIDIA_BASE_URL",
         "NVIDIA_MODEL",
         "NVIDIA_TIMEOUT_SECONDS",
@@ -1751,14 +1781,18 @@ def validate_env() -> int:
         "LAYER7_USE_BIS",
         "LAYER7_USE_CFTC",
         "LAYER7_USE_WORLD_BANK",
-        "LAYER7_USE_TRADING_ECONOMICS",
         "LAYER7_BIAS_THRESHOLD",
         "LAYER7_SOURCE_PAUSE_SECONDS",
+        "LAYER7_HTTP_TIMEOUT_SECONDS",
+        "FUNDAMENTAL_USE_CACHE",
+        "FUNDAMENTAL_CACHE_PATH",
+        "FUNDAMENTAL_CACHE_MAX_AGE_SECONDS",
+        "FUNDAMENTAL_GDP_CACHE_MAX_AGE_SECONDS",
+        "FUNDAMENTAL_CFTC_CACHE_MAX_AGE_SECONDS",
         "FUNDAMENTAL_RISK_SENTIMENT",
         "BIS_POLICY_RATES_URL",
         "CFTC_COT_URL",
         "FRED_API_KEY",
-        "TRADING_ECONOMICS_KEY",
         "LAYER8_ENABLE_NEWS_SENTIMENT",
         "SCORER_MIN_COMPOSITE_SCORE",
         "SCORER_WEIGHT_LAYER1",
@@ -1787,9 +1821,7 @@ def validate_env() -> int:
             continue
         if key == "NVIDIA_API_KEY" and not (env_bool("AI_ENABLED", False) and os.getenv("AI_PROVIDER", "nvidia").lower() == "nvidia"):
             continue
-        if key == "FRED_API_KEY" and not env_bool("LAYER7_USE_FRED", True):
-            continue
-        if key == "TRADING_ECONOMICS_KEY" and not env_bool("LAYER7_USE_TRADING_ECONOMICS", False):
+        if key == "FRED_API_KEY" and not (env_bool("LAYER7_ENABLE_FUNDAMENTALS", False) and env_bool("LAYER7_USE_FRED", True)):
             continue
         if key == "BIS_POLICY_RATES_URL" and not env_bool("LAYER7_USE_BIS", True):
             continue
@@ -1809,6 +1841,10 @@ def validate_env() -> int:
         return 1
     if env_bool("AI_ENABLED", False) and os.getenv("AI_PROVIDER", "nvidia").lower() == "gemini" and not os.getenv("GEMINI_API_KEY", "").strip():
         print("MISSING GEMINI_API_KEY because AI_ENABLED=true and AI_PROVIDER=gemini")
+        print("Market funnel env validation failed.")
+        return 1
+    if env_bool("LAYER7_ENABLE_FUNDAMENTALS", False) and env_bool("LAYER7_USE_FRED", True) and not os.getenv("FRED_API_KEY", "").strip():
+        print("MISSING FRED_API_KEY because LAYER7_ENABLE_FUNDAMENTALS=true and LAYER7_USE_FRED=true")
         print("Market funnel env validation failed.")
         return 1
     print("Market funnel env validation passed.")

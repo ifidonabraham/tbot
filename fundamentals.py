@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import csv
 import io
+import json
 import os
 import time
+import zipfile
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import requests
@@ -42,6 +45,30 @@ CURRENCY_COUNTRY = {
     "THB": ("TH", "thailand"),
 }
 
+COUNTRY_CURRENCY = {
+    "US": "USD",
+    "XM": "EUR",
+    "EA": "EUR",
+    "GB": "GBP",
+    "JP": "JPY",
+    "CH": "CHF",
+    "CA": "CAD",
+    "AU": "AUD",
+    "NZ": "NZD",
+    "CN": "CNY",
+    "MX": "MXN",
+    "ZA": "ZAR",
+    "SE": "SEK",
+    "NO": "NOK",
+    "DK": "DKK",
+    "PL": "PLN",
+    "HU": "HUF",
+    "TR": "TRY",
+    "SG": "SGD",
+    "HK": "HKD",
+    "TH": "THB",
+}
+
 RISK_ON = {"AUD", "NZD", "CAD", "ZAR", "MXN", "NOK"}
 RISK_OFF = {"USD", "JPY", "CHF"}
 
@@ -62,6 +89,8 @@ CFTC_MARKETS = {
     "MXN": ["MEXICAN PESO"],
 }
 
+CACHE_PATH = Path(os.getenv("FUNDAMENTAL_CACHE_PATH", "data/fundamental_cache.json"))
+
 
 def env_bool(name: str, default: bool) -> bool:
     raw = os.getenv(name)
@@ -75,6 +104,38 @@ def env_float(name: str, default: float) -> float:
         return float(os.getenv(name, str(default)))
     except ValueError:
         return default
+
+
+def load_cache() -> dict[str, Any]:
+    if not CACHE_PATH.exists():
+        return {}
+    try:
+        return json.loads(CACHE_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def save_cache(cache: dict[str, Any]) -> None:
+    CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    CACHE_PATH.write_text(json.dumps(cache, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def cached_value(key: str, max_age_seconds: float) -> float | None:
+    cache = load_cache()
+    item = cache.get(key, {})
+    try:
+        age = time.time() - float(item.get("timestamp", 0.0))
+        if age <= max_age_seconds:
+            return float(item["value"])
+    except (TypeError, ValueError, KeyError):
+        return None
+    return None
+
+
+def set_cached_value(key: str, value: float) -> None:
+    cache = load_cache()
+    cache[key] = {"timestamp": time.time(), "value": value}
+    save_cache(cache)
 
 
 def split_pair(symbol: str) -> tuple[str, str] | None:
@@ -99,6 +160,12 @@ def latest_numeric(values: list[dict[str, Any]], key: str = "value") -> float | 
 
 
 def fred_series(series_id: str) -> float | None:
+    cache_key = f"fred:{series_id}"
+    max_age = env_float("FUNDAMENTAL_CACHE_MAX_AGE_SECONDS", 86400.0)
+    if env_bool("FUNDAMENTAL_USE_CACHE", True):
+        cached = cached_value(cache_key, max_age)
+        if cached is not None:
+            return cached
     key = os.getenv("FRED_API_KEY", "").strip()
     if not key:
         return None
@@ -111,13 +178,22 @@ def fred_series(series_id: str) -> float | None:
             "sort_order": "desc",
             "limit": 4,
         },
-        timeout=20,
+        timeout=env_float("LAYER7_HTTP_TIMEOUT_SECONDS", 10.0),
     )
     response.raise_for_status()
-    return latest_numeric(list(reversed(response.json().get("observations", []))))
+    value = latest_numeric(list(reversed(response.json().get("observations", []))))
+    if value is not None and env_bool("FUNDAMENTAL_USE_CACHE", True):
+        set_cached_value(cache_key, value)
+    return value
 
 
 def world_bank_gdp_growth(currency: str) -> float | None:
+    cache_key = f"world_bank_gdp:{currency}"
+    max_age = env_float("FUNDAMENTAL_GDP_CACHE_MAX_AGE_SECONDS", 2592000.0)
+    if env_bool("FUNDAMENTAL_USE_CACHE", True):
+        cached = cached_value(cache_key, max_age)
+        if cached is not None:
+            return cached
     country = CURRENCY_COUNTRY.get(currency)
     if country is None:
         return None
@@ -127,7 +203,7 @@ def world_bank_gdp_growth(currency: str) -> float | None:
     response = requests.get(
         f"https://api.worldbank.org/v2/country/{iso2}/indicator/NY.GDP.MKTP.KD.ZG",
         params={"format": "json", "per_page": 5},
-        timeout=20,
+        timeout=env_float("LAYER7_HTTP_TIMEOUT_SECONDS", 10.0),
     )
     response.raise_for_status()
     payload = response.json()
@@ -136,52 +212,88 @@ def world_bank_gdp_growth(currency: str) -> float | None:
     for row in payload[1]:
         value = row.get("value")
         if value is not None:
-            return float(value)
+            numeric = float(value)
+            if env_bool("FUNDAMENTAL_USE_CACHE", True):
+                set_cached_value(cache_key, numeric)
+            return numeric
     return None
 
 
-def trading_economics_indicator(currency: str, indicator: str) -> float | None:
-    key = os.getenv("TRADING_ECONOMICS_KEY", "").strip()
-    if not key:
-        return None
-    country = CURRENCY_COUNTRY.get(currency)
-    if country is None:
-        return None
-    _, country_name = country
-    response = requests.get(
-        f"https://api.tradingeconomics.com/historical/country/{country_name}/indicator/{indicator}",
-        params={"c": key},
-        timeout=20,
-    )
-    response.raise_for_status()
-    rows = response.json()
-    if not isinstance(rows, list):
-        return None
-    return latest_numeric(rows, "Value")
-
-
 def bis_policy_rates() -> dict[str, float]:
-    url = os.getenv("BIS_POLICY_RATES_URL", "").strip()
-    if not url:
-        return {}
-    response = requests.get(url, timeout=30)
+    max_age = env_float("FUNDAMENTAL_CACHE_MAX_AGE_SECONDS", 86400.0)
+    if env_bool("FUNDAMENTAL_USE_CACHE", True):
+        cache = load_cache()
+        item = cache.get("bis_policy_rates", {})
+        try:
+            if time.time() - float(item.get("timestamp", 0.0)) <= max_age:
+                return {str(k): float(v) for k, v in item.get("value", {}).items()}
+        except (TypeError, ValueError):
+            pass
+    url = os.getenv(
+        "BIS_POLICY_RATES_URL",
+        "https://data.bis.org/static/bulk/WS_CBPOL_csv_flat.zip",
+    ).strip()
+    response = requests.get(url, timeout=env_float("LAYER7_HTTP_TIMEOUT_SECONDS", 10.0))
     response.raise_for_status()
-    rows = csv.DictReader(io.StringIO(response.text))
+    if url.lower().endswith(".zip"):
+        with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+            csv_name = next((name for name in archive.namelist() if name.lower().endswith(".csv")), "")
+            if not csv_name:
+                return {}
+            text = archive.read(csv_name).decode("utf-8-sig", errors="replace")
+    else:
+        text = response.text
+
+    rows = csv.DictReader(io.StringIO(text))
     result: dict[str, float] = {}
+    latest_time: dict[str, str] = {}
     for row in rows:
-        currency = (row.get("currency") or row.get("Currency") or row.get("CUR") or "").upper()
-        value = row.get("rate") or row.get("Rate") or row.get("value") or row.get("Value")
+        currency = (
+            row.get("currency")
+            or row.get("Currency")
+            or row.get("CUR")
+            or row.get("CURRENCY")
+            or ""
+        ).upper()
+        ref_area = (row.get("REF_AREA") or row.get("ref_area") or row.get("Reference area") or "").upper()
+        if not currency and ref_area:
+            currency = COUNTRY_CURRENCY.get(ref_area, "")
+        value = (
+            row.get("OBS_VALUE")
+            or row.get("obs_value")
+            or row.get("rate")
+            or row.get("Rate")
+            or row.get("value")
+            or row.get("Value")
+        )
+        period = str(row.get("TIME_PERIOD") or row.get("time_period") or row.get("Time period") or "")
         if currency and value:
             try:
-                result[currency] = float(value)
+                numeric = float(value)
             except ValueError:
                 continue
+            if currency not in latest_time or period >= latest_time[currency]:
+                result[currency] = numeric
+                latest_time[currency] = period
+    if result and env_bool("FUNDAMENTAL_USE_CACHE", True):
+        cache = load_cache()
+        cache["bis_policy_rates"] = {"timestamp": time.time(), "value": result}
+        save_cache(cache)
     return result
 
 
 def cftc_positioning() -> dict[str, float]:
+    max_age = env_float("FUNDAMENTAL_CFTC_CACHE_MAX_AGE_SECONDS", 604800.0)
+    if env_bool("FUNDAMENTAL_USE_CACHE", True):
+        cache = load_cache()
+        item = cache.get("cftc_positioning", {})
+        try:
+            if time.time() - float(item.get("timestamp", 0.0)) <= max_age:
+                return {str(k): float(v) for k, v in item.get("value", {}).items()}
+        except (TypeError, ValueError):
+            pass
     url = os.getenv("CFTC_COT_URL", "https://www.cftc.gov/dea/newcot/FinFutWk.txt").strip()
-    response = requests.get(url, timeout=30)
+    response = requests.get(url, timeout=env_float("LAYER7_HTTP_TIMEOUT_SECONDS", 10.0))
     response.raise_for_status()
     text = response.text
     result: dict[str, float] = {}
@@ -203,6 +315,10 @@ def cftc_positioning() -> dict[str, float]:
                     result[currency] = float(long_value) - float(short_value)
                 except (TypeError, ValueError):
                     pass
+        if result and env_bool("FUNDAMENTAL_USE_CACHE", True):
+            cache = load_cache()
+            cache["cftc_positioning"] = {"timestamp": time.time(), "value": result}
+            save_cache(cache)
         return result
 
     upper = text.upper().splitlines()
@@ -226,6 +342,10 @@ def cftc_positioning() -> dict[str, float]:
                             continue
                     if len(numbers) >= 2:
                         result[currency] = numbers[-2] - numbers[-1]
+    if result and env_bool("FUNDAMENTAL_USE_CACHE", True):
+        cache = load_cache()
+        cache["cftc_positioning"] = {"timestamp": time.time(), "value": result}
+        save_cache(cache)
     return result
 
 
@@ -235,34 +355,35 @@ def currency_score(currency: str, bis_rates: dict[str, float], cot: dict[str, fl
 
     rate = None
     if currency == "USD":
-        rate = fred_series(FRED_SERIES["USD_RATE"])
-        if rate is not None:
-            evidence["fred_rate"] = rate
+        try:
+            rate = fred_series(FRED_SERIES["USD_RATE"])
+            if rate is not None:
+                evidence["fred_rate"] = rate
+        except Exception as exc:
+            evidence["fred_rate_error"] = str(exc)
     if rate is None:
         rate = bis_rates.get(currency)
         if rate is not None:
             evidence["bis_rate"] = rate
-    if rate is None:
-        rate = trading_economics_indicator(currency, "Interest Rate")
-        if rate is not None:
-            evidence["trading_economics_rate"] = rate
 
     if rate is not None:
         score += max(-20.0, min(20.0, rate * 2.0))
 
     gdp = None
     if currency == "USD":
-        gdp = fred_series(FRED_SERIES["USD_GDP_GROWTH"])
-        if gdp is not None:
-            evidence["fred_gdp_growth"] = gdp
+        try:
+            gdp = fred_series(FRED_SERIES["USD_GDP_GROWTH"])
+            if gdp is not None:
+                evidence["fred_gdp_growth"] = gdp
+        except Exception as exc:
+            evidence["fred_gdp_error"] = str(exc)
     if gdp is None:
-        gdp = world_bank_gdp_growth(currency)
-        if gdp is not None:
-            evidence["world_bank_gdp_growth"] = gdp
-    if gdp is None:
-        gdp = trading_economics_indicator(currency, "GDP Growth Rate")
-        if gdp is not None:
-            evidence["trading_economics_gdp_growth"] = gdp
+        try:
+            gdp = world_bank_gdp_growth(currency)
+            if gdp is not None:
+                evidence["world_bank_gdp_growth"] = gdp
+        except Exception as exc:
+            evidence["world_bank_gdp_error"] = str(exc)
 
     if gdp is not None:
         score += max(-15.0, min(15.0, gdp * 2.0))
@@ -274,6 +395,13 @@ def currency_score(currency: str, bis_rates: dict[str, float], cot: dict[str, fl
 
     risk_sentiment = os.getenv("FUNDAMENTAL_RISK_SENTIMENT", "neutral").strip().lower()
     evidence["risk_sentiment"] = risk_sentiment
+    if not evidence or set(evidence) <= {"risk_sentiment"}:
+        if currency in RISK_ON:
+            evidence["currency_group"] = "risk_on_currency"
+        elif currency in RISK_OFF:
+            evidence["currency_group"] = "risk_off_currency"
+        else:
+            evidence["currency_group"] = "limited_macro_coverage"
     if risk_sentiment == "risk_on":
         if currency in RISK_ON:
             score += 8.0

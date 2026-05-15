@@ -7,6 +7,8 @@ from typing import Any
 
 import requests
 
+AI_CALL_COUNT = 0
+
 
 @dataclass
 class GeminiResult:
@@ -45,6 +47,17 @@ def ai_enabled() -> bool:
     if provider == "gemini":
         return bool(os.getenv("GEMINI_API_KEY", "").strip())
     return False
+
+
+def ai_call_allowed() -> bool:
+    global AI_CALL_COUNT
+    max_calls = int(env_float("AI_MAX_CALLS_PER_RUN", 25.0))
+    if max_calls <= 0:
+        return True
+    if AI_CALL_COUNT >= max_calls:
+        return False
+    AI_CALL_COUNT += 1
+    return True
 
 
 def gemini_enabled() -> bool:
@@ -123,6 +136,8 @@ def call_nvidia_json(system_instruction: str, prompt: str) -> dict[str, Any]:
 
 
 def call_ai_json(system_instruction: str, prompt: str) -> dict[str, Any]:
+    if not ai_call_allowed():
+        raise RuntimeError("AI_MAX_CALLS_PER_RUN reached")
     provider = ai_provider()
     if provider == "nvidia":
         return call_nvidia_json(system_instruction, prompt)
@@ -211,6 +226,53 @@ def summarize_funnel_status(context: dict[str, Any]) -> GeminiResult:
     return GeminiResult(
         enabled=True,
         decision=str(data.get("decision", "WARNING")).upper(),
+        score=max(0.0, min(100.0, score)),
+        pattern=str(data.get("pattern", "")),
+        reason=str(data.get("reason", "")),
+        raw=data,
+    )
+
+
+def evaluate_fundamental_bias(context: dict[str, Any]) -> GeminiResult:
+    if not ai_enabled():
+        return GeminiResult(enabled=False)
+
+    system = (
+        "You are a conservative macro/fundamental FX bias classifier. "
+        "Use only the provided evidence from APIs. Do not invent rates, GDP, COT, or sentiment. "
+        "Return strict JSON only. If evidence is weak or mixed, choose NEUTRAL."
+    )
+    prompt = json.dumps(
+        {
+            "task": "Classify currency-pair fundamental bias for a trading filter.",
+            "rules": {
+                "BULLISH": "Base currency evidence is stronger than quote currency evidence.",
+                "BEARISH": "Quote currency evidence is stronger than base currency evidence.",
+                "NEUTRAL": "Evidence is missing, mixed, stale, or not decisive.",
+                "safety": "This layer filters trades. It must not force entries.",
+            },
+            "required_json_schema": {
+                "decision": "BULLISH or BEARISH or NEUTRAL",
+                "score": "0 to 100, where 50 is neutral",
+                "pattern": "main fundamental driver",
+                "reason": "short reason under 300 chars",
+            },
+            "context": context,
+        },
+        separators=(",", ":"),
+    )
+    try:
+        data = call_ai_json(system, prompt)
+    except Exception as exc:
+        return GeminiResult(enabled=True, decision="ERROR", reason=f"{ai_provider()} AI error: {exc}")
+
+    try:
+        score = float(data.get("score", 50.0))
+    except (TypeError, ValueError):
+        score = 50.0
+    return GeminiResult(
+        enabled=True,
+        decision=str(data.get("decision", "NEUTRAL")).upper(),
         score=max(0.0, min(100.0, score)),
         pattern=str(data.get("pattern", "")),
         reason=str(data.get("reason", "")),
