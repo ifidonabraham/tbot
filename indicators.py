@@ -10,7 +10,6 @@ def fetch_candles(exchange, limit=100, timeframe=TIMEFRAME, symbol=SYMBOL):
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
     return df
 
-
 def compute_indicators(df):
     """Apply technical indicators with pandas/numpy."""
     close = df['close'].astype(float)

@@ -1,0 +1,16 @@
+{
+  "EURUSD": {
+    "timestamp": 1778840000.0,
+    "bid_depth": 1200000.0,
+    "ask_depth": 850000.0,
+    "trade_delta": 42000.0,
+    "last_price": 1.08765
+  },
+  "GBPUSD": {
+    "timestamp": 1778840000.0,
+    "bid_depth": 760000.0,
+    "ask_depth": 980000.0,
+    "trade_delta": -35000.0,
+    "last_price": 1.3522
+  }
+}

@@ -1,0 +1,4 @@
+received_at,symbol,kind,price,tests,timeframe
+2026-05-15T11:45:49.302302+00:00,EURUSD,support,1.16998,7,H1
+2026-05-15T11:49:49.648302+00:00,USDJPY,support,155.1,3,TradingView
+2026-05-15T12:13:06.193064+00:00,EURUSD,resistance,1.1772,9,H1
