@@ -28,8 +28,8 @@ from funnel_candidates import (
 from indicators import compute_indicators, fetch_candles
 from risk import (
     active_entry_threshold_for_state,
-    buy_blockers,
     calculate_trade_amount,
+    entry_blockers,
     position_pnl,
     sell_reason_for_position,
 )
@@ -189,9 +189,9 @@ def _scan_markets(exchange, state, quote_balance):
             contract_size = exchange.contract_size(symbol) if hasattr(exchange, "contract_size") else 1.0
             amount = calculate_trade_amount(context["price"], quote_balance, contract_size)
             blocker_df = context["df"].iloc[:-1].copy() if len(context["df"]) > 1 else context["df"]
-            blockers = buy_blockers(state, blocker_df, quote_balance, amount, contract_size, symbol)
             context["amount"] = amount
-            context["blockers"] = blockers
+            context["blocker_df"] = blocker_df
+            context["blockers"] = []
             context["contract_size"] = contract_size
             candidates.append(context)
 
@@ -206,7 +206,7 @@ def _scan_markets(exchange, state, quote_balance):
                 context["trend_status"],
                 amount,
                 contract_size,
-                "; ".join(blockers) if blockers else "none",
+                "checked after BUY/SELL side selection",
             )
             logging.info("Score details %s: %s", symbol, context["details"])
             if funnel_candidate:
@@ -237,6 +237,15 @@ def _scan_markets(exchange, state, quote_balance):
                 "side": side,
                 "score": score,
                 "details": details,
+                "blockers": entry_blockers(
+                    state,
+                    item["blocker_df"],
+                    quote_balance,
+                    item["amount"],
+                    item["contract_size"],
+                    item["symbol"],
+                    side,
+                ),
             }
             if item.get("funnel_score") is not None:
                 side_item["score"] = score
@@ -252,14 +261,14 @@ def _scan_markets(exchange, state, quote_balance):
                 }
                 if opposite_score - score > FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT:
                     side_item["blockers"] = [
-                        *item["blockers"],
+                        *side_item["blockers"],
                         (
                             f"funnel side {side} conflicts with scalper score "
                             f"by {opposite_score - score:.2f}"
                         ),
                     ]
             if not side_item["details"].get("confirmed", False):
-                side_item["blockers"] = [*item["blockers"], f"{side.lower()} confirmation candle not valid"]
+                side_item["blockers"] = [*side_item["blockers"], f"{side.lower()} confirmation candle not valid"]
             directional_candidates.append(side_item)
 
     tradable = [

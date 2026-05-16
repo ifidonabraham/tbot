@@ -85,6 +85,14 @@ def estimate_entry_cost(price, amount, contract_size=CONTRACT_SIZE):
     return estimate_buy_total(price, amount, contract_size)
 
 
+def estimate_entry_required_quote(price, amount, contract_size=CONTRACT_SIZE, side="BUY"):
+    gross = price * amount * contract_size
+    side = (side or "BUY").upper()
+    if side == "SELL":
+        return gross * (TAKER_FEE_RATE + SLIPPAGE_RATE)
+    return estimate_buy_total(price, amount, contract_size)
+
+
 def estimate_close_value(position, current_price):
     side = position.get("side", "BUY")
     amount = position["amount"]
@@ -209,10 +217,11 @@ def live_spread_percent(symbol):
     return (float(tick.ask) - float(tick.bid)) / mid * 100.0
 
 
-def buy_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE, symbol=None):
+def entry_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE, symbol=None, side="BUY"):
     price = float(df.iloc[-1]["close"])
+    side = (side or "BUY").upper()
     dynamic_reserve = reserve_amount(quote_balance)
-    required_quote = estimate_buy_total(price, amount, contract_size) + dynamic_reserve
+    required_quote = estimate_entry_required_quote(price, amount, contract_size, side) + dynamic_reserve
     real_position_value = position_value(price, amount, contract_size)
     loss_limit = daily_loss_limit(quote_balance)
     blockers = []
@@ -222,7 +231,7 @@ def buy_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE, 
     if real_position_value < MIN_POSITION_VALUE:
         blockers.append(f"position value below minimum {MIN_POSITION_VALUE:.2f} {QUOTE_ASSET}")
     if quote_balance < required_quote:
-        blockers.append(f"insufficient {QUOTE_ASSET} after fee/slippage/reserve")
+        blockers.append(f"insufficient {QUOTE_ASSET} for {side.lower()} entry after fee/slippage/reserve")
     if state.daily_pnl_usdt <= -loss_limit:
         blockers.append(f"daily loss limit reached ({loss_limit:.2f} {QUOTE_ASSET})")
     if MAX_TRADES_PER_DAY > 0 and state.daily_trade_count >= MAX_TRADES_PER_DAY:
@@ -244,6 +253,10 @@ def buy_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE, 
         blockers.append("take-profit target does not clear fees/slippage plus minimum profit")
 
     return blockers
+
+
+def buy_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE, symbol=None):
+    return entry_blockers(state, df, quote_balance, amount, contract_size, symbol, "BUY")
 
 
 def sell_reason(state, current_price, df=None, trend_df=None):
