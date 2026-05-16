@@ -1,0 +1,831 @@
+{
+  "alpha_news:AUD:72": {
+    "timestamp": 1778892230.316201,
+    "value": [
+      {
+        "authors": [
+          "Investing.com"
+        ],
+        "banner_image": "https://i-invdn-com.investing.com/news/moved_LYNXMPEM470KO_L.jpg",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Neutral",
+        "overall_sentiment_score": 0.044652,
+        "source": "Investing.com",
+        "source_domain": "Investing.com",
+        "summary": "Tractor Supply Company shareholders recently elected all nominated directors and approved Ernst & Young LLP as their independent auditor for the fiscal year ending December 26, 2026. This comes as the company's shares are trading near their 52-week low. The shareholders also gave a non-binding approval for the compensation of named executive officers, and Meg Ham was appointed to the Audit Committee.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "TSCO",
+            "ticker_sentiment_label": "Neutral",
+            "ticker_sentiment_score": "0.005535"
+          },
+          {
+            "relevance_score": "0.642376",
+            "ticker": "WBA",
+            "ticker_sentiment_label": "Neutral",
+            "ticker_sentiment_score": "0.049567"
+          }
+        ],
+        "time_published": "20260515T235731",
+        "title": "Tractor Supply shareholders elect board, approve auditor at annual meeting",
+        "topics": [
+          {
+            "relevance_score": "0.948727",
+            "topic": "earnings"
+          },
+          {
+            "relevance_score": "0.810980",
+            "topic": "financial_markets"
+          },
+          {
+            "relevance_score": "0.734901",
+            "topic": "retail_wholesale"
+          }
+        ],
+        "url": "https://www.investing.com/news/sec-filings/tractor-supply-shareholders-elect-board-approve-auditor-at-annual-meeting-93CH-4694280"
+      },
+      {
+        "authors": [],
+        "banner_image": null,
+        "category_within_source": "General",
+        "overall_sentiment_label": "Bullish",
+        "overall_sentiment_score": 0.870219,
+        "source": "TradingView",
+        "source_domain": "TradingView",
+        "summary": "XOS reported record Q1 2026 revenue and gross margins, with improved operational efficiency primarily due to a strategic shift towards higher-margin Hub and powertrain products. The company reaffirmed its 2026 guidance, citing strong demand from both commercial and public sector clients and minimal capital expenditure requirements for growth. This positive outlook is based on their Q1 2026 audio transcript.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "XOS",
+            "ticker_sentiment_label": "Bullish",
+            "ticker_sentiment_score": "0.878975"
+          }
+        ],
+        "time_published": "20260515T233910",
+        "title": "XOS: Record Q1 revenue and margins driven by Hub and powertrain growth, with strong 2026 outlook",
+        "topics": [
+          {
+            "relevance_score": "0.932802",
+            "topic": "earnings"
+          },
+          {
+            "relevance_score": "0.740133",
+            "topic": "energy_transportation"
+          }
+        ],
+        "url": "https://www.tradingview.com/news/urn:summary_document_transcript:quartr.com:3332144:0-xos-record-q1-revenue-and-margins-driven-by-hub-and-powertrain-growth-with-strong-2026-outlook/"
+      },
+      {
+        "authors": [
+          "Investing.com"
+        ],
+        "banner_image": "https://i-invdn-com.investing.com/news/moved_LYNXNPEL9F13D_L.jpg",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Neutral",
+        "overall_sentiment_score": 0.033598,
+        "source": "Investing.com",
+        "source_domain": "Investing.com",
+        "summary": "Equinix (NASDAQ:EQIX) shareholders reelected all 10 directors to the board, approved executive compensation, and ratified PricewaterhouseCoopers LLP as the independent auditor for 2026. However, a proposal to lower the ownership threshold for calling a special meeting was rejected. This comes as the company also recently reported first-quarter 2026 financial results that fell below expectations due to a lease timing issue, though analysts maintain varied outlooks on the stock, some citing AI strength.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "EQIX",
+            "ticker_sentiment_label": "Neutral",
+            "ticker_sentiment_score": "0.028761"
+          }
+        ],
+        "time_published": "20260515T232132",
+        "title": "Equinix shareholders reelect board, approve executive pay, reject special meeting proposal",
+        "topics": [
+          {
+            "relevance_score": "0.900439",
+            "topic": "earnings"
+          },
+          {
+            "relevance_score": "0.815169",
+            "topic": "finance"
+          }
+        ],
+        "url": "https://www.investing.com/news/sec-filings/equinix-shareholders-reelect-board-approve-executive-pay-reject-special-meeting-proposal-93CH-4694250"
+      },
+      {
+        "authors": [
+          "TipRanks Auto-Generated Newsdesk"
+        ],
+        "banner_image": "https://blog.tipranks.com/wp-content/uploads/2022/09/shutterstock_1061972606-750x406.jpg",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Neutral",
+        "overall_sentiment_score": 0.140227,
+        "source": "TipRanks",
+        "source_domain": "TipRanks",
+        "summary": "Viatris Inc. shareholders approved key proposals at their 2026 annual meeting on May 15, electing thirteen director nominees, endorsing the 2025 executive compensation, and re-ratifying Deloitte & Touche LLP as the independent auditor for fiscal 2026. This reflects continuity in governance and financial oversight, with the company (VTRS) currently holding a \"Hold\" rating from analysts and a \"Neutral\" outlook from TipRanks' AI Analyst.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "VTRS",
+            "ticker_sentiment_label": "Neutral",
+            "ticker_sentiment_score": "0.136176"
+          }
+        ],
+        "time_published": "20260515T225412",
+        "title": "Viatris Shareholders Approve Directors, Pay and Auditor",
+        "topics": [
+          {
+            "relevance_score": "0.935357",
+            "topic": "earnings"
+          },
+          {
+            "relevance_score": "0.844995",
+            "topic": "life_sciences"
+          },
+          {
+            "relevance_score": "0.701565",
+            "topic": "finance"
+          },
+          {
+            "relevance_score": "0.612858",
+            "topic": "financial_markets"
+          }
+        ],
+        "url": "https://www.tipranks.com/news/company-announcements/viatris-shareholders-approve-directors-pay-and-auditor"
+      },
+      {
+        "authors": [
+          "TipRanks Auto-Generated Newsdesk"
+        ],
+        "banner_image": "https://blog.tipranks.com/wp-content/uploads/2023/06/shutterstock_1887015883-750x406.jpg",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "overall_sentiment_score": 0.325106,
+        "source": "TipRanks",
+        "source_domain": "TipRanks",
+        "summary": "Equinix shareholders re-elected all ten director nominees, approved executive compensation, and ratified PwC as their auditor at the annual meeting on May 13, 2026. The strong shareholder turnout indicated broad engagement, though a proposal to lower the special meeting threshold was rejected. TipRanks\u2019 AI Analyst, Spark, rates EQIX as \"Outperform\" due to solid fundamentals and improving profitability, despite concerns about free-cash-flow conversion and valuation.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "EQIX",
+            "ticker_sentiment_label": "Somewhat-Bullish",
+            "ticker_sentiment_score": "0.302986"
+          }
+        ],
+        "time_published": "20260515T225332",
+        "title": "Equinix Shareholders Reelect Board, Back Executive Pay, Auditor",
+        "topics": [
+          {
+            "relevance_score": "0.912064",
+            "topic": "earnings"
+          },
+          {
+            "relevance_score": "0.816002",
+            "topic": "finance"
+          },
+          {
+            "relevance_score": "0.600085",
+            "topic": "technology"
+          },
+          {
+            "relevance_score": "0.718043",
+            "topic": "financial_markets"
+          }
+        ],
+        "url": "https://www.tipranks.com/news/company-announcements/equinix-shareholders-reelect-board-back-executive-pay-auditor"
+      }
+    ]
+  },
+  "alpha_news:CAD:72": {
+    "timestamp": 1778892243.0670576,
+    "value": []
+  },
+  "alpha_news:CHF:72": {
+    "timestamp": 1778892303.3326182,
+    "value": []
+  },
+  "alpha_news:DKK:72": {
+    "timestamp": 1778892750.939964,
+    "value": []
+  },
+  "alpha_news:EUR:72": {
+    "timestamp": 1778892816.351993,
+    "value": []
+  },
+  "alpha_news:JPY:72": {
+    "timestamp": 1778892357.161515,
+    "value": []
+  },
+  "alpha_news:MXN:72": {
+    "timestamp": 1778892606.4191048,
+    "value": []
+  },
+  "alpha_news:NOK:72": {
+    "timestamp": 1778892419.1546764,
+    "value": []
+  },
+  "alpha_news:SEK:72": {
+    "timestamp": 1778892764.1630845,
+    "value": []
+  },
+  "alpha_news:THB:72": {
+    "timestamp": 1778892468.0003903,
+    "value": []
+  },
+  "alpha_news:TRY:72": {
+    "timestamp": 1778892672.480671,
+    "value": [
+      {
+        "authors": [
+          "Jonathan Stempel"
+        ],
+        "banner_image": "https://www.reuters.com/resizer/v2/FPKKJW3ICZPAFMPZEUU6JC3RMQ.jpg?auth=1d1f428b736515cf9449adf21fc8ba08b6b1356c4caa2863b54928b4a50e068e&width=1920&quality=80",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Neutral",
+        "overall_sentiment_score": -0.143785,
+        "source": "Reuters",
+        "source_domain": "Reuters",
+        "summary": "Berkshire Hathaway has disclosed significant changes to its investment portfolio, including a new $2.65 billion stake in Delta Air Lines and a small investment in Macy's. The company also more than tripled its stake in Alphabet and doubled its stake in the New York Times. These moves follow the promotion of Greg Abel to CEO, with major sales including Amazon.com, UnitedHealth Group, Visa, and Mastercard.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "0.338575",
+            "ticker": "UNH",
+            "ticker_sentiment_label": "Neutral",
+            "ticker_sentiment_score": "0.041165"
+          },
+          {
+            "relevance_score": "0.609413",
+            "ticker": "V",
+            "ticker_sentiment_label": "Somewhat-Bearish",
+            "ticker_sentiment_score": "-0.200122"
+          }
+        ],
+        "time_published": "20260515T231158",
+        "title": "Berkshire buys Delta, more Alphabet; sheds Amazon, UnitedHealth, Visa and Mastercard",
+        "topics": [
+          {
+            "relevance_score": "0.929011",
+            "topic": "financial_markets"
+          },
+          {
+            "relevance_score": "0.803693",
+            "topic": "earnings"
+          },
+          {
+            "relevance_score": "0.710276",
+            "topic": "retail_wholesale"
+          },
+          {
+            "relevance_score": "0.634429",
+            "topic": "energy_transportation"
+          }
+        ],
+        "url": "https://www.reuters.com/legal/legalindustry/berkshire-invests-delta-sheds-several-stocks-including-amazon-unitedhealth-2026-05-15/"
+      },
+      {
+        "authors": [
+          "Simply Wall St"
+        ],
+        "banner_image": "https://images.ctfassets.net/n07nr2koi959/1txW1Rnk3fUjh2FW939y6e/a1bb305c92d46eae2c7f925893392fdd/avatar-v2.png?w=64&h=64&q=90&fit=fill&f=top",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Somewhat-Bearish",
+        "overall_sentiment_score": -0.283962,
+        "source": "Simply Wall Street",
+        "source_domain": "Simply Wall Street",
+        "summary": "Valens Semiconductor (VLN) reported a Q1 basic EPS loss of US$0.08 and revenue of US$16.9 million, indicating continued profitability concerns despite stable revenue. The company's trailing twelve-month revenue stands at US$70.7 million with a net loss of US$31.6 million, and it is expected to remain unprofitable for at least the next three years. Investors are focused on the path to narrowing losses, with the stock trading at a P/S of 4.5x compared to an industry average of 8.7x, while forecast revenue growth is 18.8% per year.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "VLN",
+            "ticker_sentiment_label": "Somewhat-Bearish",
+            "ticker_sentiment_score": "-0.267396"
+          }
+        ],
+        "time_published": "20260515T230239",
+        "title": "Valens Semiconductor (VLN) Q1 EPS Loss Reinforces Market Focus On Profitability Concerns",
+        "topics": [
+          {
+            "relevance_score": "0.926055",
+            "topic": "earnings"
+          },
+          {
+            "relevance_score": "0.801888",
+            "topic": "technology"
+          }
+        ],
+        "url": "https://simplywall.st/stocks/us/semiconductors/nyse-vln/valens-semiconductor/news/valens-semiconductor-vln-q1-eps-loss-reinforces-market-focus"
+      }
+    ]
+  },
+  "alpha_news:USD:72": {
+    "timestamp": 1778892511.0758913,
+    "value": []
+  },
+  "gdelt:AUD:72": {
+    "timestamp": 1778892228.6680741,
+    "value": [
+      {
+        "domain": "marketscreener.com",
+        "language": "English",
+        "seendate": "20260515T054500Z",
+        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2018-08/2018-08-24T044249Z_1_LYNXNPEE7N07O-OCABS_RTROPTP_3_CBUSINESS-US-GLOBAL-FOREX.JPG",
+        "sourcecountry": "",
+        "title": "Carry on trading : rate - based G10 currency bets make a comeback",
+        "url": "https://www.marketscreener.com/news/carry-on-trading-rate-based-g10-currency-bets-make-a-comeback-ce7f5bd2da8bf327",
+        "url_mobile": ""
+      },
+      {
+        "domain": "finanznachrichten.de",
+        "language": "English",
+        "seendate": "20260513T081500Z",
+        "socialimage": "https://www.finanznachrichten.de/content/g/fb.png",
+        "sourcecountry": "Germany",
+        "title": "NZ Dollar Falls Against Majors",
+        "url": "https://www.finanznachrichten.de/nachrichten-2026-05/68479992-nz-dollar-falls-against-majors-020.htm",
+        "url_mobile": ""
+      },
+      {
+        "domain": "gazetaexpress.com",
+        "language": "English",
+        "seendate": "20260513T111500Z",
+        "socialimage": "https://www.gazetaexpress.com/wp-content/uploads/2026/05/3t443t34t.png",
+        "sourcecountry": "Kosovo",
+        "title": "Dollar near weekly high amid Middle East tensions and US inflation",
+        "url": "https://www.gazetaexpress.com/en/Dollar-near-weekly-high-amid-Middle-East-tensions-and-US-inflation/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "finanznachrichten.de",
+        "language": "German",
+        "seendate": "20260515T153000Z",
+        "socialimage": "https://www.finanznachrichten.de/content/g/fb.png",
+        "sourcecountry": "Germany",
+        "title": "Australischer Dollar weitet starken R\u00fcckgang aus , da Fed - Zinserh\u00f6hung - Neupositionierung den US - Dollar st\u00e4rkt",
+        "url": "https://www.finanznachrichten.de/nachrichten-2026-05/68511325-australischer-dollar-weitet-starken-rueckgang-aus-da-fed-zinserhoehung-neupositionierung-den-us-dollar-staerkt-545.htm",
+        "url_mobile": ""
+      },
+      {
+        "domain": "econotimes.com",
+        "language": "English",
+        "seendate": "20260513T064500Z",
+        "socialimage": "https://f1.econotimes.com/2015/08/w6bxpz0ddb.jpg",
+        "sourcecountry": "United States",
+        "title": "Asian Currencies Hold Steady as Strong U . S . Inflation Data Boosts Dollar",
+        "url": "http://www.econotimes.com/Asian-Currencies-Hold-Steady-as-Strong-US-Inflation-Data-Boosts-Dollar-1741555",
+        "url_mobile": ""
+      },
+      {
+        "domain": "econotimes.com",
+        "language": "English",
+        "seendate": "20260514T094500Z",
+        "socialimage": "https://f1.econotimes.com/2025/04/l9s17muwe9.jpg",
+        "sourcecountry": "United States",
+        "title": "Asian Currencies Steady as Trump - Xi Summit , Inflation Concerns Boost Dollar",
+        "url": "http://www.econotimes.com/Asian-Currencies-Steady-as-Trump-Xi-Summit-Inflation-Concerns-Boost-Dollar-1741674",
+        "url_mobile": ""
+      },
+      {
+        "domain": "raya.com",
+        "language": "Arabic",
+        "seendate": "20260513T071500Z",
+        "socialimage": "https://www.raya.com/alraya/uploads/images/2026/05/13/307330.jpg",
+        "sourcecountry": "Qatar",
+        "title": "\u0623\u0633\u0639\u0627\u0631 \u0627\u0644\u0639\u0645\u0644\u0627\u062a \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u0631\u064a\u0627\u0644 \u0627\u0644\u0642\u0637\u0631\u064a",
+        "url": "https://www.raya.com/2026/05/13/%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84%D8%A7%D8%AA-%D9%85%D9%82%D8%A7%D8%A8%D9%84-%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D9%84-%D8%A7%D9%84%D9%82%D8%B7%D8%B1%D9%8A",
+        "url_mobile": "https://www.raya.com/2026/05/13/\u00d8\u00a3\u00d8\u00b3\u00d8\u00b9\u00d8\u00a7\u00d8\u00b1-\u00d8\u00a7\u00d9\u0084\u00d8\u00b9\u00d9\u0085\u00d9\u0084\u00d8\u00a7\u00d8\u00aa-\u00d9\u0085\u00d9\u0082\u00d8\u00a7\u00d8\u00a8\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d8\u00b1\u00d9\u008a\u00d8\u00a7\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d9\u0082\u00d8\u00b7\u00d8\u00b1\u00d9\u008a/amp"
+      },
+      {
+        "domain": "sabah.com.tr",
+        "language": "Turkish",
+        "seendate": "20260515T071500Z",
+        "socialimage": "https://isbh.tmgrup.com.tr/sb/album/2026/05/15/altinda-5-bin-600-dolar-senaryosu-gram-altin-kac-tl-olacak-iste-yaniti-1778824178002.jpg",
+        "sourcecountry": "Turkey",
+        "title": "Alt\u0131nda 5 bin 600 dolar senaryosu : Gram alt\u0131n ka\u00e7 TL olacak ? \u0130\u015fte yan\u0131t\u0131 ... - Galeri",
+        "url": "https://www.sabah.com.tr/trend/galeri/ekonomi/altinda-5-bin-600-dolar-senaryosu-gram-altin-kac-tl-olacak-iste-yaniti",
+        "url_mobile": "https://m.sabah.com.tr/trend/galeri/ekonomi/altinda-5-bin-600-dolar-senaryosu-gram-altin-kac-tl-olacak-iste-yaniti/amp"
+      },
+      {
+        "domain": "pakobserver.net",
+        "language": "English",
+        "seendate": "20260514T041500Z",
+        "socialimage": "https://pakobserver.net/wp-content/uploads/2023/12/Todays-foreign-currency-exchange-rate.jpg",
+        "sourcecountry": "Pakistan",
+        "title": "Currency exchange rates in Pakistan today \u2013 USD to PKR on 14 May 2026",
+        "url": "https://pakobserver.net/currency-exchange-rates-in-pakistan-today-usd-to-pkr-on-14-may-2026/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "zonebourse.com",
+        "language": "French",
+        "seendate": "20260515T080000Z",
+        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2020-09/2020-09-18T071208Z_2_LYNXMPEG8H0D3_RTROPTP_3_INPEX-C-AUSTRALIA.JPG",
+        "sourcecountry": "France",
+        "title": "Le japonais Inpex va racheter \u00e0 PetroChina sa participation dans le champ gazier australien Browse",
+        "url": "https://www.zonebourse.com/actualite-bourse/le-japonais-inpex-va-racheter-la-participation-de-petrochina-dans-le-champ-gazier-australien-browse-ce7f5bd2dd8ef325",
+        "url_mobile": ""
+      },
+      {
+        "domain": "finance.yahoo.com",
+        "language": "English",
+        "seendate": "20260515T070000Z",
+        "socialimage": "https://s.yimg.com/os/en/reuters.com/6365fa15d7795c063cfbb4196f095b87",
+        "sourcecountry": "United States",
+        "title": "Dollar rides rising US yields to largest weekly gain in two months",
+        "url": "https://finance.yahoo.com/markets/currencies/articles/dollar-rides-rising-yields-largest-045936182.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "econotimes.com",
+        "language": "English",
+        "seendate": "20260513T064500Z",
+        "socialimage": "https://f1.econotimes.com/2026/05/i0gs73y66u.jpg",
+        "sourcecountry": "United States",
+        "title": "FxWirePro : AUD / USD eases slightly as focus shifts to US - China meeting",
+        "url": "http://www.econotimes.com/FxWirePro-AUD-USD-eases-slightly-as-focus-shifts-to-US-China-meeting-1741554",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dunyanews.tv",
+        "language": "English",
+        "seendate": "20260513T054500Z",
+        "socialimage": "https://img.dunyanews.tv/news/2026/May/05-13-26/news_big_images/951237_46998788.jpg",
+        "sourcecountry": "Pakistan",
+        "title": "Dollar near one - week high as hot US inflation fans Fed hike bets , peace talks stall",
+        "url": "https://dunyanews.tv/en/Business/951237-dollar-near-oneweek-high-as-hot-us-inflation-fans-fed-hike-bets-peac",
+        "url_mobile": "https://dunyanews.tv/amp/english/951237.php"
+      },
+      {
+        "domain": "drive.com.au",
+        "language": "English",
+        "seendate": "20260513T021500Z",
+        "socialimage": "https://media.drive.com.au/obj/tx_q:70,rs:auto:960:540:1/driveau/upload/vehicles/used/mitsubishi/asx/2025/0a348819-db3f-5f83-b138-e7b134e50000",
+        "sourcecountry": "Australia",
+        "title": "Demo 2025 Grey Mitsubishi ASX LS Wagon For Sale",
+        "url": "https://www.drive.com.au/cars-for-sale/car/970192976/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "econotimes.com",
+        "language": "English",
+        "seendate": "20260515T083000Z",
+        "socialimage": "https://f1.econotimes.com/2025/01/64zxc0gbzp.jpg",
+        "sourcecountry": "United States",
+        "title": "Asian Currencies Slide as Strong U . S . Data Boosts Dollar and Fed Rate Hike Expectations",
+        "url": "http://www.econotimes.com/Asian-Currencies-Slide-as-Strong-US-Data-Boosts-Dollar-and-Fed-Rate-Hike-Expectations-1741790",
+        "url_mobile": ""
+      },
+      {
+        "domain": "economictimes.indiatimes.com",
+        "language": "English",
+        "seendate": "20260513T023000Z",
+        "socialimage": "https://img.etimg.com/thumb/msid-131052555,width-1200,height-630,imgsize-292332,overlay-etmarkets/articleshow.jpg",
+        "sourcecountry": "India",
+        "title": "Dollar near one - week high as hot U . S . inflation fans Fed hike bets , peace talks stall",
+        "url": "https://economictimes.indiatimes.com/markets/forex/dollar-near-one-week-high-as-hot-u-s-inflation-fans-fed-hike-bets-peace-talks-stall/articleshow/131052553.cms",
+        "url_mobile": "https://m.economictimes.com/markets/forex/dollar-near-one-week-high-as-hot-u-s-inflation-fans-fed-hike-bets-peace-talks-stall/amp_articleshow/131052553.cms"
+      },
+      {
+        "domain": "marketscreener.com",
+        "language": "English",
+        "seendate": "20260513T021500Z",
+        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2026-03/2026-03-25T011928Z_1_LYNXMPEM2O01T_RTROPTP_4_GLOBAL-FOREX.JPG",
+        "sourcecountry": "",
+        "title": "Dollar near one - week high as hot U . S . inflation fans Fed hike bets , peace talks stall",
+        "url": "https://www.marketscreener.com/news/dollar-near-one-week-high-as-hot-u-s-inflation-fans-fed-hike-bets-peace-talks-stall-ce7f5bdfda81f625",
+        "url_mobile": ""
+      },
+      {
+        "domain": "arynews.tv",
+        "language": "English",
+        "seendate": "20260513T164500Z",
+        "socialimage": "https://static.arynews.tv/zip-archives/wp-content/uploads/2026/05/currency-rates-pakistan.jpg",
+        "sourcecountry": "Pakistan",
+        "title": "Currency Rates Today in Pakistan",
+        "url": "https://arynews.tv/dollar-currency-rates-today-in-pakistan-may-13-2026",
+        "url_mobile": "https://arynews.tv/dollar-currency-rates-today-in-pakistan-may-13-2026.amp"
+      },
+      {
+        "domain": "canberratimes.com.au",
+        "language": "English",
+        "seendate": "20260513T221500Z",
+        "socialimage": "https://www.canberratimes.com.au/images/transform/v1/crop/frm/230199405/2faca258-ff0d-427a-afed-b01994326dde.jpg/r0_105_5760_3129_w1200_h630_fmax.jpg",
+        "sourcecountry": "Australia",
+        "title": "Australian Federal Police : HQ listed for sale with 13 - year lease | The Canberra Times",
+        "url": "https://www.canberratimes.com.au/story/9245838/australian-federal-police-hq-listed-for-sale-with-13-year-lease/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "thehindubusinessline.com",
+        "language": "English",
+        "seendate": "20260515T083000Z",
+        "socialimage": "https://bl-i.thgim.com/public/incoming/6ae72l/article70979662.ece/alternates/LANDSCAPE_1200/2025-02-27T185919Z_424006808_RC253DAB1XHI_RTRMADP_3_USA-JUNKBONDS-PRIVATEEQUITY.JPG",
+        "sourcecountry": "India",
+        "title": "Dollar rides rising yields to largest weekly gain in two months",
+        "url": "https://www.thehindubusinessline.com/markets/forex/dollar-rides-rising-yields-to-largest-weekly-gain-in-two-months/article70981604.ece",
+        "url_mobile": "https://www.thehindubusinessline.com/markets/forex/dollar-rides-rising-yields-to-largest-weekly-gain-in-two-months/article70981604.ece/amp/"
+      },
+      {
+        "domain": "marketscreener.com",
+        "language": "English",
+        "seendate": "20260515T054500Z",
+        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2026-05/2026-05-14T144256Z_1_LYNXMPEM4D133_RTROPTP_3_GLOBAL-FOREX.JPG",
+        "sourcecountry": "",
+        "title": "Dollar rides rising yields to largest weekly gain in two months",
+        "url": "https://www.marketscreener.com/news/dollar-rides-rising-yields-to-largest-weekly-gain-in-two-months-ce7f5bd2da8bf422",
+        "url_mobile": ""
+      },
+      {
+        "domain": "marketscreener.com",
+        "language": "English",
+        "seendate": "20260515T014500Z",
+        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2026-05/2026-05-14T144256Z_1_LYNXMPEM4D133_RTROPTP_3_GLOBAL-FOREX.JPG",
+        "sourcecountry": "",
+        "title": "Dollar poised for largest weekly rise in two months as Fed hike bets increase",
+        "url": "https://www.marketscreener.com/news/dollar-poised-for-largest-weekly-rise-in-two-months-as-fed-hike-bets-increase-ce7f5bd2db8bf023",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dunyanews.tv",
+        "language": "English",
+        "seendate": "20260514T050000Z",
+        "socialimage": "https://img.dunyanews.tv/news/2026/May/05-14-26/news_big_images/951453_31146943.jpg",
+        "sourcecountry": "Pakistan",
+        "title": "Dollar boosted by rate expectations , safe - haven flows as Trump , Xi meet",
+        "url": "https://dunyanews.tv/en/Business/951453-dollar-boosted-by-rate-expectations-safehaven-flows-as-trump-xi-mee",
+        "url_mobile": "https://dunyanews.tv/amp/english/951453.php"
+      },
+      {
+        "domain": "scmp.com",
+        "language": "English",
+        "seendate": "20260513T013000Z",
+        "socialimage": "https://cdn.i-scmp.com/sites/default/files/styles/og_image_scmp_generic/public/d8/images/canvas/2026/05/12/7419285c-5b3e-4a9e-8d1f-7f5ba071be08_7d9fdda4.jpg?itok=PAql5gMW&v=1778577937",
+        "sourcecountry": "China",
+        "title": "How Australia mining giants are helping China to globalise the yuan",
+        "url": "https://www.scmp.com/economy/china-economy/article/3353274/how-australias-mining-giants-are-helping-china-globalise-yuan",
+        "url_mobile": "https://amp.scmp.com/economy/china-economy/article/3353274/how-australias-mining-giants-are-helping-china-globalise-yuan"
+      },
+      {
+        "domain": "freemalaysiatoday.com",
+        "language": "English",
+        "seendate": "20260514T030000Z",
+        "socialimage": "https://www.freemalaysiatoday.com/cdn-cgi/image/quality=80,format=auto,fit=cover,dpr=1,width=1200,height=630,gravity=center/https://media.freemalaysiatoday.com/wp-content/uploads/2025/05/60cdceff-us-dollar.jpg",
+        "sourcecountry": "Malaysia",
+        "title": "Dollar boosted by rate expectations , safe - haven flows as Trump , Xi meet",
+        "url": "https://www.freemalaysiatoday.com/category/business/2026/05/14/dollar-boosted-by-rate-expectations-safe-haven-flows-as-trump-xi-meet",
+        "url_mobile": ""
+      }
+    ]
+  },
+  "gdelt:THB:72": {
+    "timestamp": 1778892466.006266,
+    "value": [
+      {
+        "domain": "finanznachrichten.de",
+        "language": "English",
+        "seendate": "20260514T141500Z",
+        "socialimage": "https://www.finanznachrichten.de/chart-thai-beverage-pcl-aktie-intraday-frankfurt.png",
+        "sourcecountry": "Germany",
+        "title": "Thai Beverage Public Company Q2 Profit Rises",
+        "url": "https://www.finanznachrichten.de/nachrichten-2026-05/68498167-thai-beverage-public-company-q2-profit-rises-020.htm",
+        "url_mobile": ""
+      },
+      {
+        "domain": "traveldailymedia.com",
+        "language": "English",
+        "seendate": "20260515T050000Z",
+        "socialimage": "https://storage.googleapis.com/stateless-www-live-traveldailymedia/2026/05/5cac3b1a-shutterstock_169567013.webp",
+        "sourcecountry": "United Kingdom",
+        "title": "Thai Airways reports Q1 2026 profit rise",
+        "url": "https://www.traveldailymedia.com/thai-airways-reports-q1-2026-profit-rise/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "thailand-business-news.com",
+        "language": "English",
+        "seendate": "20260514T113000Z",
+        "socialimage": "https://i0.wp.com/r2.thailand-business-news.com/wp-content/uploads/2024/11/Uncertainty-Surrounds-Bahts-Future-Amid-Trump-Administration-and-Thai-Central.jpg?fit=900%2C473&ssl=1",
+        "sourcecountry": "Thailand",
+        "title": "Baht Likely to Decline Further Amid Escalating Mideast Tensions",
+        "url": "https://www.thailand-business-news.com/currencies/307393-baht-likely-to-decline-further-amid-escalating-mideast-tensions",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bangkokpost.com",
+        "language": "English",
+        "seendate": "20260514T133000Z",
+        "socialimage": "https://static.bangkokpost.com/media/content/20260514/c1_3255019_260514181517_700.png",
+        "sourcecountry": "Thailand",
+        "title": "Bangkok Post - Thailand Pavilion opens at Cannes",
+        "url": "https://www.bangkokpost.com/life/arts-and-entertainment/3255019/thailand-pavilion-opens-at-cannes",
+        "url_mobile": ""
+      },
+      {
+        "domain": "scmp.com",
+        "language": "English",
+        "seendate": "20260515T113000Z",
+        "socialimage": "https://cdn.i-scmp.com/sites/default/files/styles/og_image_scmp_generic/public/d8/images/canvas/2026/05/15/a3ef2fc4-0264-4e8d-92e1-094cbd6eb36c_abf605f0.jpg?itok=qaIDKZ01&v=1778838338",
+        "sourcecountry": "China",
+        "title": "Chinese tourist banned from Thailand for life after kicking , damaging US$15 , 000 auto - gates",
+        "url": "https://www.scmp.com/week-asia/people/article/3353719/chinese-tourist-banned-thailand-life-after-kicking-damaging-us15000-auto-gates",
+        "url_mobile": "https://amp.scmp.com/week-asia/people/article/3353719/chinese-tourist-banned-thailand-life-after-kicking-damaging-us15000-auto-gates"
+      },
+      {
+        "domain": "chiangraitimes.com",
+        "language": "English",
+        "seendate": "20260514T180000Z",
+        "socialimage": "https://i0.wp.com/www.chiangraitimes.com/wp-content/uploads/2026/05/bangkok-thai-1.jpg",
+        "sourcecountry": "Thailand",
+        "title": "The Price Of Paradise : Is Thailand Becoming Too Expensive For Tourists ? ",
+        "url": "https://www.chiangraitimes.com/lifestyles/is-thailand-becoming-too-expensive/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "thailand-business-news.com",
+        "language": "English",
+        "seendate": "20260515T170000Z",
+        "socialimage": "https://i0.wp.com/r2.thailand-business-news.com/wp-content/uploads/2026/04/thailand-boosts-durian-exports-to-china-with-trade-visit.jpg?fit=1080%2C720&ssl=1",
+        "sourcecountry": "Thailand",
+        "title": "Thailand Strengthens Durian Exports to China Through Trade Delegation",
+        "url": "https://www.thailand-business-news.com/china/302487-thailand-strengthens-durian-exports-to-china-through-trade-delegation",
+        "url_mobile": ""
+      },
+      {
+        "domain": "ftnnews.com",
+        "language": "English",
+        "seendate": "20260515T113000Z",
+        "socialimage": "https://ftnnews.com/wp-content/uploads/2026/03/thai-airways-widebody-aircraft-flight.webp",
+        "sourcecountry": "Turkey",
+        "title": "Thai Airways Expands Amsterdam Flights Amid Fuel Concerns",
+        "url": "https://ftnnews.com/travel-news/aviation/thai-airways-adds-amsterdam-flights-amid-fuel-worries/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "thestar.com.my",
+        "language": "English",
+        "seendate": "20260513T023000Z",
+        "socialimage": "https://apicms.thestar.com.my/uploads/images/2026/05/13/3905402.jpg",
+        "sourcecountry": "Malaysia",
+        "title": "Ringgit opens higher against greenback , major currencies",
+        "url": "https://www.thestar.com.my/business/business-news/2026/05/13/ringgit-opens-higher-against-greenback-major-currencies",
+        "url_mobile": ""
+      },
+      {
+        "domain": "freemalaysiatoday.com",
+        "language": "English",
+        "seendate": "20260515T013000Z",
+        "socialimage": "https://www.freemalaysiatoday.com/cdn-cgi/image/quality=75,format=auto,fit=cover,dpr=1,width=1200,height=630,gravity=center/https://media.freemalaysiatoday.com/wp-content/uploads/2025/12/947c3058-ringgit.webp",
+        "sourcecountry": "Malaysia",
+        "title": "Ringgit snaps seven - day rally ahead of Q1 GDP data",
+        "url": "https://www.freemalaysiatoday.com/category/business/2026/05/15/ringgit-snaps-seven-day-rally-ahead-of-q1-gdp-data",
+        "url_mobile": ""
+      },
+      {
+        "domain": "moneycontrol.com",
+        "language": "English",
+        "seendate": "20260515T050000Z",
+        "socialimage": "https://images.moneycontrol.com/static-mcnews/2026/04/20260425040204_market_stocks_sensex_Nifty.jpg",
+        "sourcecountry": "India",
+        "title": "Rupee Watch : Rupee weakens for sixth straight session as oil prices surge",
+        "url": "https://www.moneycontrol.com/news/business/markets/rupee-watch-rupee-weakens-for-sixth-straight-session-as-oil-prices-surge-13919984.html",
+        "url_mobile": "https://www.moneycontrol.com/news/business/markets/rupee-watch-rupee-weakens-for-sixth-straight-session-as-oil-prices-surge-13919984.html/amp"
+      },
+      {
+        "domain": "thestar.com.my",
+        "language": "English",
+        "seendate": "20260514T024500Z",
+        "socialimage": "https://apicms.thestar.com.my/uploads/images/2026/05/14/3907039.jpg",
+        "sourcecountry": "Malaysia",
+        "title": "Ringgit opens higher vs US$ for 7th straight day",
+        "url": "https://www.thestar.com.my/business/business-news/2026/05/14/ringgit-opens-higher-vs-us-for-7th-straight-day",
+        "url_mobile": ""
+      },
+      {
+        "domain": "freemalaysiatoday.com",
+        "language": "English",
+        "seendate": "20260514T030000Z",
+        "socialimage": "https://www.freemalaysiatoday.com/cdn-cgi/image/quality=75,format=auto,fit=cover,dpr=1,width=1200,height=630,gravity=center/https://media.freemalaysiatoday.com/wp-content/uploads/2025/10/3707b66e-ringgit.webp",
+        "sourcecountry": "Malaysia",
+        "title": "Ringgit opens higher vs US dollar for 7th straight day",
+        "url": "https://www.freemalaysiatoday.com/category/business/2026/05/14/ringgit-opens-higher-vs-us-dollar-for-7th-straight-day",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bangkokpost.com",
+        "language": "English",
+        "seendate": "20260515T034500Z",
+        "socialimage": "https://www.bangkokpost.com/v3/assets/images/img-default.jpg",
+        "sourcecountry": "Thailand",
+        "title": "Bangkok Post - Free education comes with a growing price",
+        "url": "https://www.bangkokpost.com/opinion/opinion/3255360/free-education-comes-with-a-growing-price",
+        "url_mobile": ""
+      },
+      {
+        "domain": "moneycontrol.com",
+        "language": "English",
+        "seendate": "20260513T064500Z",
+        "socialimage": "https://images.moneycontrol.com/static-mcnews/2026/05/20260509025244_market_stocks_sensex_Nifty.jpg",
+        "sourcecountry": "India",
+        "title": "Rupee Watch : Rupee strengthens marginally after India raises gold import duty",
+        "url": "https://www.moneycontrol.com/news/business/markets/rupee-watch-rupee-strengthens-marginally-after-india-raises-gold-import-duty-13917501.html",
+        "url_mobile": "https://www.moneycontrol.com/news/business/markets/rupee-watch-rupee-strengthens-marginally-after-india-raises-gold-import-duty-13917501.html/amp"
+      },
+      {
+        "domain": "thestar.com.my",
+        "language": "English",
+        "seendate": "20260514T121500Z",
+        "socialimage": "https://apicms.thestar.com.my/uploads/images/2026/05/14/3908306.jpg",
+        "sourcecountry": "Malaysia",
+        "title": "Ringgit mostly higher against major , regional currencies , slips against US dollar",
+        "url": "https://www.thestar.com.my/business/business-news/2026/05/14/ringgit-mostly-higher-against-major-regional-currencies-slips-against-us-dollar",
+        "url_mobile": ""
+      },
+      {
+        "domain": "travelbizmonitor.com",
+        "language": "English",
+        "seendate": "20260515T220000Z",
+        "socialimage": "https://travelbizmonitor.com/wp-content/uploads/2026/05/Thailand-Visa-.jpeg",
+        "sourcecountry": "India",
+        "title": "Thailand launches 5 - year long - stay visa for Indians - TravelBiz Monitor : India travel news , travel trends , tourism",
+        "url": "https://travelbizmonitor.com/top-stories/thailand-launches-5-year-long-stay-visa-for-indians/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "sever.bg",
+        "language": "Bulgarian",
+        "seendate": "20260515T051500Z",
+        "socialimage": "",
+        "sourcecountry": "Bulgaria",
+        "title": "\u0412\u0430\u043b\u0443\u0442\u043d\u0438 \u043a\u0443\u0440\u0441\u043e\u0432\u0435",
+        "url": "https://sever.bg/%D0%9B%D0%BE%D0%B2%D0%B5%D1%87/%D0%92%D0%B0%D0%BB%D1%83%D1%82%D0%BD%D0%B8-%D0%BA%D1%83%D1%80%D1%81%D0%BE%D0%B2%D0%B5_l.er_r.2522+Result:+unknown+problem",
+        "url_mobile": ""
+      },
+      {
+        "domain": "ttgasia.com",
+        "language": "English",
+        "seendate": "20260513T090000Z",
+        "socialimage": "https://ttgasia.2017.ttgasia.com/wp-content/uploads/sites/2/2026/05/Onxy-60th-640.jpg",
+        "sourcecountry": "China",
+        "title": "Onyx sets growth targets as it marks 60th anniversary",
+        "url": "https://www.ttgasia.com/2026/05/13/onyx-sets-growth-targets-as-it-marks-60th-anniversary/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "thestar.com.my",
+        "language": "English",
+        "seendate": "20260515T114500Z",
+        "socialimage": "https://apicms.thestar.com.my/uploads/images/2026/05/15/3910148.jpg",
+        "sourcecountry": "Malaysia",
+        "title": "Ringgit closes mostly higher against major currencies on strong GDP data",
+        "url": "https://www.thestar.com.my/business/business-news/2026/05/15/ringgit-closes-mostly-higher-against-major-currencies-on-strong-gdp-data",
+        "url_mobile": ""
+      },
+      {
+        "domain": "chiangraitimes.com",
+        "language": "English",
+        "seendate": "20260513T084500Z",
+        "socialimage": "https://www.chiangraitimes.com/wp-content/uploads/2026/05/DWUJDBB7C5IBZIRPAWT63KPJZA.avif",
+        "sourcecountry": "Thailand",
+        "title": "Why Thai Investors Are Turning To Japanese Stocks In 2026",
+        "url": "https://www.chiangraitimes.com/finance/why-thai-investors-are-turning-to-japanese-stocks-in-2026/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bignewsnetwork.com",
+        "language": "English",
+        "seendate": "20260513T154500Z",
+        "socialimage": "",
+        "sourcecountry": "United States",
+        "title": "Thailand holds industrial part - sourcing event to elevate local supply chain",
+        "url": "http://www.bignewsnetwork.com/news/279048358/thailand-holds-industrial-part-sourcing-event-to-elevate-local-supply-chain",
+        "url_mobile": ""
+      },
+      {
+        "domain": "chiangraitimes.com",
+        "language": "English",
+        "seendate": "20260514T180000Z",
+        "socialimage": "https://i0.wp.com/www.chiangraitimes.com/wp-content/uploads/2026/05/xSDLfannN6tSCOzXb14r.jpeg",
+        "sourcecountry": "Thailand",
+        "title": "Thailand 5 . 6 Trillion Baht High - Speed Digital Revolution",
+        "url": "https://www.chiangraitimes.com/business/thailands-digital-revolution/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "english.news.cn",
+        "language": "English",
+        "seendate": "20260514T134500Z",
+        "socialimage": "",
+        "sourcecountry": "",
+        "title": "Thailand charts next phase of smart , green mobility transition - Xinhua",
+        "url": "https://english.news.cn/20260514/6ee019ce417d43899e33122ca9f847bb/c.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bignewsnetwork.com",
+        "language": "English",
+        "seendate": "20260514T133000Z",
+        "socialimage": "",
+        "sourcecountry": "United States",
+        "title": "Thailand charts next phase of smart , green mobility transition",
+        "url": "http://www.bignewsnetwork.com/news/279050222/thailand-charts-next-phase-of-smart-green-mobility-transition",
+        "url_mobile": ""
+      }
+    ]
+  }
+}

@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+from gemini_ai import evaluate_news_risk
 
 
 @dataclass
@@ -334,6 +335,61 @@ def currency_news_score(currency: str, hours: int) -> tuple[float, dict[str, Any
     return max(0.0, min(100.0, 50.0 + avg * 10.0)), evidence
 
 
+def ai_news_layer_result(
+    symbol: str,
+    side: str,
+    base: str,
+    quote: str,
+    evidence: dict[str, Any],
+    fallback_risk: str,
+    fallback_score: float,
+    fallback_reason: str,
+) -> NewsResult | None:
+    if not env_bool("AI_USE_FOR_LAYER8", True):
+        return None
+
+    context = {
+        "symbol": symbol,
+        "requested_trade_side": side.upper(),
+        "base_currency": base,
+        "quote_currency": quote,
+        "rules": {
+            "BLOCKED": "Use only when a high-impact event is near or supplied news indicates abnormal event risk.",
+            "AGAINST_TRADE": "Use when news bias clearly conflicts with requested trade side.",
+            "BIASED": "Use when news creates a directional bias but does not block the trade.",
+            "CLEAR": "Use when there is enough evidence and no meaningful news risk.",
+            "NEUTRAL": "Use when evidence is weak, mixed, stale, or not decisive.",
+        },
+        "fallback_model": {
+            "risk": fallback_risk,
+            "score": fallback_score,
+            "reason": fallback_reason,
+            "note": "This fallback is simple keyword/API scoring only. AI should override it when evidence supports a stronger judgement.",
+        },
+        "evidence": evidence,
+    }
+    ai_result = evaluate_news_risk(context)
+    evidence["ai_layer8"] = {
+        "enabled": ai_result.enabled,
+        "decision": ai_result.decision,
+        "score": ai_result.score,
+        "pattern": ai_result.pattern,
+        "reason": ai_result.reason,
+    }
+    if not ai_result.enabled or ai_result.decision in {"ERROR", "NOT_USED"}:
+        return None
+
+    decision = ai_result.decision if ai_result.decision in {"BLOCKED", "CLEAR", "AGAINST_TRADE", "BIASED", "NEUTRAL"} else "NEUTRAL"
+    risk = "CLEAR" if decision == "NEUTRAL" else decision
+    reason = f"AI Layer 8 {decision}: {ai_result.reason or ai_result.pattern or 'news evidence assessed'}"
+    return NewsResult(
+        risk=risk,
+        score=ai_result.score,
+        reason=reason,
+        evidence=evidence,
+    )
+
+
 def evaluate_news(symbol: str, side: str = "") -> NewsResult:
     pair = split_pair(symbol)
     if pair is None:
@@ -364,4 +420,11 @@ def evaluate_news(symbol: str, side: str = "") -> NewsResult:
     else:
         risk = "CLEAR" if abs(directional) < env_float("NEWS_BIAS_THRESHOLD", 8.0) else "BIASED"
         reason = f"news bias score base={base_score:.1f}, quote={quote_score:.1f}"
-    return NewsResult(risk=risk, score=max(0.0, min(100.0, score)), reason=reason, evidence=evidence)
+    score = max(0.0, min(100.0, score))
+
+    ai_result = ai_news_layer_result(symbol, side, base, quote, evidence, risk, score, reason)
+    if ai_result is not None:
+        return ai_result
+
+    evidence["fallback_note"] = "AI Layer 8 unavailable; using simple keyword/API sentiment fallback."
+    return NewsResult(risk=risk, score=score, reason=reason, evidence=evidence)

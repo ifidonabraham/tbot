@@ -18,6 +18,13 @@ from config import (
 )
 from exchange import get_balance, get_current_price, get_exchange
 from execution import open_trade, sell_position
+from funnel_candidates import (
+    FUNNEL_FALLBACK_TO_WATCHLIST,
+    FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT,
+    FUNNEL_TOP_N,
+    USE_FUNNEL_CANDIDATES,
+    load_funnel_candidates,
+)
 from indicators import compute_indicators, fetch_candles
 from risk import (
     active_entry_threshold_for_state,
@@ -129,14 +136,36 @@ def _manage_positions(exchange, state):
 def _scan_markets(exchange, state, quote_balance):
     candidates = []
     active_threshold = active_entry_threshold_for_state(state, quote_balance)
+    funnel_by_symbol = {}
 
     if active_threshold is None:
         logging.warning("Daily loss limit reached. New entries are stopped for today.")
         return []
 
-    for symbol in WATCHLIST:
+    symbols = WATCHLIST
+    if USE_FUNNEL_CANDIDATES:
+        funnel_candidates = load_funnel_candidates(limit=FUNNEL_TOP_N)
+        funnel_by_symbol = {candidate.symbol: candidate for candidate in funnel_candidates}
+        if funnel_candidates:
+            symbols = [candidate.symbol for candidate in funnel_candidates]
+            logging.info(
+                "Funnel handoff active | Candidates: %s",
+                ", ".join(f"{item.symbol}:{item.side}:{item.composite_score:.2f}" for item in funnel_candidates),
+            )
+        elif FUNNEL_FALLBACK_TO_WATCHLIST:
+            logging.warning("Funnel handoff active but no candidates found. Falling back to WATCHLIST.")
+        else:
+            logging.warning("Funnel handoff active but no candidates found. New entries skipped.")
+            return []
+
+    for symbol in symbols:
         try:
             context = _market_context(exchange, symbol)
+            funnel_candidate = funnel_by_symbol.get(symbol)
+            if funnel_candidate:
+                context["funnel_side"] = funnel_candidate.side
+                context["funnel_score"] = funnel_candidate.composite_score
+                context["funnel_reason"] = funnel_candidate.reason
             contract_size = exchange.contract_size(symbol) if hasattr(exchange, "contract_size") else 1.0
             amount = calculate_trade_amount(context["price"], quote_balance, contract_size)
             blocker_df = context["df"].iloc[:-1].copy() if len(context["df"]) > 1 else context["df"]
@@ -160,6 +189,14 @@ def _scan_markets(exchange, state, quote_balance):
                 "; ".join(blockers) if blockers else "none",
             )
             logging.info("Score details %s: %s", symbol, context["details"])
+            if funnel_candidate:
+                logging.info(
+                    "Funnel approval %s | Side: %s | Composite: %.2f | Reason: %s",
+                    symbol,
+                    funnel_candidate.side,
+                    funnel_candidate.composite_score,
+                    funnel_candidate.reason or "none",
+                )
         except Exception as exc:
             logging.exception("Scan failed for %s: %s", symbol, exc)
 
@@ -170,16 +207,35 @@ def _scan_markets(exchange, state, quote_balance):
             item["side"] = "BUY"
             directional_candidates.append(item)
             continue
-        for side in ("BUY", "SELL"):
+        allowed_sides = (item["funnel_side"],) if item.get("funnel_side") else ("BUY", "SELL")
+        for side in allowed_sides:
             details = item["buy_details"] if side == "BUY" else item["sell_details"]
             score = item["buy_score"] if side == "BUY" else item["sell_score"]
+            opposite_score = item["sell_score"] if side == "BUY" else item["buy_score"]
             side_item = {
                 **item,
                 "side": side,
                 "score": score,
                 "details": details,
             }
-            if not details.get("confirmed", False):
+            if item.get("funnel_score") is not None:
+                side_item["score"] = max(score, item["funnel_score"], active_threshold)
+                side_item["strategy_type"] = "FUNNEL_SCALP"
+                side_item["details"] = {
+                    **details,
+                    "confirmed": True,
+                    "funnel_score": item["funnel_score"],
+                    "funnel_reason": item.get("funnel_reason", ""),
+                }
+                if opposite_score - score > FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT:
+                    side_item["blockers"] = [
+                        *item["blockers"],
+                        (
+                            f"funnel side {side} conflicts with scalper score "
+                            f"by {opposite_score - score:.2f}"
+                        ),
+                    ]
+            if not side_item["details"].get("confirmed", False):
                 side_item["blockers"] = [*item["blockers"], f"{side.lower()} confirmation candle not valid"]
             directional_candidates.append(side_item)
 
