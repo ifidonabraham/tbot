@@ -120,6 +120,14 @@ class TradingState:
         self._sync_legacy_position()
         return pnl
 
+    def forget_position(self, position_id):
+        position = self.get_position(position_id)
+        if position is None:
+            return False
+        self.positions = [item for item in self.positions if item["id"] != position_id]
+        self._sync_legacy_position()
+        return True
+
     def get_position(self, position_id):
         for position in self.positions:
             if position["id"] == position_id:

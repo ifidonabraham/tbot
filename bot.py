@@ -61,6 +61,17 @@ def _broker_profit(exchange, position):
     return snapshot.get("profit")
 
 
+def _broker_position_exists(exchange, position):
+    ticket = position.get("broker_ticket")
+    if not ticket or not hasattr(exchange, "position_profit"):
+        return True
+    try:
+        return exchange.position_profit(ticket) is not None
+    except Exception as exc:
+        logging.warning("Broker position existence check failed for %s ticket %s: %s", position["symbol"], ticket, exc)
+        return True
+
+
 def _position_snapshot(position, price, broker_profit=None):
     pnl, pnl_percent, _ = position_pnl(position, price, broker_profit)
     side = position.get("side", "BUY")
@@ -105,6 +116,15 @@ def _market_context(exchange, symbol):
 def _manage_positions(exchange, state):
     for position in list(state.positions):
         symbol = position["symbol"]
+        if not _broker_position_exists(exchange, position):
+            logging.warning(
+                "Forgetting stale local position %s ticket %s because MT5 has no matching broker position.",
+                symbol,
+                position.get("broker_ticket"),
+            )
+            state.forget_position(position["id"])
+            state.save()
+            continue
         context = _market_context(exchange, symbol)
         price = context["price"]
         broker_profit = _broker_profit(exchange, position)
