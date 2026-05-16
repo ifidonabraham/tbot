@@ -17,7 +17,8 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 from fundamentals import evaluate_fundamentals
-from gemini_ai import ai_enabled, evaluate_candle_pattern, evaluate_fundamental_bias, summarize_funnel_status
+from gemini_ai import ai_enabled, evaluate_candle_pattern, evaluate_fundamental_bias, evaluate_news_risk, summarize_funnel_status
+from news_sentiment import evaluate_news
 
 try:
     import MetaTrader5 as mt5
@@ -35,6 +36,13 @@ PULLBACK_CONFIRMED = "PULLBACK_CONFIRMED"
 PULLBACK_WAIT = "PULLBACK_WAIT"
 RANGE_BUY = "RANGE_BUY"
 RANGE_SELL = "RANGE_SELL"
+
+FALLBACK_CURRENCIES = [
+    "USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "NZD", "CNH", "CNY",
+    "HKD", "SGD", "NOK", "SEK", "DKK", "PLN", "HUF", "CZK", "TRY", "ZAR",
+    "MXN", "BRL", "CLP", "COP", "ARS", "THB", "IDR", "INR", "KRW", "ILS",
+]
+FALLBACK_METALS = ["XAUUSD", "XAGUSD", "XPTUSD", "XPDUSD", "XAUEUR", "XAGEUR", "XAUJPY", "XAUGBP", "XAUAUD", "XAUCHF"]
 
 
 @dataclass
@@ -221,6 +229,12 @@ def massive_universe(api_key: str, api_base: str, limit: int) -> list[str]:
 def configured_universe(limit: int) -> list[str]:
     raw = os.getenv("WATCHLIST", "")
     symbols = [normalize_symbol(s.strip()) for s in raw.split(",") if s.strip()]
+    if env_bool("FUNNEL_EXPAND_FOREX_UNIVERSE", True):
+        for base in FALLBACK_CURRENCIES:
+            for quote in FALLBACK_CURRENCIES:
+                if base != quote:
+                    symbols.append(base + quote)
+        symbols.extend(FALLBACK_METALS)
     return symbols[:limit]
 
 
@@ -908,6 +922,32 @@ def apply_layer3(candidate: Candidate) -> Candidate | None:
     if not closed_beyond:
         candidate.layer3_state = NO_BREAKOUT
         candidate.layer3_reason = "eliminated: price did not close beyond breakout level"
+        if env_bool("AI_ALLOW_LAYER3_FLEXIBLE_WAIT", True) and ai_enabled():
+            near_distance = env_float("AI_LAYER3_NEAR_BREAKOUT_DISTANCE_PERCENT", 0.08)
+            if candidate.breakout_distance_percent is not None and candidate.breakout_distance_percent <= near_distance:
+                ai_result = evaluate_candle_pattern(
+                    {
+                        "task": "near_breakout_flexibility_check",
+                        "symbol": candidate.symbol,
+                        "side": side,
+                        "layer1_state": candidate.state,
+                        "breakout_level": level,
+                        "last_close": last_close,
+                        "previous_close": previous_close,
+                        "breakout_distance_percent": candidate.breakout_distance_percent,
+                        "volume_ratio": volume_ratio,
+                        "candle_ratio": candle_ratio,
+                        "recent_candles": candle_rows_for_ai(closed, 8),
+                    }
+                )
+                candidate.ai_decision = ai_result.decision
+                candidate.ai_score = ai_result.score
+                candidate.ai_reason = ai_result.reason
+                candidate.ai_pattern = ai_result.pattern
+                if ai_result.decision == "CONFIRM" and ai_result.score >= env_float("AI_LAYER3_MIN_FLEX_SCORE", 75.0):
+                    candidate.layer3_state = WAIT
+                    candidate.layer3_reason = f"AI flexible WAIT near breakout: {ai_result.reason}"
+                    return candidate
         return None
 
     if recent_break and not just_broke:
@@ -1441,9 +1481,17 @@ def apply_layer7(candidate: Candidate) -> Candidate:
         return candidate
 
     use_ai_for_layer7 = ai_enabled() and env_bool("AI_USE_FOR_LAYER7", True)
+    force_ai_layer7 = False
+    if use_ai_for_layer7:
+        pair = split_forex_symbol(candidate.symbol)
+        majors = {"USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "NZD"}
+        if env_bool("AI_LAYER7_FORCE_FOR_EXOTICS", True) and pair is not None and (pair[0] not in majors or pair[1] not in majors):
+            force_ai_layer7 = True
+        elif env_bool("AI_LAYER7_FORCE_FOR_WEAK_EVIDENCE", True) and pair is not None and result.score == 50.0:
+            force_ai_layer7 = True
     if use_ai_for_layer7:
         min_ai_score = env_float("AI_LAYER7_MIN_PRE_AI_SCORE", 60.0)
-        if result.score < min_ai_score and env_bool("AI_LAYER7_SKIP_WEAK_CANDIDATES", True):
+        if result.score < min_ai_score and env_bool("AI_LAYER7_SKIP_WEAK_CANDIDATES", True) and not force_ai_layer7:
             use_ai_for_layer7 = False
     if use_ai_for_layer7:
         ai_result = evaluate_fundamental_bias(
@@ -1477,9 +1525,38 @@ def apply_layer8(candidate: Candidate) -> Candidate:
         candidate.layer8_score = 50.0
         candidate.layer8_reason = "News sentiment layer disabled"
         return candidate
-    candidate.layer8_risk = "NEUTRAL"
-    candidate.layer8_score = 50.0
-    candidate.layer8_reason = "News API connectors not implemented yet"
+    side = candidate.breakout_side or layer6_expected_side(candidate)
+    try:
+        result = evaluate_news(candidate.symbol, side)
+    except Exception as exc:
+        candidate.layer8_risk = "NEUTRAL"
+        candidate.layer8_score = 50.0
+        candidate.layer8_reason = f"News layer error: {exc}"
+        return candidate
+
+    if ai_enabled() and env_bool("AI_USE_FOR_LAYER8", True):
+        ai_result = evaluate_news_risk(
+            {
+                "symbol": candidate.symbol,
+                "side": side,
+                "computed_risk": result.risk,
+                "computed_score": result.score,
+                "computed_reason": result.reason,
+                "evidence": result.evidence,
+            }
+        )
+        if ai_result.enabled and ai_result.decision not in {"ERROR", ""}:
+            result.risk = ai_result.decision if ai_result.decision in {"BLOCKED", "CLEAR", "AGAINST_TRADE", "BIASED", "NEUTRAL"} else result.risk
+            result.score = ai_result.score
+            result.reason = f"AI+news: {ai_result.reason}"
+            candidate.ai_decision = ai_result.decision
+            candidate.ai_score = ai_result.score
+            candidate.ai_reason = ai_result.reason
+            candidate.ai_pattern = ai_result.pattern
+
+    candidate.layer8_risk = result.risk
+    candidate.layer8_score = result.score
+    candidate.layer8_reason = result.reason
     return candidate
 
 
@@ -1534,6 +1611,9 @@ def finalize_candidate(candidate: Candidate) -> Candidate | None:
     candidate = apply_layer6(candidate)
     candidate = apply_layer7(candidate)
     candidate = apply_layer8(candidate)
+    if candidate.layer8_risk == "BLOCKED":
+        candidate.composite_reason = "blocked by high-impact news risk"
+        return None
     scores = layer_scores(candidate)
     candidate.layer1_score = scores["layer1"]
     candidate.layer2_score = scores["layer2"]
@@ -1762,7 +1842,14 @@ def validate_env() -> int:
         "AI_USE_FOR_LAYER7",
         "AI_LAYER7_SKIP_WEAK_CANDIDATES",
         "AI_LAYER7_MIN_PRE_AI_SCORE",
+        "AI_LAYER7_FORCE_FOR_EXOTICS",
+        "AI_LAYER7_FORCE_FOR_WEAK_EVIDENCE",
+        "AI_ALLOW_LAYER3_FLEXIBLE_WAIT",
+        "AI_LAYER3_NEAR_BREAKOUT_DISTANCE_PERCENT",
+        "AI_LAYER3_MIN_FLEX_SCORE",
+        "AI_USE_FOR_LAYER8",
         "AI_MAX_CALLS_PER_RUN",
+        "FUNNEL_EXPAND_FOREX_UNIVERSE",
         "NVIDIA_BASE_URL",
         "NVIDIA_MODEL",
         "NVIDIA_TIMEOUT_SECONDS",
@@ -1794,6 +1881,19 @@ def validate_env() -> int:
         "CFTC_COT_URL",
         "FRED_API_KEY",
         "LAYER8_ENABLE_NEWS_SENTIMENT",
+        "LAYER8_USE_GDELT",
+        "LAYER8_USE_ALPHA_VANTAGE_NEWS",
+        "LAYER8_USE_NEWSAPI",
+        "NEWS_USE_CACHE",
+        "NEWS_CACHE_PATH",
+        "NEWS_CACHE_MAX_AGE_SECONDS",
+        "NEWS_HTTP_TIMEOUT_SECONDS",
+        "NEWS_LOOKBACK_HOURS",
+        "NEWS_LOOKAHEAD_HOURS",
+        "NEWS_BLOCK_MINUTES_AROUND_EVENT",
+        "NEWS_CALENDAR_PATH",
+        "FOREX_FACTORY_CALENDAR_URL",
+        "NEWSAPI_KEY",
         "SCORER_MIN_COMPOSITE_SCORE",
         "SCORER_WEIGHT_LAYER1",
         "SCORER_WEIGHT_LAYER2",
@@ -1820,6 +1920,10 @@ def validate_env() -> int:
         if key == "GEMINI_API_KEY" and not (env_bool("AI_ENABLED", False) and os.getenv("AI_PROVIDER", "nvidia").lower() == "gemini"):
             continue
         if key == "NVIDIA_API_KEY" and not (env_bool("AI_ENABLED", False) and os.getenv("AI_PROVIDER", "nvidia").lower() == "nvidia"):
+            continue
+        if key == "NEWSAPI_KEY" and not (env_bool("LAYER8_ENABLE_NEWS_SENTIMENT", False) and env_bool("LAYER8_USE_NEWSAPI", False)):
+            continue
+        if key == "FOREX_FACTORY_CALENDAR_URL":
             continue
         if key == "FRED_API_KEY" and not (env_bool("LAYER7_ENABLE_FUNDAMENTALS", False) and env_bool("LAYER7_USE_FRED", True)):
             continue
@@ -1895,7 +1999,7 @@ def main() -> int:
     use_mt5 = env_bool("FUNNEL_USE_MT5", True)
     use_alpha = env_bool("FUNNEL_USE_ALPHA_VANTAGE", True)
     use_massive = env_bool("FUNNEL_USE_MASSIVE", True)
-    effective_min_agreement = min_agreement if (use_alpha or use_massive) else 1
+    effective_min_agreement = min_agreement if (require_external and (use_alpha or use_massive)) else 1
 
     mt5_ready = init_mt5() if use_mt5 else False
     massive_key = os.getenv("MASSIVE_API_KEY") or os.getenv("POLYGON_API_KEY") or ""
@@ -1955,7 +2059,10 @@ def main() -> int:
         symbol = item.symbol if isinstance(item, Candidate) else item
         try:
             if local_prefilter_all and mt5_ready and isinstance(item, Candidate):
-                candidate = externally_confirm_candidate(item, use_alpha, use_massive)
+                if require_external:
+                    candidate = externally_confirm_candidate(item, use_alpha, use_massive)
+                else:
+                    candidate = item
             else:
                 candidate = symbol_candidate(symbol, mt5_ready, use_alpha, use_massive)
         except Exception as exc:  # Keep one bad provider response from killing the whole scan.

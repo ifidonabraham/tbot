@@ -278,3 +278,43 @@ def evaluate_fundamental_bias(context: dict[str, Any]) -> GeminiResult:
         reason=str(data.get("reason", "")),
         raw=data,
     )
+
+
+def evaluate_news_risk(context: dict[str, Any]) -> GeminiResult:
+    if not ai_enabled():
+        return GeminiResult(enabled=False)
+
+    system = (
+        "You are a conservative FX news-risk classifier. Use only supplied calendar/news evidence. "
+        "High-impact scheduled events near now must be BLOCKED. If evidence is weak, choose NEUTRAL. "
+        "Return strict JSON only."
+    )
+    prompt = json.dumps(
+        {
+            "task": "Classify news risk and directional news bias for a currency pair.",
+            "required_json_schema": {
+                "decision": "BLOCKED or CLEAR or AGAINST_TRADE or BIASED or NEUTRAL",
+                "score": "0 to 100, where 0 is blocked/high risk and 50 is neutral",
+                "pattern": "main news driver",
+                "reason": "short reason under 300 chars",
+            },
+            "context": context,
+        },
+        separators=(",", ":"),
+    )
+    try:
+        data = call_ai_json(system, prompt)
+    except Exception as exc:
+        return GeminiResult(enabled=True, decision="ERROR", reason=f"{ai_provider()} AI error: {exc}")
+    try:
+        score = float(data.get("score", 50.0))
+    except (TypeError, ValueError):
+        score = 50.0
+    return GeminiResult(
+        enabled=True,
+        decision=str(data.get("decision", "NEUTRAL")).upper(),
+        score=max(0.0, min(100.0, score)),
+        pattern=str(data.get("pattern", "")),
+        reason=str(data.get("reason", "")),
+        raw=data,
+    )

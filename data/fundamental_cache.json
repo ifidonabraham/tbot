@@ -66,5 +66,9 @@
   "world_bank_gdp:TRY": {
     "timestamp": 1778868454.5753882,
     "value": 3.3276230893799
+  },
+  "world_bank_gdp:ZAR": {
+    "timestamp": 1778869855.189173,
+    "value": 0.534843531905139
   }
 }
