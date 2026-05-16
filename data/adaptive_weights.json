@@ -1,0 +1,99 @@
+{
+  "active": false,
+  "enabled": true,
+  "min_trades": 30,
+  "range": {
+    "layer1": 15.0,
+    "layer2": 15.0,
+    "layer3": 0.0,
+    "layer4": 0.0,
+    "layer5": 25.0,
+    "layer6": 20.0,
+    "layer7": 15.0,
+    "layer8": 10.0
+  },
+  "range_trade_count": 0,
+  "stats": {
+    "range": {
+      "layer1": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer2": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer3": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer4": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer5": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer6": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer7": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer8": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      }
+    },
+    "trend": {
+      "layer1": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer2": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer3": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer4": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer5": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer6": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer7": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      },
+      "layer8": {
+        "avg_signal_outcome": 0.0,
+        "count": 0.0
+      }
+    }
+  },
+  "trade_count": 0,
+  "trend": {
+    "layer1": 20.0,
+    "layer2": 15.0,
+    "layer3": 15.0,
+    "layer4": 15.0,
+    "layer5": 10.0,
+    "layer6": 10.0,
+    "layer7": 10.0,
+    "layer8": 5.0
+  },
+  "trend_trade_count": 0,
+  "updated_at": "2026-05-16T11:43:30.539782+00:00"
+}

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import os
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -16,6 +17,10 @@ class FunnelCandidate:
     side: str
     composite_score: float
     reason: str
+    layer_scores: dict[str, float]
+    layer5_state: str = ""
+    layer8_risk: str = ""
+    expected_net_value: float = 0.0
 
 
 def _bool(name: str, default: bool = False) -> bool:
@@ -39,11 +44,19 @@ def _int(name: str, default: int) -> int:
     return int(value)
 
 
+def _float_from_row(row: dict[str, str], key: str, default: float) -> float:
+    try:
+        return float(row.get(key, "") or default)
+    except ValueError:
+        return default
+
+
 USE_FUNNEL_CANDIDATES = _bool("USE_FUNNEL_CANDIDATES", True)
 FUNNEL_OUTPUT_PATH = Path(os.getenv("FUNNEL_OUTPUT_PATH", "data/layer1_candidates.csv"))
 FUNNEL_TOP_N = _int("FUNNEL_TOP_N", 5)
 FUNNEL_FALLBACK_TO_WATCHLIST = _bool("FUNNEL_FALLBACK_TO_WATCHLIST", False)
 FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT = _float("FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT", 15.0)
+FUNNEL_CANDIDATE_MAX_AGE_SECONDS = _float("FUNNEL_CANDIDATE_MAX_AGE_SECONDS", 300.0)
 
 
 def _resolve_side(row: dict[str, str]) -> str | None:
@@ -75,6 +88,10 @@ def load_funnel_candidates(
 
     if not csv_path.exists():
         return []
+    if FUNNEL_CANDIDATE_MAX_AGE_SECONDS > 0:
+        age_seconds = time.time() - csv_path.stat().st_mtime
+        if age_seconds > FUNNEL_CANDIDATE_MAX_AGE_SECONDS:
+            return []
 
     candidates: list[FunnelCandidate] = []
     with csv_path.open("r", newline="", encoding="utf-8") as handle:
@@ -97,9 +114,27 @@ def load_funnel_candidates(
             reason = row.get("composite_reason", "").strip()
             if row.get("layer8_reason", "").strip():
                 reason = f"{reason}; {row['layer8_reason'].strip()}" if reason else row["layer8_reason"].strip()
-            candidates.append(FunnelCandidate(symbol, side, composite_score, reason))
+            layer_scores = {}
+            for layer in range(1, 9):
+                key = f"layer{layer}_score"
+                try:
+                    layer_scores[f"layer{layer}"] = float(row.get(key, "0") or 0)
+                except ValueError:
+                    layer_scores[f"layer{layer}"] = 0.0
+            candidates.append(
+                FunnelCandidate(
+                    symbol,
+                    side,
+                    composite_score,
+                    reason,
+                    layer_scores,
+                    row.get("layer5_state", "").strip(),
+                    row.get("layer8_risk", "").strip(),
+                    _float_from_row(row, "expected_net_value", composite_score),
+                )
+            )
 
-    candidates.sort(key=lambda item: item.composite_score, reverse=True)
+    candidates.sort(key=lambda item: (item.expected_net_value, item.composite_score), reverse=True)
     if max_items > 0:
         return candidates[:max_items]
     return candidates

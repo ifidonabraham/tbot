@@ -6,10 +6,14 @@ from config import (
     MT5_MAGIC,
     MT5_PASSWORD,
     MT5_PATH,
+    MT5_SET_BROKER_STOP_LOSS,
+    MT5_SET_BROKER_TAKE_PROFIT,
     MT5_SERVER,
     MT5_TIMEOUT_MS,
     QUOTE_ASSET,
     SYMBOL,
+    STOP_LOSS_PERCENT,
+    TAKE_PROFIT_PERCENT,
 )
 
 try:
@@ -155,6 +159,7 @@ class MT5Broker:
             raise RuntimeError(f"No MT5 tick data for {symbol}: {mt5.last_error()}")
 
         price = float(tick.ask if order_type == mt5.ORDER_TYPE_BUY else tick.bid)
+        stops = self._broker_stops_for_order(symbol, order_type, price) if position_ticket is None else {}
         request = {
             "action": mt5.TRADE_ACTION_DEAL,
             "symbol": symbol,
@@ -166,6 +171,7 @@ class MT5Broker:
             "comment": "TradingBot Python",
             "type_time": mt5.ORDER_TIME_GTC,
         }
+        request.update(stops)
         if position_ticket is not None:
             request["position"] = int(position_ticket)
 
@@ -181,6 +187,34 @@ class MT5Broker:
             errors.append(f"filling={filling_mode}, retcode={result.retcode}, comment={result.comment}")
 
         raise RuntimeError(f"MT5 order failed after filling retries: {' | '.join(errors)}")
+
+    def _broker_stops_for_order(self, symbol, order_type, price):
+        info = mt5.symbol_info(symbol)
+        if info is None:
+            raise RuntimeError(f"No MT5 symbol info for {symbol}: {mt5.last_error()}")
+
+        point = float(info.point or 0.0)
+        digits = int(info.digits or 5)
+        min_distance = float(getattr(info, "trade_stops_level", 0) or 0) * point
+        stops = {}
+
+        if MT5_SET_BROKER_STOP_LOSS and STOP_LOSS_PERCENT > 0:
+            raw_distance = price * STOP_LOSS_PERCENT / 100.0
+            distance = max(raw_distance, min_distance)
+            if order_type == mt5.ORDER_TYPE_BUY:
+                stops["sl"] = round(price - distance, digits)
+            else:
+                stops["sl"] = round(price + distance, digits)
+
+        if MT5_SET_BROKER_TAKE_PROFIT and TAKE_PROFIT_PERCENT > 0:
+            raw_distance = price * TAKE_PROFIT_PERCENT / 100.0
+            distance = max(raw_distance, min_distance)
+            if order_type == mt5.ORDER_TYPE_BUY:
+                stops["tp"] = round(price + distance, digits)
+            else:
+                stops["tp"] = round(price - distance, digits)
+
+        return stops
 
     def _close_long_positions(self, symbol, amount):
         positions = mt5.positions_get(symbol=symbol)
@@ -260,6 +294,19 @@ class MT5Broker:
             return None
         latest = max(matches, key=lambda position: position.time_msc)
         return int(latest.ticket)
+
+    def position_profit(self, position_ticket):
+        positions = mt5.positions_get(ticket=int(position_ticket))
+        if not positions:
+            return None
+        position = positions[0]
+        return {
+            "profit": float(position.profit),
+            "swap": float(position.swap),
+            "volume": float(position.volume),
+            "price_open": float(position.price_open),
+            "price_current": float(position.price_current),
+        }
 
     def contract_size(self, symbol):
         self.ensure_symbol(symbol)

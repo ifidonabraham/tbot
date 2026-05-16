@@ -16,8 +16,9 @@ import numpy as np
 import pandas as pd
 import requests
 from dotenv import load_dotenv
+from adaptive_weights import adaptive_weights_for_mode
 from fundamentals import evaluate_fundamentals
-from gemini_ai import ai_enabled, evaluate_candle_pattern, evaluate_fundamental_bias, evaluate_news_risk, summarize_funnel_status
+from gemini_ai import ai_enabled, evaluate_candle_pattern, evaluate_fundamental_bias, summarize_funnel_status
 from news_sentiment import evaluate_news
 
 try:
@@ -106,6 +107,9 @@ class Candidate:
     layer8_reason: str = "News layer disabled"
     composite_score: float = 0.0
     composite_reason: str = ""
+    live_spread_percent: float | None = None
+    execution_cost_penalty: float = 0.0
+    expected_net_value: float = 0.0
 
 
 @dataclass
@@ -484,6 +488,41 @@ def mt5_layer1_candidate(symbol: str) -> Candidate:
     trend = source_trend("MT5", mt5_rates(symbol, mt5.TIMEFRAME_H1), mt5_rates(symbol, mt5.TIMEFRAME_H4))
     agreement = 1 if trend.state != RANGING else 0
     return Candidate(symbol, trend.state, agreement, [trend])
+
+
+def local_prefilter_rank(candidate: Candidate) -> float:
+    score = 0.0
+    if candidate.state in {TRENDING_UP, TRENDING_DOWN}:
+        score += 60.0
+    elif candidate.state == RANGING:
+        score += 35.0
+
+    pair = split_forex_symbol(candidate.symbol)
+    majors = {"USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "NZD"}
+    if pair is not None:
+        major_count = int(pair[0] in majors) + int(pair[1] in majors)
+        score += major_count * 10.0
+
+    if mt5 is not None:
+        tick = mt5.symbol_info_tick(candidate.symbol)
+        if tick is not None and tick.bid > 0 and tick.ask > 0:
+            mid = float((tick.bid + tick.ask) / 2.0)
+            spread_percent = (float(tick.ask) - float(tick.bid)) / mid * 100.0
+            score += max(0.0, 25.0 - spread_percent * 500.0)
+
+    return score
+
+
+def current_spread_percent(symbol: str) -> float | None:
+    if mt5 is None:
+        return None
+    tick = mt5.symbol_info_tick(symbol)
+    if tick is None or tick.bid <= 0 or tick.ask <= 0:
+        return None
+    mid = float((tick.bid + tick.ask) / 2.0)
+    if mid <= 0:
+        return None
+    return (float(tick.ask) - float(tick.bid)) / mid * 100.0
 
 
 def externally_confirm_candidate(candidate: Candidate, use_alpha: bool, use_massive: bool) -> Candidate:
@@ -1205,7 +1244,8 @@ def apply_layer4(candidate: Candidate) -> Candidate | None:
         candidate.ai_pattern = ai_result.pattern
         if ai_result.decision == "CONFIRM" and ai_result.score >= ai_min_score:
             pattern = ai_result.pattern or pattern or "gemini_confirmation"
-            direction_ok = True if ai_can_relax else direction_ok
+            if ai_can_relax and not direction_ok:
+                candidate.ai_reason = f"{candidate.ai_reason}; AI support noted but candle direction still failed"
         elif ai_result.decision in {"REJECT", "ERROR"}:
             direction_ok = False
 
@@ -1272,9 +1312,18 @@ def apply_layer5(candidate: Candidate) -> Candidate | None:
 
     lookback = env_int("LAYER5_LOOKBACK_CANDLES", 120)
     recent = closed.tail(lookback).copy()
-    support = float(recent["low"].quantile(env_float("LAYER5_SUPPORT_QUANTILE", 0.10)))
-    resistance = float(recent["high"].quantile(env_float("LAYER5_RESISTANCE_QUANTILE", 0.90)))
     current = float(recent.iloc[-1]["close"])
+    support_levels, resistance_levels = swing_levels(recent, candidate.symbol)
+    min_touches = env_int("LAYER5_MIN_TOUCHES_PER_SIDE", 2)
+    support_candidates = [level for level in support_levels if level.price < current and level.tests >= min_touches]
+    resistance_candidates = [level for level in resistance_levels if level.price > current and level.tests >= min_touches]
+    if not support_candidates or not resistance_candidates:
+        candidate.layer5_reason = "eliminated: no tested swing support/resistance range boundaries"
+        return None
+    support_level = max(support_candidates, key=lambda level: level.price)
+    resistance_level = min(resistance_candidates, key=lambda level: level.price)
+    support = float(support_level.price)
+    resistance = float(resistance_level.price)
     width = resistance - support
     if current <= 0 or width <= 0:
         candidate.layer5_reason = "eliminated: invalid range width"
@@ -1313,7 +1362,6 @@ def apply_layer5(candidate: Candidate) -> Candidate | None:
     touch_tolerance = width * env_float("LAYER5_TOUCH_TOLERANCE_FRACTION", 0.12)
     support_touches = int((recent["low"] <= support + touch_tolerance).sum())
     resistance_touches = int((recent["high"] >= resistance - touch_tolerance).sum())
-    min_touches = env_int("LAYER5_MIN_TOUCHES_PER_SIDE", 2)
     if support_touches < min_touches or resistance_touches < min_touches:
         candidate.layer5_reason = (
             f"eliminated: touches support={support_touches}, resistance={resistance_touches}, need {min_touches}+ each"
@@ -1470,7 +1518,8 @@ def apply_layer6(candidate: Candidate) -> Candidate:
         candidate.ai_reason = ai_result.reason
         candidate.ai_pattern = ai_result.pattern
         if ai_result.decision == "CONFIRM":
-            score = max(score, ai_result.score)
+            if pattern:
+                score = max(score, min(ai_result.score, score + env_float("AI_LAYER6_MAX_SCORE_BOOST", 10.0)))
             pattern = ai_result.pattern or pattern
             reasons.append(f"Gemini confirms: {ai_result.reason}")
         elif ai_result.decision == "REJECT":
@@ -1552,26 +1601,6 @@ def apply_layer8(candidate: Candidate) -> Candidate:
         candidate.layer8_reason = f"News layer error: {exc}"
         return candidate
 
-    if ai_enabled() and env_bool("AI_USE_FOR_LAYER8", True):
-        ai_result = evaluate_news_risk(
-            {
-                "symbol": candidate.symbol,
-                "side": side,
-                "computed_risk": result.risk,
-                "computed_score": result.score,
-                "computed_reason": result.reason,
-                "evidence": result.evidence,
-            }
-        )
-        if ai_result.enabled and ai_result.decision not in {"ERROR", ""}:
-            result.risk = ai_result.decision if ai_result.decision in {"BLOCKED", "CLEAR", "AGAINST_TRADE", "BIASED", "NEUTRAL"} else result.risk
-            result.score = ai_result.score
-            result.reason = f"AI+news: {ai_result.reason}"
-            candidate.ai_decision = ai_result.decision
-            candidate.ai_score = ai_result.score
-            candidate.ai_reason = ai_result.reason
-            candidate.ai_pattern = ai_result.pattern
-
     candidate.layer8_risk = result.risk
     candidate.layer8_score = result.score
     candidate.layer8_reason = result.reason
@@ -1601,11 +1630,11 @@ def layer_scores(candidate: Candidate) -> dict[str, float]:
     elif candidate.layer3_state == WAIT:
         layer3 = 55.0
     elif candidate.layer5_state in {RANGE_BUY, RANGE_SELL}:
-        layer3 = 50.0
+        layer3 = 0.0
 
     layer4 = 90.0 if candidate.layer4_state == PULLBACK_CONFIRMED else 55.0 if candidate.layer4_state == PULLBACK_WAIT else 0.0
     if candidate.layer5_state in {RANGE_BUY, RANGE_SELL}:
-        layer4 = 50.0
+        layer4 = 0.0
 
     layer5 = 0.0
     if candidate.layer5_state in {RANGE_BUY, RANGE_SELL}:
@@ -1629,8 +1658,8 @@ def finalize_candidate(candidate: Candidate) -> Candidate | None:
     candidate = apply_layer6(candidate)
     candidate = apply_layer7(candidate)
     candidate = apply_layer8(candidate)
-    if candidate.layer8_risk == "BLOCKED":
-        candidate.composite_reason = "blocked by high-impact news risk"
+    if candidate.layer8_risk in {"BLOCKED", "AGAINST_TRADE"}:
+        candidate.composite_reason = f"blocked by Layer 8 news risk: {candidate.layer8_risk}"
         return None
     scores = layer_scores(candidate)
     candidate.layer1_score = scores["layer1"]
@@ -1643,8 +1672,8 @@ def finalize_candidate(candidate: Candidate) -> Candidate | None:
         weights = {
             "layer1": env_float("SCORER_RANGE_WEIGHT_LAYER1", 15.0),
             "layer2": env_float("SCORER_RANGE_WEIGHT_LAYER2", 15.0),
-            "layer3": env_float("SCORER_RANGE_WEIGHT_LAYER3", 0.0),
-            "layer4": env_float("SCORER_RANGE_WEIGHT_LAYER4", 0.0),
+            "layer3": 0.0,
+            "layer4": 0.0,
             "layer5": env_float("SCORER_RANGE_WEIGHT_LAYER5", 25.0),
             "layer6": env_float("SCORER_RANGE_WEIGHT_LAYER6", 20.0),
             "layer7": env_float("SCORER_RANGE_WEIGHT_LAYER7", 15.0),
@@ -1661,6 +1690,8 @@ def finalize_candidate(candidate: Candidate) -> Candidate | None:
             "layer7": env_float("SCORER_WEIGHT_LAYER7", 10.0),
             "layer8": env_float("SCORER_WEIGHT_LAYER8", 5.0),
         }
+    weight_mode = "range" if candidate.layer5_state in {RANGE_BUY, RANGE_SELL} else "trend"
+    weights = adaptive_weights_for_mode(weight_mode, weights)
     total_weight = max(sum(weights.values()), 1e-9)
     composite = sum(scores[key] * weights[key] for key in weights) / total_weight
     candidate.composite_score = max(0.0, min(100.0, composite))
@@ -1669,7 +1700,29 @@ def finalize_candidate(candidate: Candidate) -> Candidate | None:
     threshold = env_float("SCORER_MIN_COMPOSITE_SCORE", 65.0)
     if candidate.composite_score < threshold:
         return None
+    spread_percent = current_spread_percent(candidate.symbol)
+    candidate.live_spread_percent = spread_percent
+    spread_for_penalty = spread_percent if spread_percent is not None else env_float("SCORER_UNKNOWN_SPREAD_PERCENT", 0.03)
+    spread_multiplier = env_float("SCORER_SPREAD_COST_MULTIPLIER", 500.0)
+    candidate.execution_cost_penalty = max(0.0, spread_for_penalty * spread_multiplier)
+    priority_bonus = env_float("SCORER_HIGH_PRIORITY_BONUS", 2.0) if candidate.layer3_state == HIGH_PRIORITY else 0.0
+    range_bonus = 0.0
+    if candidate.layer5_state in {RANGE_BUY, RANGE_SELL} and candidate.range_width_atr is not None:
+        range_bonus = min(env_float("SCORER_RANGE_WIDTH_MAX_BONUS", 3.0), max(0.0, candidate.range_width_atr - 2.0))
+    candidate.expected_net_value = candidate.composite_score + priority_bonus + range_bonus - candidate.execution_cost_penalty
     return candidate
+
+
+def rank_candidates_by_expected_value(candidates: list[Candidate]) -> list[Candidate]:
+    return sorted(
+        candidates,
+        key=lambda item: (
+            item.expected_net_value,
+            item.composite_score,
+            -(item.live_spread_percent if item.live_spread_percent is not None else 999.0),
+        ),
+        reverse=True,
+    )
 
 
 def write_candidates(candidates: list[Candidate], output_path: Path) -> None:
@@ -1728,6 +1781,9 @@ def write_candidates(candidates: list[Candidate], output_path: Path) -> None:
                 "layer8_score",
                 "layer8_reason",
                 "composite_score",
+                "live_spread_percent",
+                "execution_cost_penalty",
+                "expected_net_value",
                 "composite_reason",
                 "sources",
             ]
@@ -1786,6 +1842,9 @@ def write_candidates(candidates: list[Candidate], output_path: Path) -> None:
                     f"{candidate.layer8_score:.2f}",
                     candidate.layer8_reason,
                     f"{candidate.composite_score:.2f}",
+                    "" if candidate.live_spread_percent is None else f"{candidate.live_spread_percent:.5f}",
+                    f"{candidate.execution_cost_penalty:.2f}",
+                    f"{candidate.expected_net_value:.2f}",
                     candidate.composite_reason,
                     sources,
                 ]
@@ -1872,6 +1931,7 @@ def validate_env() -> int:
         "AI_USE_FOR_LAYER8",
         "AI_MAX_CALLS_PER_RUN",
         "FUNNEL_EXPAND_FOREX_UNIVERSE",
+        "FUNNEL_MAX_RANGE_CANDIDATES",
         "NVIDIA_BASE_URL",
         "NVIDIA_MODEL",
         "NVIDIA_TIMEOUT_SECONDS",
@@ -1885,6 +1945,7 @@ def validate_env() -> int:
         "LAYER6_TIMEFRAME",
         "LAYER6_LOOKBACK_CANDLES",
         "LAYER6_MAX_KEY_LEVEL_DISTANCE_PERCENT",
+        "AI_LAYER6_MAX_SCORE_BOOST",
         "LAYER7_ENABLE_FUNDAMENTALS",
         "LAYER7_USE_FRED",
         "LAYER7_USE_BIS",
@@ -1935,6 +1996,17 @@ def validate_env() -> int:
         "SCORER_RANGE_WEIGHT_LAYER6",
         "SCORER_RANGE_WEIGHT_LAYER7",
         "SCORER_RANGE_WEIGHT_LAYER8",
+        "SCORER_SPREAD_COST_MULTIPLIER",
+        "SCORER_UNKNOWN_SPREAD_PERCENT",
+        "SCORER_HIGH_PRIORITY_BONUS",
+        "SCORER_RANGE_WIDTH_MAX_BONUS",
+        "ADAPTIVE_WEIGHTS_ENABLED",
+        "ADAPTIVE_WEIGHTS_PATH",
+        "ADAPTIVE_TRADE_LOG_PATH",
+        "ADAPTIVE_WEIGHTS_MIN_TRADES",
+        "ADAPTIVE_WEIGHT_LEARNING_RATE",
+        "ADAPTIVE_WEIGHT_MIN_FACTOR",
+        "ADAPTIVE_WEIGHT_MAX_FACTOR",
     ]
     missing = []
     for key in required:
@@ -2009,6 +2081,7 @@ def health_check() -> int:
     if output.exists():
         with output.open("r", newline="", encoding="utf-8") as handle:
             rows = list(csv.DictReader(handle))
+    output_age = time.time() - output.stat().st_mtime if output.exists() else None
 
     mt5_ready = init_mt5() if env_bool("FUNNEL_USE_MT5", True) else False
     mt5_symbol_count = 0
@@ -2054,7 +2127,11 @@ def health_check() -> int:
         f"max_symbols={env_int('FUNNEL_MAX_SYMBOLS', 200)} "
         f"max_external={env_int('FUNNEL_MAX_EXTERNAL_SYMBOLS', 25)}"
     )
-    print(f"Funnel output: {output} | rows={len(rows)} | exists={output.exists()}")
+    age_text = "missing" if output_age is None else f"{output_age:.1f}s"
+    print(
+        f"Funnel output: {output} | rows={len(rows)} | exists={output.exists()} "
+        f"| age={age_text} | max_age={env_float('FUNNEL_CANDIDATE_MAX_AGE_SECONDS', 300.0)}s"
+    )
     print(f"Scalper handoff: {handoff}")
     if scalper_candidates:
         print("Top scalper candidates:")
@@ -2110,6 +2187,9 @@ def main() -> int:
     candidates: list[Candidate] = []
     processed_symbols = universe if local_prefilter_all and mt5_ready else universe[:max_external]
     local_layer1_candidates: list[Candidate] = []
+    local_range_candidates: list[Candidate] = []
+    local_prefilter_processed = 0
+    external_processed = 0
     layer1_passed = 0
     layer2_processed = 0
     layer2_confirmed = 0
@@ -2123,7 +2203,7 @@ def main() -> int:
     layer5_confirmed = 0
 
     if local_prefilter_all and mt5_ready:
-        print("Layer 1 local prefilter: scanning full MT5 universe before external confirmation")
+        print("Layer 1 local prefilter: scanning full MT5 universe before ranking/external confirmation")
         for symbol in processed_symbols:
             if budget.expired():
                 print(f"TIME_BUDGET_STOP layer1 prefilter after {budget.seconds:.1f}s")
@@ -2133,19 +2213,29 @@ def main() -> int:
             except Exception as exc:
                 print(f"{symbol}: MT5_PREFILTER_ERROR {exc}")
                 continue
+            local_prefilter_processed += 1
             print(f"{symbol}: MT5_{local_candidate.state} agreement={local_candidate.agreement}")
             if local_candidate.state != RANGING:
                 local_layer1_candidates.append(local_candidate)
             else:
-                layer5_processed += 1
-                layer5_candidate = apply_layer5(local_candidate)
-                if layer5_candidate is not None:
-                    final_candidate = finalize_candidate(layer5_candidate)
-                    if final_candidate is not None:
-                        candidates.append(final_candidate)
-                        layer5_confirmed += 1
-                        print(f"{symbol}: Layer5 {final_candidate.layer5_state} score={final_candidate.composite_score:.2f} {final_candidate.layer5_reason}")
+                local_range_candidates.append(local_candidate)
+
+        local_layer1_candidates = sorted(local_layer1_candidates, key=local_prefilter_rank, reverse=True)
+        local_range_candidates = sorted(local_range_candidates, key=local_prefilter_rank, reverse=True)
         external_symbols = local_layer1_candidates[:max_external]
+        range_limit = env_int("FUNNEL_MAX_RANGE_CANDIDATES", max_external)
+        for local_candidate in local_range_candidates[:range_limit]:
+            if budget.expired():
+                print(f"TIME_BUDGET_STOP range layer after {budget.seconds:.1f}s")
+                break
+            layer5_processed += 1
+            layer5_candidate = apply_layer5(local_candidate)
+            if layer5_candidate is not None:
+                final_candidate = finalize_candidate(layer5_candidate)
+                if final_candidate is not None:
+                    candidates.append(final_candidate)
+                    layer5_confirmed += 1
+                    print(f"{local_candidate.symbol}: Layer5 {final_candidate.layer5_state} score={final_candidate.composite_score:.2f} {final_candidate.layer5_reason}")
     else:
         external_symbols = []
 
@@ -2158,6 +2248,7 @@ def main() -> int:
             print("TIME_BUDGET_STOP not enough remaining time for another external/layer pass")
             break
         symbol = item.symbol if isinstance(item, Candidate) else item
+        external_processed += 1
         try:
             if local_prefilter_all and mt5_ready and isinstance(item, Candidate):
                 if require_external:
@@ -2223,13 +2314,16 @@ def main() -> int:
                 print(f"{symbol}: Layer2 FAIL {candidate.layer2_reason}")
 
     output = Path(os.getenv("FUNNEL_OUTPUT_PATH", "data/layer1_candidates.csv"))
+    candidates = rank_candidates_by_expected_value(candidates)
     write_candidates(candidates, output)
     print("---- Funnel summary ----")
     print(f"Universe gathered: {len(universe)}")
-    print(f"Layer 1 processed: {len(processed_symbols)}")
+    print(f"Layer 1 processed: {local_prefilter_processed if local_prefilter_all and mt5_ready else len(processed_symbols)}")
     if local_prefilter_all and mt5_ready:
         print(f"Layer 1 MT5 prefilter passed: {len(local_layer1_candidates)}")
-        print(f"External confirmation processed: {len(scan_items)}")
+        print(f"Layer 1 MT5 ranging pool: {len(local_range_candidates)}")
+        print(f"External confirmation selected: {len(scan_items)}")
+        print(f"External confirmation processed: {external_processed}")
     print(f"Layer 1 passed: {layer1_passed}")
     print(f"Layer 2 processed: {layer2_processed}")
     print(f"Layer 2 confirmed: {layer2_confirmed}")
@@ -2242,6 +2336,14 @@ def main() -> int:
     print(f"Layer 5 processed: {layer5_processed}")
     print(f"Layer 5 range confirmed: {layer5_confirmed}")
     print(f"Funnel candidates written: {len(candidates)} -> {output}")
+    if candidates:
+        print(
+            "Top expected net value: "
+            + ", ".join(
+                f"{item.symbol}:{item.expected_net_value:.2f}/score={item.composite_score:.2f}/spread={item.live_spread_percent if item.live_spread_percent is not None else -1:.5f}%"
+                for item in candidates[:5]
+            )
+        )
 
     if mt5_ready:
         mt5.shutdown()

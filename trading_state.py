@@ -21,6 +21,7 @@ class TradingState:
     entry_contract_size: float = 1.0
     entry_score: float = 0.0
     peak_pnl_percent: float = 0.0
+    peak_pnl_money: float = 0.0
     realized_pnl_usdt: float = 0.0
     daily_pnl_usdt: float = 0.0
     daily_trade_count: int = 0
@@ -51,6 +52,7 @@ class TradingState:
                 "entry_contract_size": state.entry_contract_size,
                 "entry_score": state.entry_score,
                 "peak_pnl_percent": state.peak_pnl_percent,
+                "peak_pnl_money": state.peak_pnl_money,
                 "broker_ticket": None,
             })
         state._normalize_positions()
@@ -93,6 +95,7 @@ class TradingState:
             "entry_score": entry_score,
             "side": side,
             "peak_pnl_percent": 0.0,
+            "peak_pnl_money": 0.0,
             "broker_ticket": broker_ticket,
             "breakeven_armed": False,
             "breakeven_sl_set": False,
@@ -137,6 +140,8 @@ class TradingState:
             position.setdefault("momentum_fade_count", 0)
             position.setdefault("strategy_type", "MOMENTUM")
             position.setdefault("side", "BUY")
+            position.setdefault("peak_pnl_money", 0.0)
+            position.setdefault("peak_pnl_percent", 0.0)
 
     def _sync_legacy_position(self):
         if not self.positions:
@@ -148,6 +153,7 @@ class TradingState:
             self.entry_contract_size = 1.0
             self.entry_score = 0.0
             self.peak_pnl_percent = 0.0
+            self.peak_pnl_money = 0.0
             return
 
         latest = self.positions[-1]
@@ -159,3 +165,4 @@ class TradingState:
         self.entry_contract_size = latest["entry_contract_size"]
         self.entry_score = latest["entry_score"]
         self.peak_pnl_percent = latest["peak_pnl_percent"]
+        self.peak_pnl_money = latest.get("peak_pnl_money", 0.0)

@@ -47,12 +47,27 @@ logging.basicConfig(
 )
 
 
-def _position_snapshot(position, price):
-    pnl, pnl_percent, _ = position_pnl(position, price)
+def _broker_profit(exchange, position):
+    ticket = position.get("broker_ticket")
+    if not ticket or not hasattr(exchange, "position_profit"):
+        return None
+    try:
+        snapshot = exchange.position_profit(ticket)
+    except Exception as exc:
+        logging.warning("Broker PnL unavailable for %s ticket %s: %s", position["symbol"], ticket, exc)
+        return None
+    if not snapshot:
+        return None
+    return snapshot.get("profit")
+
+
+def _position_snapshot(position, price, broker_profit=None):
+    pnl, pnl_percent, _ = position_pnl(position, price, broker_profit)
     side = position.get("side", "BUY")
     return (
         f"Position: {side} {position['symbol']} {position['amount']:.8f} {BASE_ASSET} @ "
-        f"${position['entry_price']:,.5f} | Unrealized PnL: {pnl:.4f} {QUOTE_ASSET} ({pnl_percent:.3f}%)"
+        f"${position['entry_price']:,.5f} | Unrealized PnL: {pnl:.4f} {QUOTE_ASSET} ({pnl_percent:.3f}%) | "
+        f"Peak: {position.get('peak_pnl_money', 0.0):.4f} {QUOTE_ASSET}"
     )
 
 
@@ -92,6 +107,7 @@ def _manage_positions(exchange, state):
         symbol = position["symbol"]
         context = _market_context(exchange, symbol)
         price = context["price"]
+        broker_profit = _broker_profit(exchange, position)
         reason = None
         if position.get("strategy_type") == "STAT_ARB" and position.get("leader_symbol"):
             try:
@@ -99,7 +115,7 @@ def _manage_positions(exchange, state):
                 reason = stat_arb_exit_reason(position, context["df"], leader_context["df"])
             except Exception as exc:
                 logging.warning("Stat-arb exit check failed for %s: %s", symbol, exc)
-        reason = reason or sell_reason_for_position(position, price, context["df"], context["trend_df"])
+        reason = reason or sell_reason_for_position(position, price, context["df"], context["trend_df"], broker_profit)
         if (
             position.get("breakeven_armed")
             and not position.get("breakeven_sl_set")
@@ -125,7 +141,7 @@ def _manage_positions(exchange, state):
             price,
             exit_score,
             position.get("peak_pnl_percent", 0.0),
-            _position_snapshot(position, price),
+            _position_snapshot(position, price, broker_profit),
         )
 
         if reason:
@@ -166,6 +182,10 @@ def _scan_markets(exchange, state, quote_balance):
                 context["funnel_side"] = funnel_candidate.side
                 context["funnel_score"] = funnel_candidate.composite_score
                 context["funnel_reason"] = funnel_candidate.reason
+                context["funnel_layer_scores"] = funnel_candidate.layer_scores
+                context["funnel_layer5_state"] = funnel_candidate.layer5_state
+                context["funnel_layer8_risk"] = funnel_candidate.layer8_risk
+                context["funnel_expected_net_value"] = funnel_candidate.expected_net_value
             contract_size = exchange.contract_size(symbol) if hasattr(exchange, "contract_size") else 1.0
             amount = calculate_trade_amount(context["price"], quote_balance, contract_size)
             blocker_df = context["df"].iloc[:-1].copy() if len(context["df"]) > 1 else context["df"]
@@ -219,13 +239,16 @@ def _scan_markets(exchange, state, quote_balance):
                 "details": details,
             }
             if item.get("funnel_score") is not None:
-                side_item["score"] = max(score, item["funnel_score"], active_threshold)
+                side_item["score"] = score
                 side_item["strategy_type"] = "FUNNEL_SCALP"
                 side_item["details"] = {
                     **details,
-                    "confirmed": True,
                     "funnel_score": item["funnel_score"],
                     "funnel_reason": item.get("funnel_reason", ""),
+                    "funnel_layer_scores": item.get("funnel_layer_scores", {}),
+                    "funnel_layer5_state": item.get("funnel_layer5_state", ""),
+                    "funnel_layer8_risk": item.get("funnel_layer8_risk", ""),
+                    "funnel_expected_net_value": item.get("funnel_expected_net_value", 0.0),
                 }
                 if opposite_score - score > FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT:
                     side_item["blockers"] = [
@@ -293,10 +316,18 @@ def run_bot():
                         contract_size=best["contract_size"],
                         strategy_type=best.get("strategy_type", "MOMENTUM"),
                         metadata={
-                            "leader_symbol": best["details"].get("leader"),
-                            "stat_arb_pair": best["details"].get("stat_arb_pair"),
-                            "entry_divergence_percent": best["details"].get("divergence_percent", 0.0),
-                        } if best.get("strategy_type") == "STAT_ARB" else None,
+                            **({
+                                "leader_symbol": best["details"].get("leader"),
+                                "stat_arb_pair": best["details"].get("stat_arb_pair"),
+                                "entry_divergence_percent": best["details"].get("divergence_percent", 0.0),
+                            } if best.get("strategy_type") == "STAT_ARB" else {}),
+                            "funnel_score": best["details"].get("funnel_score", 0.0),
+                            "funnel_reason": best["details"].get("funnel_reason", ""),
+                            "funnel_layer_scores": best["details"].get("funnel_layer_scores", {}),
+                            "funnel_layer5_state": best["details"].get("funnel_layer5_state", ""),
+                            "funnel_layer8_risk": best["details"].get("funnel_layer8_risk", ""),
+                            "funnel_expected_net_value": best["details"].get("funnel_expected_net_value", 0.0),
+                        },
                         side=best["side"],
                     )
                     logging.info("%s executed for %s: %s", best["side"], best["symbol"], result)
