@@ -7,7 +7,7 @@ import os
 import lzma
 import struct
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Iterable
@@ -137,6 +137,24 @@ def env_float(name: str, default: float) -> float:
         return default
 
 
+@dataclass
+class RuntimeBudget:
+    seconds: float
+    started_at: float = field(default_factory=time.monotonic)
+
+    def expired(self) -> bool:
+        return self.seconds > 0 and time.monotonic() - self.started_at >= self.seconds
+
+    def remaining(self) -> float:
+        if self.seconds <= 0:
+            return float("inf")
+        return max(0.0, self.seconds - (time.monotonic() - self.started_at))
+
+
+def http_timeout(default: float = 10.0) -> float:
+    return max(1.0, env_float("FUNNEL_HTTP_TIMEOUT_SECONDS", default))
+
+
 def mt5_timeframe(name: str, default: str = "M5") -> int | None:
     if mt5 is None:
         return None
@@ -208,7 +226,7 @@ def massive_universe(api_key: str, api_base: str, limit: int) -> list[str]:
         return []
     url = f"{api_base.rstrip('/')}/v2/snapshot/locale/global/markets/forex/tickers"
     try:
-        response = requests.get(url, params={"apiKey": api_key}, timeout=30)
+        response = requests.get(url, params={"apiKey": api_key}, timeout=http_timeout())
         response.raise_for_status()
     except requests.RequestException as exc:
         print(f"MASSIVE universe unavailable: {safe_http_error(exc)}")
@@ -279,7 +297,7 @@ def alpha_rates(symbol: str, interval: str = "60min") -> pd.DataFrame:
         "outputsize": "full",
         "apikey": key,
     }
-    response = requests.get("https://www.alphavantage.co/query", params=params, timeout=30)
+    response = requests.get("https://www.alphavantage.co/query", params=params, timeout=http_timeout())
     response.raise_for_status()
     payload = response.json()
     series_key = next((k for k in payload if k.startswith("Time Series")), "")
@@ -310,7 +328,7 @@ def massive_rates(symbol: str) -> pd.DataFrame:
     url = f"{base}/v2/aggs/ticker/{polygon_symbol(symbol)}/range/1/hour/{start}/{end}"
     params = {"adjusted": "false", "sort": "asc", "limit": 50000, "apiKey": key}
     try:
-        response = requests.get(url, params=params, timeout=30)
+        response = requests.get(url, params=params, timeout=http_timeout())
         response.raise_for_status()
     except requests.RequestException as exc:
         print(f"{symbol}: MASSIVE rates unavailable: {safe_http_error(exc)}")
@@ -447,7 +465,7 @@ def symbol_candidate(symbol: str, use_mt5: bool, use_alpha: bool, use_massive: b
         trends.append(source_trend("MT5", mt5_rates(symbol, mt5.TIMEFRAME_H1), mt5_rates(symbol, mt5.TIMEFRAME_H4)))
     if use_alpha:
         trends.append(source_trend("ALPHA_VANTAGE", alpha_rates(symbol)))
-        time.sleep(12.5)  # Friendly to Alpha Vantage free-tier pacing.
+        time.sleep(max(0.0, env_float("FUNNEL_ALPHA_SLEEP_SECONDS", 12.5)))
     if use_massive:
         trends.append(source_trend("MASSIVE", massive_rates(symbol)))
 
@@ -472,7 +490,7 @@ def externally_confirm_candidate(candidate: Candidate, use_alpha: bool, use_mass
     trends = list(candidate.sources)
     if use_alpha:
         trends.append(source_trend("ALPHA_VANTAGE", alpha_rates(candidate.symbol)))
-        time.sleep(12.5)
+        time.sleep(max(0.0, env_float("FUNNEL_ALPHA_SLEEP_SECONDS", 12.5)))
     if use_massive:
         trends.append(source_trend("MASSIVE", massive_rates(candidate.symbol)))
 
@@ -525,7 +543,7 @@ def dukascopy_hour_candle(symbol: str, hour: datetime) -> dict[str, float | date
         f"{symbol}/{hour.year}/{month:02d}/{hour.day:02d}/{hour.hour:02d}h_ticks.bi5"
     )
     try:
-        response = requests.get(url, timeout=20)
+        response = requests.get(url, timeout=http_timeout())
         if response.status_code == 404:
             return None
         response.raise_for_status()
@@ -1789,6 +1807,10 @@ def validate_env() -> int:
         "FUNNEL_MIN_SOURCE_AGREEMENT",
         "FUNNEL_OUTPUT_PATH",
         "FUNNEL_MT5_TIMEOUT_MS",
+        "FUNNEL_TIME_BUDGET_SECONDS",
+        "FUNNEL_HTTP_TIMEOUT_SECONDS",
+        "FUNNEL_ALPHA_SLEEP_SECONDS",
+        "FUNNEL_MIN_REMAINING_FOR_EXTERNAL_SECONDS",
         "LAYER2_USE_TRADINGVIEW_WEBHOOK",
         "LAYER2_TRADINGVIEW_LEVELS_PATH",
         "LAYER2_USE_DUKASCOPY",
@@ -1980,15 +2002,83 @@ def ai_report() -> int:
     return 0 if result.decision != "ERROR" else 1
 
 
+def health_check() -> int:
+    load_dotenv()
+    output = Path(os.getenv("FUNNEL_OUTPUT_PATH", "data/layer1_candidates.csv"))
+    rows: list[dict[str, str]] = []
+    if output.exists():
+        with output.open("r", newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+
+    mt5_ready = init_mt5() if env_bool("FUNNEL_USE_MT5", True) else False
+    mt5_symbol_count = 0
+    mt5_account = "unavailable"
+    if mt5_ready and mt5 is not None:
+        symbols = mt5.symbols_get()
+        mt5_symbol_count = len(symbols or [])
+        account = mt5.account_info()
+        if account is not None:
+            mt5_account = f"{account.login} {account.server} balance={account.balance:.2f} equity={account.equity:.2f}"
+
+    try:
+        from funnel_candidates import (
+            FUNNEL_FALLBACK_TO_WATCHLIST,
+            FUNNEL_TOP_N,
+            USE_FUNNEL_CANDIDATES,
+            load_funnel_candidates,
+        )
+
+        scalper_candidates = load_funnel_candidates()
+        handoff = (
+            f"enabled={USE_FUNNEL_CANDIDATES} top_n={FUNNEL_TOP_N} "
+            f"fallback_to_watchlist={FUNNEL_FALLBACK_TO_WATCHLIST} loaded={len(scalper_candidates)}"
+        )
+    except Exception as exc:
+        scalper_candidates = []
+        handoff = f"ERROR {exc}"
+
+    print("---- System health ----")
+    print(f"MT5: {'OK' if mt5_ready else 'FAIL'} | symbols={mt5_symbol_count} | account={mt5_account}")
+    print(f"AI: {'OK' if ai_enabled() else 'OFF'} | provider={os.getenv('AI_PROVIDER', 'nvidia')} | max_calls={env_int('AI_MAX_CALLS_PER_RUN', 25)}")
+    print(
+        "External APIs configured: "
+        f"alpha={env_bool('FUNNEL_USE_ALPHA_VANTAGE', True)} "
+        f"massive={env_bool('FUNNEL_USE_MASSIVE', True)} "
+        f"require_confirmation={env_bool('FUNNEL_REQUIRE_EXTERNAL_CONFIRMATION', True)}"
+    )
+    print(
+        "Runtime controls: "
+        f"time_budget={env_float('FUNNEL_TIME_BUDGET_SECONDS', 240.0)}s "
+        f"http_timeout={http_timeout()}s "
+        f"alpha_sleep={env_float('FUNNEL_ALPHA_SLEEP_SECONDS', 12.5)}s "
+        f"max_symbols={env_int('FUNNEL_MAX_SYMBOLS', 200)} "
+        f"max_external={env_int('FUNNEL_MAX_EXTERNAL_SYMBOLS', 25)}"
+    )
+    print(f"Funnel output: {output} | rows={len(rows)} | exists={output.exists()}")
+    print(f"Scalper handoff: {handoff}")
+    if scalper_candidates:
+        print("Top scalper candidates:")
+        for item in scalper_candidates[:5]:
+            print(f"  {item.symbol} {item.side} score={item.composite_score:.2f}")
+    if mt5_ready and mt5 is not None:
+        mt5.shutdown()
+
+    critical_ok = mt5_ready and (not os.getenv("BROKER", "").lower().endswith("mt5") or mt5_symbol_count > 0)
+    return 0 if critical_ok else 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Multi-layer market selection funnel")
     parser.add_argument("--validate-env", action="store_true", help="Validate required .env keys without running a scan")
     parser.add_argument("--ai-report", action="store_true", help="Ask Gemini to summarize current funnel output and bottlenecks")
+    parser.add_argument("--health", action="store_true", help="Check MT5, AI, API config, funnel output, and scalper handoff")
     args = parser.parse_args()
     if args.validate_env:
         return validate_env()
     if args.ai_report:
         return ai_report()
+    if args.health:
+        return health_check()
 
     load_dotenv()
     max_symbols = env_int("FUNNEL_MAX_SYMBOLS", 200)
@@ -2000,15 +2090,17 @@ def main() -> int:
     use_alpha = env_bool("FUNNEL_USE_ALPHA_VANTAGE", True)
     use_massive = env_bool("FUNNEL_USE_MASSIVE", True)
     effective_min_agreement = min_agreement if (require_external and (use_alpha or use_massive)) else 1
+    budget = RuntimeBudget(env_float("FUNNEL_TIME_BUDGET_SECONDS", 240.0))
 
     mt5_ready = init_mt5() if use_mt5 else False
     massive_key = os.getenv("MASSIVE_API_KEY") or os.getenv("POLYGON_API_KEY") or ""
     massive_base = os.getenv("MASSIVE_API_BASE", "https://api.massive.com")
+    include_massive_universe = use_massive and (require_external or not mt5_ready)
 
     universe = unique_symbols(
         [
             mt5_universe(max_symbols) if mt5_ready else [],
-            massive_universe(massive_key, massive_base, max_symbols) if use_massive else [],
+            massive_universe(massive_key, massive_base, max_symbols) if include_massive_universe else [],
             configured_universe(max_symbols),
         ],
         max_symbols,
@@ -2033,6 +2125,9 @@ def main() -> int:
     if local_prefilter_all and mt5_ready:
         print("Layer 1 local prefilter: scanning full MT5 universe before external confirmation")
         for symbol in processed_symbols:
+            if budget.expired():
+                print(f"TIME_BUDGET_STOP layer1 prefilter after {budget.seconds:.1f}s")
+                break
             try:
                 local_candidate = mt5_layer1_candidate(symbol)
             except Exception as exc:
@@ -2056,6 +2151,12 @@ def main() -> int:
 
     scan_items = external_symbols if local_prefilter_all and mt5_ready else processed_symbols
     for item in scan_items:
+        if budget.expired():
+            print(f"TIME_BUDGET_STOP external/layer scan after {budget.seconds:.1f}s")
+            break
+        if budget.remaining() < env_float("FUNNEL_MIN_REMAINING_FOR_EXTERNAL_SECONDS", 5.0):
+            print("TIME_BUDGET_STOP not enough remaining time for another external/layer pass")
+            break
         symbol = item.symbol if isinstance(item, Candidate) else item
         try:
             if local_prefilter_all and mt5_ready and isinstance(item, Candidate):
