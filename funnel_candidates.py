@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from dotenv import load_dotenv
+from symbol_quality import is_tier1_or_validated
 
 load_dotenv(override=True)
 
@@ -99,6 +100,8 @@ def load_funnel_candidates(
         for row in reader:
             symbol = row.get("symbol", "").strip()
             if not symbol:
+                continue
+            if not is_tier1_or_validated(symbol):
                 continue
             if row.get("layer8_risk", "").strip().upper() == "BLOCKED":
                 continue

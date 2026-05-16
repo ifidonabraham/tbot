@@ -20,6 +20,7 @@ from adaptive_weights import adaptive_weights_for_mode
 from fundamentals import evaluate_fundamentals
 from gemini_ai import ai_enabled, evaluate_candle_pattern, evaluate_fundamental_bias, summarize_funnel_status
 from news_sentiment import evaluate_news
+from symbol_quality import is_tier1_or_validated
 
 try:
     import MetaTrader5 as mt5
@@ -1655,6 +1656,9 @@ def layer_scores(candidate: Candidate) -> dict[str, float]:
 
 
 def finalize_candidate(candidate: Candidate) -> Candidate | None:
+    if not is_tier1_or_validated(candidate.symbol):
+        candidate.composite_reason = "blocked by Tier 1 symbol quality gate"
+        return None
     candidate = apply_layer6(candidate)
     candidate = apply_layer7(candidate)
     candidate = apply_layer8(candidate)
@@ -1931,6 +1935,12 @@ def validate_env() -> int:
         "AI_USE_FOR_LAYER8",
         "AI_MAX_CALLS_PER_RUN",
         "FUNNEL_EXPAND_FOREX_UNIVERSE",
+        "SCALPER_TIER1_GATE_ENABLED",
+        "SCALPER_TIER1_SYMBOLS",
+        "SYMBOL_QUALITY_MIN_TRADES",
+        "SYMBOL_QUALITY_MIN_WIN_RATE",
+        "SYMBOL_QUALITY_MIN_NET_PNL",
+        "SYMBOL_QUALITY_TRADE_LOG_PATH",
         "FUNNEL_MAX_RANGE_CANDIDATES",
         "NVIDIA_BASE_URL",
         "NVIDIA_MODEL",
