@@ -48,6 +48,7 @@ from config import (
     QUOTE_ASSET,
     MT5_ACCOUNT_MODE,
     VOLUME_MIN_RATIO,
+    TRADE_AMOUNT,
 )
 from strategy import directional_exit_momentum_score, exit_momentum_score, volume_ratio
 
@@ -136,6 +137,15 @@ def reserve_amount(quote_balance):
 
 
 def calculate_trade_amount(price, quote_balance, contract_size=CONTRACT_SIZE):
+    if BROKER == "exness_mt5":
+        if quote_balance <= reserve_amount(quote_balance):
+            return 0.0
+        amount = min(TRADE_AMOUNT, MAX_TRADE_AMOUNT)
+        amount = _round_down_to_step(amount)
+        if amount < MIN_TRADE_AMOUNT:
+            return 0.0
+        return amount
+
     deployable_quote = max(0.0, quote_balance - reserve_amount(quote_balance))
     risk_quote = deployable_quote * POSITION_RISK_FRACTION
     cost_per_unit = price * contract_size * (1 + TAKER_FEE_RATE + SLIPPAGE_RATE)

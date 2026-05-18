@@ -514,6 +514,11 @@ def local_prefilter_rank(candidate: Candidate) -> float:
     return score
 
 
+def layer1_broad_score(candidate: Candidate) -> float:
+    """Broad Layer 1 score for ranking, not a hard pass/fail gate."""
+    return max(0.0, min(100.0, local_prefilter_rank(candidate)))
+
+
 def current_spread_percent(symbol: str) -> float | None:
     if mt5 is None:
         return None
@@ -797,7 +802,32 @@ def apply_layer2(candidate: Candidate) -> Candidate | None:
         candidate.layer2_reason = "passed: sell candidate near tested resistance"
         return candidate
 
-    candidate.layer2_reason = "eliminated: ranging after Layer 1"
+    near_support = (
+        support is not None
+        and support.tests >= min_tests
+        and candidate.support_distance_percent is not None
+        and candidate.support_distance_percent <= max_distance
+    )
+    near_resistance = (
+        resistance is not None
+        and resistance.tests >= min_tests
+        and candidate.resistance_distance_percent is not None
+        and candidate.resistance_distance_percent <= max_distance
+    )
+    if near_support or near_resistance:
+        levels = []
+        if near_support:
+            levels.append(
+                f"support tests={support.tests} distance={candidate.support_distance_percent:.4f}%"
+            )
+        if near_resistance:
+            levels.append(
+                f"resistance tests={resistance.tests} distance={candidate.resistance_distance_percent:.4f}%"
+            )
+        candidate.layer2_reason = "passed: ranging candidate near tested " + " and ".join(levels)
+        return candidate
+
+    candidate.layer2_reason = "eliminated: ranging symbol not near tested support/resistance"
     return None
 
 
@@ -1609,8 +1639,8 @@ def apply_layer8(candidate: Candidate) -> Candidate:
 
 
 def layer_scores(candidate: Candidate) -> dict[str, float]:
-    layer1 = 75.0 if candidate.state in {TRENDING_UP, TRENDING_DOWN} else 50.0
-    if candidate.agreement > 1:
+    layer1 = candidate.layer1_score if candidate.layer1_score > 0 else 75.0 if candidate.state in {TRENDING_UP, TRENDING_DOWN} else 50.0
+    if candidate.agreement > 1 and candidate.layer1_score <= 0:
         layer1 = min(100.0, layer1 + 10.0 * (candidate.agreement - 1))
 
     distances = [
@@ -1622,8 +1652,6 @@ def layer_scores(candidate: Candidate) -> dict[str, float]:
     if candidate.layer2_reason.startswith("passed"):
         nearest = min(distances) if distances else 0.5
         layer2 = max(50.0, 100.0 - nearest * 100.0)
-    elif candidate.layer5_state in {RANGE_BUY, RANGE_SELL}:
-        layer2 = 70.0
 
     layer3 = 0.0
     if candidate.layer3_state == HIGH_PRIORITY:
@@ -2197,6 +2225,7 @@ def main() -> int:
     candidates: list[Candidate] = []
     processed_symbols = universe if local_prefilter_all and mt5_ready else universe[:max_external]
     local_layer1_candidates: list[Candidate] = []
+    local_layer1_pool: list[Candidate] = []
     local_range_candidates: list[Candidate] = []
     local_prefilter_processed = 0
     external_processed = 0
@@ -2224,28 +2253,22 @@ def main() -> int:
                 print(f"{symbol}: MT5_PREFILTER_ERROR {exc}")
                 continue
             local_prefilter_processed += 1
-            print(f"{symbol}: MT5_{local_candidate.state} agreement={local_candidate.agreement}")
+            local_candidate.layer1_score = layer1_broad_score(local_candidate)
+            print(
+                f"{symbol}: MT5_{local_candidate.state} "
+                f"agreement={local_candidate.agreement} layer1_score={local_candidate.layer1_score:.2f}"
+            )
+            local_layer1_pool.append(local_candidate)
             if local_candidate.state != RANGING:
                 local_layer1_candidates.append(local_candidate)
             else:
                 local_range_candidates.append(local_candidate)
 
+        local_layer1_pool = sorted(local_layer1_pool, key=local_prefilter_rank, reverse=True)
         local_layer1_candidates = sorted(local_layer1_candidates, key=local_prefilter_rank, reverse=True)
         local_range_candidates = sorted(local_range_candidates, key=local_prefilter_rank, reverse=True)
-        external_symbols = local_layer1_candidates[:max_external]
-        range_limit = env_int("FUNNEL_MAX_RANGE_CANDIDATES", max_external)
-        for local_candidate in local_range_candidates[:range_limit]:
-            if budget.expired():
-                print(f"TIME_BUDGET_STOP range layer after {budget.seconds:.1f}s")
-                break
-            layer5_processed += 1
-            layer5_candidate = apply_layer5(local_candidate)
-            if layer5_candidate is not None:
-                final_candidate = finalize_candidate(layer5_candidate, enforce_min_score=False)
-                if final_candidate is not None:
-                    candidates.append(final_candidate)
-                    layer5_confirmed += 1
-                    print(f"{local_candidate.symbol}: Layer5 {final_candidate.layer5_state} score={final_candidate.composite_score:.2f} {final_candidate.layer5_reason}")
+        layer2_pool_size = env_int("FUNNEL_LAYER2_POOL_SIZE", max_external)
+        external_symbols = local_layer1_pool[:layer2_pool_size]
     else:
         external_symbols = []
 
@@ -2271,30 +2294,36 @@ def main() -> int:
             print(f"{symbol}: ERROR {exc}")
             continue
         print(f"{symbol}: {candidate.state} agreement={candidate.agreement}")
-        if candidate.state == RANGING:
-            layer5_processed += 1
-            layer5_candidate = apply_layer5(candidate)
-            if layer5_candidate is not None:
-                final_candidate = finalize_candidate(layer5_candidate, enforce_min_score=False)
-                if final_candidate is not None:
-                    candidates.append(final_candidate)
-                    layer5_confirmed += 1
-                    print(f"{symbol}: Layer5 {final_candidate.layer5_state} score={final_candidate.composite_score:.2f} {final_candidate.layer5_reason}")
-            else:
-                print(f"{symbol}: Layer5 FAIL {candidate.layer5_reason}")
-            continue
-
         external_ok = any(
             trend.source != "MT5" and trend.state == candidate.state
             for trend in candidate.sources
         )
-        if candidate.state != RANGING and candidate.agreement >= effective_min_agreement and (external_ok or not require_external):
+        layer1_allowed = candidate.agreement >= effective_min_agreement and (external_ok or not require_external)
+        if candidate.state == RANGING:
+            layer1_allowed = candidate.layer1_score >= env_float("FUNNEL_LAYER1_MIN_SCORE_FOR_LAYER2", 45.0)
+
+        if layer1_allowed:
             layer1_passed += 1
             layer2_processed += 1
             layer2_candidate = apply_layer2(candidate)
             if layer2_candidate is not None:
                 layer2_confirmed += 1
                 print(f"{symbol}: Layer2 PASS {layer2_candidate.layer2_reason}")
+                if layer2_candidate.state == RANGING:
+                    layer5_processed += 1
+                    layer5_candidate = apply_layer5(layer2_candidate)
+                    if layer5_candidate is not None:
+                        final_candidate = finalize_candidate(layer5_candidate, enforce_min_score=False)
+                        if final_candidate is not None:
+                            candidates.append(final_candidate)
+                            layer5_confirmed += 1
+                            print(
+                                f"{symbol}: Layer5 {final_candidate.layer5_state} "
+                                f"score={final_candidate.composite_score:.2f} {final_candidate.layer5_reason}"
+                            )
+                    else:
+                        print(f"{symbol}: Layer5 FAIL {layer2_candidate.layer5_reason}")
+                    continue
                 layer3_processed += 1
                 layer3_candidate = apply_layer3(layer2_candidate)
                 if layer3_candidate is not None:
@@ -2353,8 +2382,9 @@ def main() -> int:
     print(f"Universe gathered: {len(universe)}")
     print(f"Layer 1 processed: {local_prefilter_processed if local_prefilter_all and mt5_ready else len(processed_symbols)}")
     if local_prefilter_all and mt5_ready:
-        print(f"Layer 1 MT5 prefilter passed: {len(local_layer1_candidates)}")
-        print(f"Layer 1 MT5 ranging pool: {len(local_range_candidates)}")
+        print(f"Layer 1 broad pool: {len(local_layer1_pool)}")
+        print(f"Layer 1 strict trend count: {len(local_layer1_candidates)}")
+        print(f"Layer 1 range count: {len(local_range_candidates)}")
         print(f"External confirmation selected: {len(scan_items)}")
         print(f"External confirmation processed: {external_processed}")
     print(f"Layer 1 passed: {layer1_passed}")
