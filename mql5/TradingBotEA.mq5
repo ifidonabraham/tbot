@@ -15,8 +15,8 @@ const int BOT_MAX_POSITIONS_PER_SYMBOL = 3;
 const int BOT_MAX_CURRENCY_EXPOSURE = 3;
 const double BOT_MAX_SPREAD_PERCENT = 0.045;
 const double BOT_MAX_LOSS_MONEY_PER_POSITION = 0.08;
-const double BOT_SESSION_LOSS_STOP = 0.08;
-const bool BOT_PAUSE_WHEN_SESSION_NEGATIVE = true;
+const double BOT_SESSION_LOSS_STOP = 0.0;
+const bool BOT_PAUSE_WHEN_SESSION_NEGATIVE = false;
 
 input string InpWatchlist = "EURUSD,GBPUSD,USDJPY,USDCAD,AUDUSD,EURGBP,NZDUSD,EURJPY,GBPJPY,EURGBP,AUDJPY,CADJPY,CHFJPY,NZDJPY,EURCHF,EURAUD,EURNZD,EURCAD,GBPAUD,GBPCAD,GBPCHF,GBPNZD,AUDCAD,AUDCHF,AUDNZD,NZDCAD,NZDCHF,CADCHF,XAUUSD,XAGUSD";
 input bool InpUseMarketWatchSymbols = false;
@@ -31,12 +31,12 @@ input bool InpResetMemoryOnStart = true;
 input bool InpSingleInstance = true;
 input bool InpResetDailyPnlOnStart = true;
 
-input double InpMinimumUsableScore = 75.0;
-input double InpMinimumDirectionalEdge = 30.0;
-input int InpMaxNewPositionsPerScan = 1;
-input int InpMaxOpenPositions = 2;
-input int InpMaxPositionsPerSymbol = 1;
-input int InpMaxCurrencyExposure = 1;
+input double InpMinimumUsableScore = 57.0;
+input double InpMinimumDirectionalEdge = 20.0;
+input int InpMaxNewPositionsPerScan = 10;
+input int InpMaxOpenPositions = 12;
+input int InpMaxPositionsPerSymbol = 3;
+input int InpMaxCurrencyExposure = 3;
 input int InpEntryScanSeconds = 2;
 input int InpStartupWarmupSeconds = 30;
 
@@ -52,8 +52,8 @@ input double InpMaxBrokerStopLossMoney = 0.25;
 input int InpMaxHoldSeconds = 180;
 input int InpMinimumProfitHoldSeconds = 30;
 
-input double InpMaxDailyLossMoney = 5.0;
-input double InpMaxDailyLossPercent = 20.0;
+input double InpMaxDailyLossMoney = 0.0;
+input double InpMaxDailyLossPercent = 0.0;
 
 input bool InpEnableLayer1TrendFunnel = true;
 input int InpLayer1AdxPeriod = 14;

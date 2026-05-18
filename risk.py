@@ -115,6 +115,11 @@ def position_pnl(position, current_price, broker_profit=None):
             return pnl, pnl_percent, close_value
         except (TypeError, ValueError):
             pass
+    if BROKER == "exness_mt5" and not PAPER_TRADING:
+        # MT5 forex/CFD positions are margin contracts. If the broker profit
+        # snapshot is temporarily unavailable, do not fall back to spot-style
+        # notional math because JPY/cross pairs can produce impossible PnL.
+        return 0.0, 0.0, position.get("entry_total_cost", 0.0)
     close_value = estimate_close_value(position, current_price)
     pnl = close_value - position["entry_total_cost"]
     pnl_percent = net_profit_percent(position["entry_total_cost"], close_value)

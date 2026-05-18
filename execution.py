@@ -218,7 +218,13 @@ def sell_position(exchange, state, position, price, reason):
         raise RuntimeError("Live trading is locked. Enable PAPER_TRADING=false and set LIVE_TRADING_CONFIRMATION.")
 
     if hasattr(exchange, "close_position") and ticket:
-        order = exchange.close_position(symbol, amount, ticket, entry_side)
+        try:
+            order = exchange.close_position(symbol, amount, ticket, entry_side)
+        except Exception:
+            if hasattr(exchange, "position_profit") and exchange.position_profit(ticket) is None:
+                order = {"already_closed": True, "ticket": ticket}
+            else:
+                raise
     else:
         order = exchange.create_market_buy_order(symbol, amount) if entry_side == "SELL" else exchange.create_market_sell_order(symbol, amount)
     state.close_position(position["id"], proceeds)

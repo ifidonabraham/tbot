@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import csv
 import argparse
+import atexit
 import json
 import os
 import lzma
 import struct
 import time
+import builtins
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -26,6 +28,12 @@ try:
     import MetaTrader5 as mt5
 except ImportError:  # pragma: no cover - lets the scanner run without MT5 installed.
     mt5 = None
+
+
+def print(*args, **kwargs) -> None:  # type: ignore[override]
+    """Keep long background scans observable when stdout is redirected."""
+    kwargs.setdefault("flush", True)
+    builtins.print(*args, **kwargs)
 
 
 TRENDING_UP = "TRENDING_UP"
@@ -142,6 +150,48 @@ def env_float(name: str, default: float) -> float:
         return default
 
 
+def csv_row_count(path: Path) -> int:
+    if not path.exists():
+        return 0
+    try:
+        with path.open("r", newline="", encoding="utf-8") as handle:
+            return max(0, sum(1 for _ in handle) - 1)
+    except OSError:
+        return 0
+
+
+def acquire_scan_lock() -> tuple[int | None, Path]:
+    lock_path = Path(os.getenv("FUNNEL_SCAN_LOCK_PATH", "data/funnel_scan.lock"))
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    stale_seconds = env_float("FUNNEL_SCAN_LOCK_STALE_SECONDS", 3600.0)
+    if lock_path.exists() and stale_seconds > 0:
+        try:
+            age = time.time() - lock_path.stat().st_mtime
+            if age > stale_seconds:
+                lock_path.unlink()
+        except OSError:
+            pass
+    try:
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError:
+        print(f"Another funnel scan is already running: {lock_path}")
+        return None, lock_path
+    os.write(fd, str(os.getpid()).encode("ascii", errors="ignore"))
+    return fd, lock_path
+
+
+def release_scan_lock(fd: int | None, lock_path: Path) -> None:
+    if fd is not None:
+        try:
+            os.close(fd)
+        except OSError:
+            pass
+    try:
+        lock_path.unlink()
+    except OSError:
+        pass
+
+
 @dataclass
 class RuntimeBudget:
     seconds: float
@@ -154,6 +204,9 @@ class RuntimeBudget:
         if self.seconds <= 0:
             return float("inf")
         return max(0.0, self.seconds - (time.monotonic() - self.started_at))
+
+    def elapsed(self) -> float:
+        return time.monotonic() - self.started_at
 
 
 def http_timeout(default: float = 10.0) -> float:
@@ -280,6 +333,9 @@ def mt5_rates(symbol: str, timeframe: int, count: int = 260) -> pd.DataFrame:
     if mt5 is None:
         return pd.DataFrame()
     try:
+        info = mt5.symbol_info(symbol)
+        if info is None:
+            return pd.DataFrame()
         mt5.symbol_select(symbol, True)
         rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, count)
     except Exception:
@@ -493,6 +549,9 @@ def symbol_candidate(symbol: str, use_mt5: bool, use_alpha: bool, use_massive: b
 def mt5_layer1_candidate(symbol: str) -> Candidate:
     if mt5 is None:
         return Candidate(symbol, RANGING, 0, [SourceTrend("MT5", RANGING, "MT5 unavailable")])
+    info = mt5.symbol_info(symbol)
+    if info is None:
+        return Candidate(symbol, RANGING, 0, [SourceTrend("MT5", RANGING, "symbol not available in MT5")])
     trend = source_trend("MT5", mt5_rates(symbol, mt5.TIMEFRAME_H1), mt5_rates(symbol, mt5.TIMEFRAME_H4))
     agreement = 1 if trend.state != RANGING else 0
     return Candidate(symbol, trend.state, agreement, [trend])
@@ -547,7 +606,9 @@ def externally_confirm_candidate(candidate: Candidate, use_alpha: bool, use_mass
         trends.append(source_trend("MASSIVE", massive_rates(candidate.symbol)))
 
     agreement = sum(1 for trend in trends if trend.state == candidate.state)
-    return Candidate(candidate.symbol, candidate.state, agreement, trends)
+    confirmed = Candidate(candidate.symbol, candidate.state, agreement, trends)
+    confirmed.layer1_score = candidate.layer1_score
+    return confirmed
 
 
 def support_resistance_frame(symbol: str) -> pd.DataFrame:
@@ -1853,6 +1914,14 @@ def rank_candidates_by_expected_value(candidates: list[Candidate]) -> list[Candi
 
 
 def write_candidates(candidates: list[Candidate], output_path: Path) -> None:
+    if env_bool("FUNNEL_PREVENT_SMALLER_CANDIDATE_OVERWRITE", True):
+        existing_count = csv_row_count(output_path)
+        if existing_count > 0 and len(candidates) < existing_count:
+            print(
+                "SKIP_SMALLER_CANDIDATE_WRITE "
+                f"new={len(candidates)} existing={existing_count} path={output_path}"
+            )
+            return
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
@@ -2291,6 +2360,10 @@ def main() -> int:
         return health_check()
 
     load_dotenv()
+    lock_fd, lock_path = acquire_scan_lock()
+    if lock_fd is None:
+        return 2
+    atexit.register(release_scan_lock, lock_fd, lock_path)
     max_symbols = env_int("FUNNEL_MAX_SYMBOLS", 200)
     max_external = env_int("FUNNEL_MAX_EXTERNAL_SYMBOLS", 25)
     min_agreement = env_int("FUNNEL_MIN_SOURCE_AGREEMENT", 2)
@@ -2335,6 +2408,26 @@ def main() -> int:
     layer4_wait = 0
     layer5_processed = 0
     layer5_confirmed = 0
+    prefilter_seconds = env_float("FUNNEL_LAYER1_PREFILTER_SECONDS", min(360.0, max(60.0, budget.seconds * 0.25)))
+    prefilter_min_symbols = env_int("FUNNEL_LAYER1_PREFILTER_MIN_SYMBOLS", 250)
+    prefilter_progress_every = max(1, env_int("FUNNEL_LAYER1_PROGRESS_EVERY", 25))
+    verbose_prefilter = env_bool("FUNNEL_VERBOSE_LAYER1_PREFILTER", False)
+    target_candidates = env_int("FUNNEL_TARGET_CANDIDATES", 40)
+    min_layer2_before_target_stop = env_int("FUNNEL_MIN_LAYER2_BEFORE_TARGET_STOP", 80)
+    max_layer2_processed = env_int("FUNNEL_MAX_LAYER2_PROCESSED", 160)
+    checkpoint_every = env_int("FUNNEL_CHECKPOINT_EVERY_CANDIDATES", 5)
+    output = Path(os.getenv("FUNNEL_OUTPUT_PATH", "data/layer1_candidates.csv"))
+    last_checkpoint_count = 0
+
+    def checkpoint(reason: str, *, force: bool = False) -> None:
+        nonlocal last_checkpoint_count
+        if not candidates:
+            return
+        if not force and checkpoint_every > 0 and len(candidates) - last_checkpoint_count < checkpoint_every:
+            return
+        write_candidates(rank_candidates_by_expected_value(candidates), output)
+        last_checkpoint_count = len(candidates)
+        print(f"CHECKPOINT {reason}: wrote {len(candidates)} candidates -> {output}")
 
     if local_prefilter_all and mt5_ready:
         print("Layer 1 local prefilter: scanning full MT5 universe before ranking/external confirmation")
@@ -2342,22 +2435,45 @@ def main() -> int:
             if budget.expired():
                 print(f"TIME_BUDGET_STOP layer1 prefilter after {budget.seconds:.1f}s")
                 break
+            if (
+                prefilter_seconds > 0
+                and budget.elapsed() >= prefilter_seconds
+                and local_prefilter_processed >= prefilter_min_symbols
+            ):
+                print(
+                    "LAYER1_PREFILTER_HANDOFF "
+                    f"after {budget.elapsed():.1f}s and {local_prefilter_processed} symbols; "
+                    "reserving remaining budget for deeper layers"
+                )
+                break
             try:
+                if verbose_prefilter:
+                    print(f"{symbol}: MT5_PREFILTER_START")
                 local_candidate = mt5_layer1_candidate(symbol)
             except Exception as exc:
                 print(f"{symbol}: MT5_PREFILTER_ERROR {exc}")
                 continue
             local_prefilter_processed += 1
             local_candidate.layer1_score = layer1_broad_score(local_candidate)
-            print(
-                f"{symbol}: MT5_{local_candidate.state} "
-                f"agreement={local_candidate.agreement} layer1_score={local_candidate.layer1_score:.2f}"
-            )
+            if verbose_prefilter:
+                print(
+                    f"{symbol}: MT5_{local_candidate.state} "
+                    f"agreement={local_candidate.agreement} layer1_score={local_candidate.layer1_score:.2f}"
+                )
             local_layer1_pool.append(local_candidate)
             if local_candidate.state != RANGING:
                 local_layer1_candidates.append(local_candidate)
             else:
                 local_range_candidates.append(local_candidate)
+            if local_prefilter_processed % prefilter_progress_every == 0:
+                print(
+                    "Layer1 prefilter progress: "
+                    f"processed={local_prefilter_processed} "
+                    f"broad={len(local_layer1_pool)} "
+                    f"trend={len(local_layer1_candidates)} "
+                    f"range={len(local_range_candidates)} "
+                    f"elapsed={budget.elapsed():.1f}s"
+                )
 
         local_layer1_pool = sorted(local_layer1_pool, key=local_prefilter_rank, reverse=True)
         local_layer1_candidates = sorted(local_layer1_candidates, key=local_prefilter_rank, reverse=True)
@@ -2371,6 +2487,19 @@ def main() -> int:
     for item in scan_items:
         if budget.expired():
             print(f"TIME_BUDGET_STOP external/layer scan after {budget.seconds:.1f}s")
+            break
+        if max_layer2_processed > 0 and layer2_processed >= max_layer2_processed:
+            print(f"LAYER_SCAN_STOP max layer2 processed reached: {layer2_processed}")
+            break
+        if (
+            target_candidates > 0
+            and len(candidates) >= target_candidates
+            and layer2_processed >= min_layer2_before_target_stop
+        ):
+            print(
+                "LAYER_SCAN_STOP target candidates reached: "
+                f"candidates={len(candidates)} layer2_processed={layer2_processed}"
+            )
             break
         if budget.remaining() < env_float("FUNNEL_MIN_REMAINING_FOR_EXTERNAL_SECONDS", 5.0):
             print("TIME_BUDGET_STOP not enough remaining time for another external/layer pass")
@@ -2412,6 +2541,7 @@ def main() -> int:
                         if final_candidate is not None:
                             candidates.append(final_candidate)
                             layer5_confirmed += 1
+                            checkpoint("layer5")
                             print(
                                 f"{symbol}: Layer5 {final_candidate.layer5_state} "
                                 f"score={final_candidate.composite_score:.2f} {final_candidate.layer5_reason}"
@@ -2435,6 +2565,7 @@ def main() -> int:
                             print(f"{symbol}: Scorer FAIL composite below threshold")
                             continue
                         candidates.append(final_candidate)
+                        checkpoint("layer4")
                         if final_candidate.layer4_state == PULLBACK_CONFIRMED:
                             layer4_confirmed += 1
                         elif final_candidate.layer4_state == PULLBACK_WAIT:
@@ -2451,6 +2582,7 @@ def main() -> int:
                             final_candidate = finalize_candidate(fallback_candidate, enforce_min_score=False)
                             if final_candidate is not None:
                                 candidates.append(final_candidate)
+                                checkpoint("layer4_after_layer3_fail")
                                 if final_candidate.layer4_state == PULLBACK_CONFIRMED:
                                     layer4_confirmed += 1
                                 elif final_candidate.layer4_state == PULLBACK_WAIT:
@@ -2465,14 +2597,15 @@ def main() -> int:
                     fallback_candidate = finalize_candidate(candidate, enforce_min_score=False)
                     if fallback_candidate is not None:
                         candidates.append(fallback_candidate)
+                        checkpoint("layer2_fallback")
                         print(
                             f"{symbol}: Funnel handoff kept after Layer2 fail "
                             f"score={fallback_candidate.composite_score:.2f}"
                         )
 
-    output = Path(os.getenv("FUNNEL_OUTPUT_PATH", "data/layer1_candidates.csv"))
     candidates = rank_candidates_by_expected_value(candidates)
     write_candidates(candidates, output)
+    checkpoint("final", force=True)
     print("---- Funnel summary ----")
     print(f"Universe gathered: {len(universe)}")
     print(f"Layer 1 processed: {local_prefilter_processed if local_prefilter_all and mt5_ready else len(processed_symbols)}")
@@ -2505,6 +2638,8 @@ def main() -> int:
 
     if mt5_ready:
         mt5.shutdown()
+    release_scan_lock(lock_fd, lock_path)
+    atexit.unregister(release_scan_lock)
     return 0
 
 

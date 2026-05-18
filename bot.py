@@ -1,5 +1,8 @@
 import logging
+import os
+import subprocess
 import time
+from pathlib import Path
 
 from config import (
     BASE_ASSET,
@@ -22,6 +25,7 @@ from funnel_candidates import (
     FUNNEL_FALLBACK_TO_WATCHLIST,
     FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT,
     FUNNEL_TOP_N,
+    FUNNEL_OUTPUT_PATH,
     USE_FUNNEL_CANDIDATES,
     load_funnel_candidates,
 )
@@ -46,6 +50,64 @@ logging.basicConfig(
         logging.StreamHandler(),
     ],
 )
+
+
+def _env_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_float(name, default):
+    value = os.getenv(name)
+    if value is None or value.strip() == "":
+        return default
+    return float(value)
+
+
+FUNNEL_AUTO_REFRESH = _env_bool("FUNNEL_AUTO_REFRESH", True)
+FUNNEL_REFRESH_TIMEOUT_SECONDS = _env_float("FUNNEL_REFRESH_TIMEOUT_SECONDS", 600.0)
+FUNNEL_LIVE_MIN_SCORE = _env_float("FUNNEL_LIVE_MIN_SCORE", 57.0)
+FUNNEL_HARD_SIDE_CONFLICT = _env_float("FUNNEL_HARD_SIDE_CONFLICT", 15.0)
+_last_funnel_refresh_attempt = 0.0
+
+
+def _refresh_funnel_candidates_if_needed(reason):
+    global _last_funnel_refresh_attempt
+    if not FUNNEL_AUTO_REFRESH:
+        return
+
+    now = time.monotonic()
+    min_gap = max(30.0, _env_float("FUNNEL_REFRESH_MIN_GAP_SECONDS", 120.0))
+    if now - _last_funnel_refresh_attempt < min_gap:
+        return
+    _last_funnel_refresh_attempt = now
+
+    logging.warning("Refreshing market funnel before scalping because %s.", reason)
+    try:
+        result = subprocess.run(
+            [str(Path("venv") / "Scripts" / "python.exe"), "market_funnel.py"],
+            cwd=Path(__file__).resolve().parent,
+            capture_output=True,
+            text=True,
+            timeout=FUNNEL_REFRESH_TIMEOUT_SECONDS,
+        )
+        stdout_tail = "\n".join((result.stdout or "").splitlines()[-20:])
+        stderr_tail = "\n".join((result.stderr or "").splitlines()[-20:])
+        if result.returncode != 0:
+            logging.error(
+                "Market funnel refresh failed with code %s.\nSTDOUT:\n%s\nSTDERR:\n%s",
+                result.returncode,
+                stdout_tail,
+                stderr_tail,
+            )
+            return
+        logging.info("Market funnel refresh completed.\n%s", stdout_tail)
+    except subprocess.TimeoutExpired:
+        logging.error("Market funnel refresh timed out after %.0f seconds.", FUNNEL_REFRESH_TIMEOUT_SECONDS)
+    except Exception as exc:
+        logging.exception("Market funnel refresh failed: %s", exc)
 
 
 def _broker_profit(exchange, position):
@@ -230,6 +292,14 @@ def _scan_markets(exchange, state, quote_balance):
     symbols = WATCHLIST
     if USE_FUNNEL_CANDIDATES:
         funnel_candidates = load_funnel_candidates(limit=FUNNEL_TOP_N)
+        if not funnel_candidates:
+            csv_path = Path(FUNNEL_OUTPUT_PATH)
+            reason = "candidate file is missing"
+            if csv_path.exists():
+                age = time.time() - csv_path.stat().st_mtime
+                reason = f"candidate file is stale or filtered out; age={age:.0f}s"
+            _refresh_funnel_candidates_if_needed(reason)
+            funnel_candidates = load_funnel_candidates(limit=FUNNEL_TOP_N)
         funnel_by_symbol = {candidate.symbol: candidate for candidate in funnel_candidates}
         if funnel_candidates:
             symbols = list(dict.fromkeys(
@@ -309,6 +379,7 @@ def _scan_markets(exchange, state, quote_balance):
                 **item,
                 "side": side,
                 "score": score,
+                "entry_threshold": active_threshold,
                 "details": details,
                 "blockers": entry_blockers(
                     state,
@@ -322,6 +393,7 @@ def _scan_markets(exchange, state, quote_balance):
             }
             if item.get("funnel_score") is not None:
                 side_item["score"] = score
+                side_item["entry_threshold"] = max(active_threshold, FUNNEL_LIVE_MIN_SCORE)
                 side_item["strategy_type"] = "FUNNEL_SCALP"
                 side_item["details"] = {
                     **details,
@@ -332,7 +404,7 @@ def _scan_markets(exchange, state, quote_balance):
                     "funnel_layer8_risk": item.get("funnel_layer8_risk", ""),
                     "funnel_expected_net_value": item.get("funnel_expected_net_value", 0.0),
                 }
-                if opposite_score - score > FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT:
+                if opposite_score - score > FUNNEL_HARD_SIDE_CONFLICT:
                     side_item["blockers"] = [
                         *side_item["blockers"],
                         (
@@ -347,7 +419,7 @@ def _scan_markets(exchange, state, quote_balance):
     tradable = [
         item
         for item in directional_candidates
-        if item["score"] >= active_threshold
+        if item["score"] >= item.get("entry_threshold", active_threshold)
         and item["details"].get("confirmed", True)
         and not item["blockers"]
         and item["amount"] > 0
@@ -355,13 +427,14 @@ def _scan_markets(exchange, state, quote_balance):
     for item in directional_candidates:
         if item.get("strategy_type") == "STAT_ARB":
             continue
-        if item["score"] >= active_threshold or item.get("funnel_score") is not None:
+        item_threshold = item.get("entry_threshold", active_threshold)
+        if item["score"] >= item_threshold or item.get("funnel_score") is not None:
             logging.info(
                 "Entry gate %s %s | Score: %.2f/%.2f | Confirmed: %s | Amount: %.8f | Blockers: %s",
                 item["symbol"],
                 item["side"],
                 item["score"],
-                active_threshold,
+                item_threshold,
                 item["details"].get("confirmed", True),
                 item["amount"],
                 "; ".join(item["blockers"]) if item["blockers"] else "none",

@@ -1,261 +1,72 @@
 {
   "alpha_news:AUD:72": {
-    "timestamp": 1778892230.316201,
+    "timestamp": 1779122974.8291357,
     "value": [
       {
-        "authors": [
-          "Investing.com"
-        ],
-        "banner_image": "https://i-invdn-com.investing.com/news/moved_LYNXMPEM470KO_L.jpg",
-        "category_within_source": "General",
-        "overall_sentiment_label": "Neutral",
-        "overall_sentiment_score": 0.044652,
-        "source": "Investing.com",
-        "source_domain": "Investing.com",
-        "summary": "Tractor Supply Company shareholders recently elected all nominated directors and approved Ernst & Young LLP as their independent auditor for the fiscal year ending December 26, 2026. This comes as the company's shares are trading near their 52-week low. The shareholders also gave a non-binding approval for the compensation of named executive officers, and Meg Ham was appointed to the Audit Committee.",
-        "ticker_sentiment": [
-          {
-            "relevance_score": "1.000000",
-            "ticker": "TSCO",
-            "ticker_sentiment_label": "Neutral",
-            "ticker_sentiment_score": "0.005535"
-          },
-          {
-            "relevance_score": "0.642376",
-            "ticker": "WBA",
-            "ticker_sentiment_label": "Neutral",
-            "ticker_sentiment_score": "0.049567"
-          }
-        ],
-        "time_published": "20260515T235731",
-        "title": "Tractor Supply shareholders elect board, approve auditor at annual meeting",
-        "topics": [
-          {
-            "relevance_score": "0.948727",
-            "topic": "earnings"
-          },
-          {
-            "relevance_score": "0.810980",
-            "topic": "financial_markets"
-          },
-          {
-            "relevance_score": "0.734901",
-            "topic": "retail_wholesale"
-          }
-        ],
-        "url": "https://www.investing.com/news/sec-filings/tractor-supply-shareholders-elect-board-approve-auditor-at-annual-meeting-93CH-4694280"
-      },
-      {
         "authors": [],
-        "banner_image": null,
+        "banner_image": "https://static.gurufocus.com/cdn-cgi/image/width=250,quality=100/2044672192502996992.png",
         "category_within_source": "General",
-        "overall_sentiment_label": "Bullish",
-        "overall_sentiment_score": 0.870219,
-        "source": "TradingView",
-        "source_domain": "TradingView",
-        "summary": "XOS reported record Q1 2026 revenue and gross margins, with improved operational efficiency primarily due to a strategic shift towards higher-margin Hub and powertrain products. The company reaffirmed its 2026 guidance, citing strong demand from both commercial and public sector clients and minimal capital expenditure requirements for growth. This positive outlook is based on their Q1 2026 audio transcript.",
+        "overall_sentiment_label": "Bearish",
+        "overall_sentiment_score": -0.840281,
+        "source": "GuruFocus",
+        "source_domain": "GuruFocus",
+        "summary": "Drip Coffee has filed a lawsuit against Kimco Realty, alleging fraudulent practices. The article from GuruFocus.com reports this legal action without providing further details on the specific nature of the fraud claims. The stock news item is part of a broader feed of financial and corporate news.",
         "ticker_sentiment": [
           {
             "relevance_score": "1.000000",
-            "ticker": "XOS",
-            "ticker_sentiment_label": "Bullish",
-            "ticker_sentiment_score": "0.878975"
+            "ticker": "KIM",
+            "ticker_sentiment_label": "Bearish",
+            "ticker_sentiment_score": "-0.819917"
           }
         ],
-        "time_published": "20260515T233910",
-        "title": "XOS: Record Q1 revenue and margins driven by Hub and powertrain growth, with strong 2026 outlook",
+        "time_published": "20260518T160652",
+        "title": "Drip Coffee Sues Kimco Realty for Fraudulent Practices",
         "topics": [
-          {
-            "relevance_score": "0.932802",
-            "topic": "earnings"
-          },
-          {
-            "relevance_score": "0.740133",
-            "topic": "energy_transportation"
-          }
-        ],
-        "url": "https://www.tradingview.com/news/urn:summary_document_transcript:quartr.com:3332144:0-xos-record-q1-revenue-and-margins-driven-by-hub-and-powertrain-growth-with-strong-2026-outlook/"
-      },
-      {
-        "authors": [
-          "Investing.com"
-        ],
-        "banner_image": "https://i-invdn-com.investing.com/news/moved_LYNXNPEL9F13D_L.jpg",
-        "category_within_source": "General",
-        "overall_sentiment_label": "Neutral",
-        "overall_sentiment_score": 0.033598,
-        "source": "Investing.com",
-        "source_domain": "Investing.com",
-        "summary": "Equinix (NASDAQ:EQIX) shareholders reelected all 10 directors to the board, approved executive compensation, and ratified PricewaterhouseCoopers LLP as the independent auditor for 2026. However, a proposal to lower the ownership threshold for calling a special meeting was rejected. This comes as the company also recently reported first-quarter 2026 financial results that fell below expectations due to a lease timing issue, though analysts maintain varied outlooks on the stock, some citing AI strength.",
-        "ticker_sentiment": [
           {
             "relevance_score": "1.000000",
-            "ticker": "EQIX",
-            "ticker_sentiment_label": "Neutral",
-            "ticker_sentiment_score": "0.028761"
+            "topic": "real_estate"
           }
         ],
-        "time_published": "20260515T232132",
-        "title": "Equinix shareholders reelect board, approve executive pay, reject special meeting proposal",
-        "topics": [
-          {
-            "relevance_score": "0.900439",
-            "topic": "earnings"
-          },
-          {
-            "relevance_score": "0.815169",
-            "topic": "finance"
-          }
-        ],
-        "url": "https://www.investing.com/news/sec-filings/equinix-shareholders-reelect-board-approve-executive-pay-reject-special-meeting-proposal-93CH-4694250"
-      },
-      {
-        "authors": [
-          "TipRanks Auto-Generated Newsdesk"
-        ],
-        "banner_image": "https://blog.tipranks.com/wp-content/uploads/2022/09/shutterstock_1061972606-750x406.jpg",
-        "category_within_source": "General",
-        "overall_sentiment_label": "Neutral",
-        "overall_sentiment_score": 0.140227,
-        "source": "TipRanks",
-        "source_domain": "TipRanks",
-        "summary": "Viatris Inc. shareholders approved key proposals at their 2026 annual meeting on May 15, electing thirteen director nominees, endorsing the 2025 executive compensation, and re-ratifying Deloitte & Touche LLP as the independent auditor for fiscal 2026. This reflects continuity in governance and financial oversight, with the company (VTRS) currently holding a \"Hold\" rating from analysts and a \"Neutral\" outlook from TipRanks' AI Analyst.",
-        "ticker_sentiment": [
-          {
-            "relevance_score": "1.000000",
-            "ticker": "VTRS",
-            "ticker_sentiment_label": "Neutral",
-            "ticker_sentiment_score": "0.136176"
-          }
-        ],
-        "time_published": "20260515T225412",
-        "title": "Viatris Shareholders Approve Directors, Pay and Auditor",
-        "topics": [
-          {
-            "relevance_score": "0.935357",
-            "topic": "earnings"
-          },
-          {
-            "relevance_score": "0.844995",
-            "topic": "life_sciences"
-          },
-          {
-            "relevance_score": "0.701565",
-            "topic": "finance"
-          },
-          {
-            "relevance_score": "0.612858",
-            "topic": "financial_markets"
-          }
-        ],
-        "url": "https://www.tipranks.com/news/company-announcements/viatris-shareholders-approve-directors-pay-and-auditor"
-      },
-      {
-        "authors": [
-          "TipRanks Auto-Generated Newsdesk"
-        ],
-        "banner_image": "https://blog.tipranks.com/wp-content/uploads/2023/06/shutterstock_1887015883-750x406.jpg",
-        "category_within_source": "General",
-        "overall_sentiment_label": "Somewhat-Bullish",
-        "overall_sentiment_score": 0.325106,
-        "source": "TipRanks",
-        "source_domain": "TipRanks",
-        "summary": "Equinix shareholders re-elected all ten director nominees, approved executive compensation, and ratified PwC as their auditor at the annual meeting on May 13, 2026. The strong shareholder turnout indicated broad engagement, though a proposal to lower the special meeting threshold was rejected. TipRanks\u2019 AI Analyst, Spark, rates EQIX as \"Outperform\" due to solid fundamentals and improving profitability, despite concerns about free-cash-flow conversion and valuation.",
-        "ticker_sentiment": [
-          {
-            "relevance_score": "1.000000",
-            "ticker": "EQIX",
-            "ticker_sentiment_label": "Somewhat-Bullish",
-            "ticker_sentiment_score": "0.302986"
-          }
-        ],
-        "time_published": "20260515T225332",
-        "title": "Equinix Shareholders Reelect Board, Back Executive Pay, Auditor",
-        "topics": [
-          {
-            "relevance_score": "0.912064",
-            "topic": "earnings"
-          },
-          {
-            "relevance_score": "0.816002",
-            "topic": "finance"
-          },
-          {
-            "relevance_score": "0.600085",
-            "topic": "technology"
-          },
-          {
-            "relevance_score": "0.718043",
-            "topic": "financial_markets"
-          }
-        ],
-        "url": "https://www.tipranks.com/news/company-announcements/equinix-shareholders-reelect-board-back-executive-pay-auditor"
+        "url": "https://www.gurufocus.com/news/8866689/drip-coffee-sues-kimco-realty-for-fraudulent-practices"
       }
     ]
   },
   "alpha_news:CAD:72": {
-    "timestamp": 1779114616.3689518,
+    "timestamp": 1779126975.3893266,
     "value": [
       {
-        "authors": [],
-        "banner_image": "https://app.accessnewswire.com/imagelibrary/2d918015-11db-4814-a811-db145275aaf0/1167715/1fa33ec7-6963-4b6d-822b-3d420b64746e.png",
+        "authors": [
+          "Christopher Yasiejko"
+        ],
+        "banner_image": "https://news-api.bloomberglaw.com/v1/resize-image?url=https%3A%2F%2Fbloomberg-bna-brightspot.s3.us-east-1.amazonaws.com%2Ff3%2F47%2F512629de44e3988363d888db286e%2F407180848.jpg&width=1240&height=480&fit=cover&crop=4000x1542%2B0%2B500",
         "category_within_source": "General",
-        "overall_sentiment_label": "Bullish",
-        "overall_sentiment_score": 0.490231,
-        "source": "ACCESS Newswire",
-        "source_domain": "ACCESS Newswire",
-        "summary": "This article shares the inspiring story of Bill Allison, an 81-year-old military veteran who received a heart transplant in 2009 after decades of smoking and two heart attacks. It highlights his life-changing decision to quit smoking and drinking, emphasizing the critical role of ongoing medical care and medication adherence, supported by CVS Specialty and his pharmacist, Amy Guard. The piece also underscores the profound impact of organ donation and encourages others to consider becoming donors and to listen to their healthcare teams.",
+        "overall_sentiment_label": "Somewhat-Bearish",
+        "overall_sentiment_score": -0.208474,
+        "source": "Bloomberg Law News",
+        "source_domain": "Bloomberg Law News",
+        "summary": "Cipla Ltd. has accused Gilead Sciences Inc. of misusing a patent lawsuit concerning Cipla's generic version of the HIV drug Descovy to circumvent a 2022 confidential settlement. Cipla denies Gilead's allegations that its new drug application infringes seven patents related to tenofovir alafenamide (TAF), one of Descovy's active ingredients, and claims Gilead has been executing a \"decades long product hopping strategy.\"",
         "ticker_sentiment": [
           {
             "relevance_score": "1.000000",
-            "ticker": "CVS",
-            "ticker_sentiment_label": "Bullish",
-            "ticker_sentiment_score": "0.462966"
+            "ticker": "GILD",
+            "ticker_sentiment_label": "Somewhat-Bearish",
+            "ticker_sentiment_score": "-0.223621"
           }
         ],
-        "time_published": "20260518T130800",
-        "title": "CVS Health: A Second Chance at Life Through Heart Transplant and Ongoing Care",
+        "time_published": "20260518T164538",
+        "title": "Cipla Flips Gilead\u2019s \u2018End Run\u2019 Claim in Descovy Patent Fight",
         "topics": [
           {
-            "relevance_score": "1.000000",
+            "relevance_score": "0.919718",
             "topic": "life_sciences"
           }
         ],
-        "url": "https://www.accessnewswire.com/newsroom/en/healthcare-and-pharmaceutical/cvs-health-a-second-chance-at-life-through-heart-transplant-and-ongoi-1167715"
-      },
-      {
-        "authors": [
-          "Karina Ioffee"
-        ],
-        "banner_image": "https://i0.wp.com/richmondside.org/wp-content/uploads/2026/05/webimage-apen_050626-3-XeBLOw.jpg.jpeg?fit=780%2C520&quality=100&ssl=1",
-        "category_within_source": "General",
-        "overall_sentiment_label": "Somewhat-Bearish",
-        "overall_sentiment_score": -0.317207,
-        "source": "Richmondside",
-        "source_domain": "Richmondside",
-        "summary": "The Asian Pacific Environmental Network (APEN), founded in Richmond three decades ago, has grown into a formidable three-office organization with 40 staff and nearly 1,000 members. APEN has achieved significant victories against Chevron, including a $550 million settlement for Richmond in 2024, and has been instrumental in advocating for environmental justice for historically marginalized communities like Laotian refugees. With new co-director Michelle Chan, APEN is now focusing on helping Richmond transition to a cleaner economy by collaborating with city leaders to wisely spend settlement funds and develop contingency plans for the eventual closure of fossil fuel refineries.",
-        "ticker_sentiment": [
-          {
-            "relevance_score": "0.996518",
-            "ticker": "CVX",
-            "ticker_sentiment_label": "Somewhat-Bearish",
-            "ticker_sentiment_score": "-0.331478"
-          }
-        ],
-        "time_published": "20260518T130023",
-        "title": "From helping Laotian refugees to fighting Chevron: How APEN became a Richmond environmental powerhouse",
-        "topics": [
-          {
-            "relevance_score": "0.939967",
-            "topic": "energy_transportation"
-          }
-        ],
-        "url": "https://richmondside.org/2026/05/18/richmond-environmental-powerhouse-apen/"
+        "url": "https://news.bloomberglaw.com/litigation/cipla-flips-gileads-end-run-claim-in-descovy-patent-fight"
       }
     ]
   },
   "alpha_news:CHF:72": {
-    "timestamp": 1778892303.3326182,
+    "timestamp": 1779128816.1222248,
     "value": []
   },
   "alpha_news:DKK:72": {
@@ -263,88 +74,137 @@
     "value": []
   },
   "alpha_news:EUR:72": {
-    "timestamp": 1779114602.9867241,
+    "timestamp": 1779122813.4623926,
     "value": [
       {
-        "authors": [],
-        "banner_image": null,
+        "authors": [
+          "Zacks Equity Research"
+        ],
+        "banner_image": "https://staticx-tuner.zacks.com/images/articles/charts/2c/160955.jpg?v=829941807",
         "category_within_source": "General",
-        "overall_sentiment_label": "Neutral",
-        "overall_sentiment_score": 0.01535,
-        "source": "TradingView",
-        "source_domain": "TradingView",
-        "summary": "Nordex SE has issued a notification of major holdings, as required by Article 40, Section 1 of the WpHG, announcing that BlackRock, Inc. has acquired/disposed of shares with voting rights. The notification details BlackRock's new total holding of 4.52% of voting rights in Nordex SE as of May 13, 2026, which includes direct shares and various financial instruments. The announcement provides a full chain of controlled undertakings under BlackRock, Inc.",
+        "overall_sentiment_label": "Somewhat-Bullish",
+        "overall_sentiment_score": 0.197837,
+        "source": "Zacks Investment Research",
+        "source_domain": "Zacks Investment Research",
+        "summary": "CVRx stock rose after Humana announced Medicare Advantage coverage for its Barostim therapy, effective May 1, 2026. This policy expands patient access to the heart failure treatment and covers both FDA-approved indications and patients in the BENEFIT-HF trial. The news follows other favorable reimbursement developments earlier in 2026 and is expected to strengthen CVRx's commercial position and drive future revenue growth in the neuromodulation devices market.",
         "ticker_sentiment": [
           {
-            "relevance_score": "0.982841",
-            "ticker": "BLK",
+            "relevance_score": "0.801465",
+            "ticker": "HUM",
+            "ticker_sentiment_label": "Somewhat-Bullish",
+            "ticker_sentiment_score": "0.349435"
+          },
+          {
+            "relevance_score": "0.648765",
+            "ticker": "ISRG",
             "ticker_sentiment_label": "Neutral",
-            "ticker_sentiment_score": "0.018570"
+            "ticker_sentiment_score": "0.121370"
+          },
+          {
+            "relevance_score": "0.561965",
+            "ticker": "CAH",
+            "ticker_sentiment_label": "Neutral",
+            "ticker_sentiment_score": "0.072678"
           }
         ],
-        "time_published": "20260518T135000",
-        "title": "Nordex SE: Release according to Article 40, Section 1 of the WpHG [the German Securities Trading Act] with the objective of Europe-wide distribution",
+        "time_published": "20260518T160445",
+        "title": "CVRx Stock Up on Humana's Medicare Coverage for Barostim Therapy",
         "topics": [
           {
-            "relevance_score": "0.921818",
-            "topic": "financial_markets"
+            "relevance_score": "0.918250",
+            "topic": "life_sciences"
+          },
+          {
+            "relevance_score": "0.820239",
+            "topic": "earnings"
           }
         ],
-        "url": "https://www.tradingview.com/news/eqs:138f91ae4094b:0-nordex-se-release-according-to-article-40-section-1-of-the-wphg-the-german-securities-trading-act-with-the-objective-of-europe-wide-distribution/"
+        "url": "https://www.zacks.com/stock/news/2922865/cvrx-stock-up-on-humanas-medicare-coverage-for-barostim-therapy"
       },
       {
         "authors": [
-          "Investing.com"
+          "Liz Kiesche"
         ],
-        "banner_image": "https://i-invdn-com.investing.com/news/LYNXNPEC0K08U_L.jpg",
+        "banner_image": "https://static.seekingalpha.com/cdn/s3/uploads/getty_images/1471694218/image_1471694218.jpg?io=getty-c-w630",
         "category_within_source": "General",
         "overall_sentiment_label": "Bullish",
-        "overall_sentiment_score": 0.366613,
-        "source": "Investing.com",
-        "source_domain": "Investing.com",
-        "summary": "Citigroup Inc. and HPS Investment Partners have launched a \u20ac15 billion Private Capital Program to offer private financing solutions for corporate and sponsor-owned borrowers across the EMEA region. This five-year initiative will leverage Citi's origination capabilities and HPS's capital and structuring expertise to address the increasing demand for private credit. The program aims to serve borrowers in Continental Europe, the UK, and eventually the Middle East, focusing on sub-investment grade debt instruments.",
+        "overall_sentiment_score": 0.371306,
+        "source": "Seeking Alpha",
+        "source_domain": "Seeking Alpha",
+        "summary": "Citigroup and BlackRock's HPS Investment Partners have partnered to launch a \u20ac15 billion ($17.5 billion) program aimed at expanding direct lending in the EMEA region. This initiative will provide capital solutions and private financing for corporate and sponsor-owned borrowers. The collaboration seeks to enhance access to private capital markets across Europe, the Middle East, and Africa.",
         "ticker_sentiment": [
           {
             "relevance_score": "1.000000",
             "ticker": "C",
             "ticker_sentiment_label": "Bullish",
-            "ticker_sentiment_score": "0.401600"
+            "ticker_sentiment_score": "0.411491"
           },
           {
-            "relevance_score": "0.734461",
+            "relevance_score": "0.816935",
             "ticker": "BLK",
             "ticker_sentiment_label": "Somewhat-Bullish",
-            "ticker_sentiment_score": "0.332064"
-          },
-          {
-            "relevance_score": "0.603710",
-            "ticker": "WFC",
-            "ticker_sentiment_label": "Somewhat-Bullish",
-            "ticker_sentiment_score": "0.307076"
+            "ticker_sentiment_score": "0.309833"
           }
         ],
-        "time_published": "20260518T132610",
-        "title": "Citi, HPS launch \u20ac15 billion private capital program for EMEA",
+        "time_published": "20260518T160011",
+        "title": "Citi and BlackRock's HPS team up for $17.5B program to expand direct lending in EMEA (C:NYSE)",
         "topics": [
           {
-            "relevance_score": "0.910548",
+            "relevance_score": "0.915833",
             "topic": "finance"
+          }
+        ],
+        "url": "https://seekingalpha.com/news/4594457-citi-and-blackrocks-hps-team-up-for-175b-program-to-expand-direct-lending-in-emea"
+      },
+      {
+        "authors": [
+          "Amy Thielen"
+        ],
+        "banner_image": "https://static.seekingalpha.com/cdn/s3/uploads/getty_images/2151804339/image_2151804339.jpg?io=getty-c-w630",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Bullish",
+        "overall_sentiment_score": 0.362113,
+        "source": "Seeking Alpha",
+        "source_domain": "Seeking Alpha",
+        "summary": "Ford is currently in discussions with European and North American governments to supply trucks and all-terrain vehicles for military use. This initiative aims to utilize commercially available vehicles to reduce high costs and long production times associated with purpose-built military hardware.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "F",
+            "ticker_sentiment_label": "Bullish",
+            "ticker_sentiment_score": "0.391008"
+          }
+        ],
+        "time_published": "20260518T155741",
+        "title": "Ford in talks to supply military vehicles to European governments (F:NYSE)",
+        "topics": [
+          {
+            "relevance_score": "0.845160",
+            "topic": "energy_transportation"
           },
           {
-            "relevance_score": "0.835454",
+            "relevance_score": "0.723695",
+            "topic": "manufacturing"
+          },
+          {
+            "relevance_score": "0.626815",
             "topic": "financial_markets"
           },
           {
-            "relevance_score": "0.601965",
-            "topic": "earnings"
+            "relevance_score": "0.629194",
+            "topic": "economy_fiscal"
           }
         ],
-        "url": "https://www.investing.com/news/company-news/citi-hps-launch-15-billion-private-capital-program-for-emea-93CH-4695937"
+        "url": "https://seekingalpha.com/news/4594452-ford-in-talks-to-supply-military-vehicles-to-european-governments"
       }
     ]
   },
+  "alpha_news:GBP:72": {
+    "timestamp": 1779124608.18359,
+    "value": []
+  },
   "alpha_news:JPY:72": {
-    "timestamp": 1779114745.969693,
+    "timestamp": 1779128831.721498,
     "value": []
   },
   "alpha_news:MXN:72": {
@@ -353,6 +213,10 @@
   },
   "alpha_news:NOK:72": {
     "timestamp": 1778892419.1546764,
+    "value": []
+  },
+  "alpha_news:NZD:72": {
+    "timestamp": 1779124651.0885768,
     "value": []
   },
   "alpha_news:SEK:72": {
@@ -449,260 +313,1535 @@
     ]
   },
   "alpha_news:USD:72": {
-    "timestamp": 1778892511.0758913,
+    "timestamp": 1779126973.2582808,
     "value": []
   },
   "gdelt:AUD:72": {
-    "timestamp": 1778892228.6680741,
+    "timestamp": 1779124442.2198544,
     "value": [
       {
-        "domain": "marketscreener.com",
+        "domain": "en.dailypakistan.com.pk",
         "language": "English",
-        "seendate": "20260515T054500Z",
-        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2018-08/2018-08-24T044249Z_1_LYNXNPEE7N07O-OCABS_RTROPTP_3_CBUSINESS-US-GLOBAL-FOREX.JPG",
-        "sourcecountry": "",
-        "title": "Carry on trading : rate - based G10 currency bets make a comeback",
-        "url": "https://www.marketscreener.com/news/carry-on-trading-rate-based-g10-currency-bets-make-a-comeback-ce7f5bd2da8bf327",
+        "seendate": "20260517T080000Z",
+        "socialimage": "https://en.dailypakistan.com.pk/wp-content/uploads/2024/08/today-currency-rates-in-pakistan-rupee-to-us-dollar-euro-pound-dirham-riyal-4-august-2024-1722743309-8290.jpg",
+        "sourcecountry": "Pakistan",
+        "title": "Currency Rates in Pakistan - Today Open Market Rates for Dollar , Euro , Pound , Riyal",
+        "url": "https://en.dailypakistan.com.pk/17-May-2026/currency-rates-in-pakistan-today-open-market-rates-for-dollar-euro-pound-riyal-17-may-2026",
         "url_mobile": ""
       },
       {
-        "domain": "finanznachrichten.de",
-        "language": "English",
-        "seendate": "20260513T081500Z",
-        "socialimage": "https://www.finanznachrichten.de/content/g/fb.png",
-        "sourcecountry": "Germany",
-        "title": "NZ Dollar Falls Against Majors",
-        "url": "https://www.finanznachrichten.de/nachrichten-2026-05/68479992-nz-dollar-falls-against-majors-020.htm",
+        "domain": "sydsvenskan.se",
+        "language": "Swedish",
+        "seendate": "20260517T121500Z",
+        "socialimage": "https://static.bonniernews.se/ba/70a3e019-4798-453c-9e3f-fe10009c39c2.jpg?crop=6666%2C3750%2Cx0%2Cy814&format=pjpg&auto=avif",
+        "sourcecountry": "Sweden",
+        "title": "Svenska kronan s\u00e4mst bland de stora valutorna",
+        "url": "https://www.sydsvenskan.se/ekonomi/svenska-kronan-samst-bland-de-stora-valutorna/",
         "url_mobile": ""
       },
       {
-        "domain": "gazetaexpress.com",
-        "language": "English",
-        "seendate": "20260513T111500Z",
-        "socialimage": "https://www.gazetaexpress.com/wp-content/uploads/2026/05/3t443t34t.png",
-        "sourcecountry": "Kosovo",
-        "title": "Dollar near weekly high amid Middle East tensions and US inflation",
-        "url": "https://www.gazetaexpress.com/en/Dollar-near-weekly-high-amid-Middle-East-tensions-and-US-inflation/",
-        "url_mobile": ""
-      },
-      {
-        "domain": "finanznachrichten.de",
-        "language": "German",
-        "seendate": "20260515T153000Z",
-        "socialimage": "https://www.finanznachrichten.de/content/g/fb.png",
-        "sourcecountry": "Germany",
-        "title": "Australischer Dollar weitet starken R\u00fcckgang aus , da Fed - Zinserh\u00f6hung - Neupositionierung den US - Dollar st\u00e4rkt",
-        "url": "https://www.finanznachrichten.de/nachrichten-2026-05/68511325-australischer-dollar-weitet-starken-rueckgang-aus-da-fed-zinserhoehung-neupositionierung-den-us-dollar-staerkt-545.htm",
-        "url_mobile": ""
-      },
-      {
-        "domain": "econotimes.com",
-        "language": "English",
-        "seendate": "20260513T064500Z",
-        "socialimage": "https://f1.econotimes.com/2015/08/w6bxpz0ddb.jpg",
-        "sourcecountry": "United States",
-        "title": "Asian Currencies Hold Steady as Strong U . S . Inflation Data Boosts Dollar",
-        "url": "http://www.econotimes.com/Asian-Currencies-Hold-Steady-as-Strong-US-Inflation-Data-Boosts-Dollar-1741555",
-        "url_mobile": ""
-      },
-      {
-        "domain": "econotimes.com",
-        "language": "English",
-        "seendate": "20260514T094500Z",
-        "socialimage": "https://f1.econotimes.com/2025/04/l9s17muwe9.jpg",
-        "sourcecountry": "United States",
-        "title": "Asian Currencies Steady as Trump - Xi Summit , Inflation Concerns Boost Dollar",
-        "url": "http://www.econotimes.com/Asian-Currencies-Steady-as-Trump-Xi-Summit-Inflation-Concerns-Boost-Dollar-1741674",
+        "domain": "nyheter24.se",
+        "language": "Swedish",
+        "seendate": "20260517T103000Z",
+        "socialimage": "https://cdn01.nyheter24.se/0edc87a504b004a30200007d000004bd02/2026/05/17/2364147/ur_imageb6ibPe.jpeg",
+        "sourcecountry": "Sweden",
+        "title": "Svenska kronan s\u00e4mst bland de stora valutorna",
+        "url": "https://nyheter24.se/nyheter/ekonomi/naringsliv/1483734-svenska-kronan-samst-bland-de-stora-valutorna",
         "url_mobile": ""
       },
       {
         "domain": "raya.com",
         "language": "Arabic",
-        "seendate": "20260513T071500Z",
-        "socialimage": "https://www.raya.com/alraya/uploads/images/2026/05/13/307330.jpg",
+        "seendate": "20260517T091500Z",
+        "socialimage": "https://www.raya.com/alraya/uploads/images/2026/05/17/310462.webp",
         "sourcecountry": "Qatar",
         "title": "\u0623\u0633\u0639\u0627\u0631 \u0627\u0644\u0639\u0645\u0644\u0627\u062a \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u0631\u064a\u0627\u0644 \u0627\u0644\u0642\u0637\u0631\u064a",
-        "url": "https://www.raya.com/2026/05/13/%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84%D8%A7%D8%AA-%D9%85%D9%82%D8%A7%D8%A8%D9%84-%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D9%84-%D8%A7%D9%84%D9%82%D8%B7%D8%B1%D9%8A",
-        "url_mobile": "https://www.raya.com/2026/05/13/\u00d8\u00a3\u00d8\u00b3\u00d8\u00b9\u00d8\u00a7\u00d8\u00b1-\u00d8\u00a7\u00d9\u0084\u00d8\u00b9\u00d9\u0085\u00d9\u0084\u00d8\u00a7\u00d8\u00aa-\u00d9\u0085\u00d9\u0082\u00d8\u00a7\u00d8\u00a8\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d8\u00b1\u00d9\u008a\u00d8\u00a7\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d9\u0082\u00d8\u00b7\u00d8\u00b1\u00d9\u008a/amp"
+        "url": "https://www.raya.com/2026/05/17/%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84%D8%A7%D8%AA-%D9%85%D9%82%D8%A7%D8%A8%D9%84-%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D9%84-%D8%A7%D9%84%D9%82%D8%B7%D8%B1%D9%8A",
+        "url_mobile": "https://www.raya.com/2026/05/17/\u00d8\u00a3\u00d8\u00b3\u00d8\u00b9\u00d8\u00a7\u00d8\u00b1-\u00d8\u00a7\u00d9\u0084\u00d8\u00b9\u00d9\u0085\u00d9\u0084\u00d8\u00a7\u00d8\u00aa-\u00d9\u0085\u00d9\u0082\u00d8\u00a7\u00d8\u00a8\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d8\u00b1\u00d9\u008a\u00d8\u00a7\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d9\u0082\u00d8\u00b7\u00d8\u00b1\u00d9\u008a/amp"
       },
       {
-        "domain": "sabah.com.tr",
-        "language": "Turkish",
-        "seendate": "20260515T071500Z",
-        "socialimage": "https://isbh.tmgrup.com.tr/sb/album/2026/05/15/altinda-5-bin-600-dolar-senaryosu-gram-altin-kac-tl-olacak-iste-yaniti-1778824178002.jpg",
-        "sourcecountry": "Turkey",
-        "title": "Alt\u0131nda 5 bin 600 dolar senaryosu : Gram alt\u0131n ka\u00e7 TL olacak ? \u0130\u015fte yan\u0131t\u0131 ... - Galeri",
-        "url": "https://www.sabah.com.tr/trend/galeri/ekonomi/altinda-5-bin-600-dolar-senaryosu-gram-altin-kac-tl-olacak-iste-yaniti",
-        "url_mobile": "https://m.sabah.com.tr/trend/galeri/ekonomi/altinda-5-bin-600-dolar-senaryosu-gram-altin-kac-tl-olacak-iste-yaniti/amp"
+        "domain": "navbharattimes.indiatimes.com",
+        "language": "Hindi",
+        "seendate": "20260516T060000Z",
+        "socialimage": "https://static.langimg.com/nbt/thumb/131132042/melbourne-university-scholarships.jpg?imgsize=1917297&resizemode=75",
+        "sourcecountry": "India",
+        "title": "Australia Scholarships : \u092b\u0940\u0938 \u092e\u093e\u092b , \u20b927 \u0932\u093e\u0916 \u0938\u094d\u091f\u093e\u0907\u092a\u0947\u0902\u0921 , PG - PhD \u0915\u0947 \u0932\u093f\u090f \u092c\u0941\u0932\u093e \u0930\u0939\u0940 \u0911\u0938\u094d\u091f\u094d\u0930\u0947\u0932\u093f\u092f\u093e \u0915\u0940 \u091f\u0949\u092a \u092f\u0942\u0928\u093f\u0935\u0930\u094d\u0938\u093f\u091f\u0940",
+        "url": "https://navbharattimes.indiatimes.com/education/study-abroad/others/study-in-australia-university-of-melbourne-graduate-research-scholarships-application-link-eligibility-for-indian-students/articleshow/131132053.cms",
+        "url_mobile": "https://navbharattimes.indiatimes.com/education/study-abroad/others/study-in-australia-university-of-melbourne-graduate-research-scholarships-application-link-eligibility-for-indian-students/amp_articleshow/131132053.cms"
       },
       {
-        "domain": "pakobserver.net",
+        "domain": "afr.com",
         "language": "English",
-        "seendate": "20260514T041500Z",
-        "socialimage": "https://pakobserver.net/wp-content/uploads/2023/12/Todays-foreign-currency-exchange-rate.jpg",
-        "sourcecountry": "Pakistan",
-        "title": "Currency exchange rates in Pakistan today \u2013 USD to PKR on 14 May 2026",
-        "url": "https://pakobserver.net/currency-exchange-rates-in-pakistan-today-usd-to-pkr-on-14-may-2026/",
+        "seendate": "20260517T121500Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_0.353%2C$multiply_3%2C$ratio_1.777778%2C$width_1059%2C$x_0%2C$y_3/t_crop_custom/c_scale%2Cw_800%2Cq_88%2Cf_jpg/t_afr_no_label_no_age_social_wm/188de9d9286a17b2d6aa80fcabb95be791f62f4f",
+        "sourcecountry": "Australia",
+        "title": "Telstra warns that $7 . 3 billion spectrum licence cash grab could trigger legal challenge",
+        "url": "https://www.afr.com/companies/telecommunications/telstra-warns-7-3b-spectrum-cash-grab-could-trigger-legal-challenge-20260514-p5zx4t",
         "url_mobile": ""
       },
       {
+        "domain": "econotimes.com",
+        "language": "English",
+        "seendate": "20260518T090000Z",
+        "socialimage": "https://f1.econotimes.com/2026/05/hyr0l3qlu1.jpg",
+        "sourcecountry": "United States",
+        "title": "FxWirePro : AUD / USD eases as markets react to China data shock",
+        "url": "http://www.econotimes.com/FxWirePro-AUD-USD-eases-as-markets-react-to-China-data-shock-1741941",
+        "url_mobile": ""
+      },
+      {
+        "domain": "english.aawsat.com",
+        "language": "English",
+        "seendate": "20260518T093000Z",
+        "socialimage": "https://static.srpcdigital.com/styles/1200x600/public/2026-05/1547554.jpeg.webp",
+        "sourcecountry": "Syria",
+        "title": "Dollar Steady as Oil Climbs , Bond Selloff Deepens",
+        "url": "https://english.aawsat.com/business/5274394-dollar-steady-oil-climbs-bond-selloff-deepens",
+        "url_mobile": ""
+      },
+      {
+        "domain": "smh.com.au",
+        "language": "English",
+        "seendate": "20260517T193000Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_1%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_258%2C$y_0/t_crop_custom/q_86%2Cf_auto/40a4e6c1297c3cc616fcee5ad2b2b194f929577d",
+        "sourcecountry": "Australia",
+        "title": "  Concert - goers pay : Ticket levy could raise $3m for Sydney struggling music scene",
+        "url": "https://www.smh.com.au/culture/music/concert-goers-pay-ticket-levy-could-raise-3m-for-sydney-s-struggling-music-scene-20260513-p5zwjo.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "theage.com.au",
+        "language": "English",
+        "seendate": "20260517T194500Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_1%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_258%2C$y_0/t_crop_custom/q_86%2Cf_auto/40a4e6c1297c3cc616fcee5ad2b2b194f929577d",
+        "sourcecountry": "Australia",
+        "title": "  Concert - goers pay : Ticket levy could raise $3m for Sydney struggling music scene",
+        "url": "https://www.theage.com.au/culture/music/concert-goers-pay-ticket-levy-could-raise-3m-for-sydney-s-struggling-music-scene-20260513-p5zwjo.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "brisbanetimes.com.au",
+        "language": "English",
+        "seendate": "20260517T193000Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_1%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_258%2C$y_0/t_crop_custom/q_86%2Cf_auto/40a4e6c1297c3cc616fcee5ad2b2b194f929577d",
+        "sourcecountry": "Australia",
+        "title": "  Concert - goers pay : Ticket levy could raise $3m for Sydney struggling music scene",
+        "url": "https://www.brisbanetimes.com.au/culture/music/concert-goers-pay-ticket-levy-could-raise-3m-for-sydney-s-struggling-music-scene-20260513-p5zwjo.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "eldestapeweb.com",
+        "language": "Spanish",
+        "seendate": "20260516T011500Z",
+        "socialimage": "https://cdn.eldestapeweb.com/eldestape/052026/1778831741842.jpeg?&cw=1200&ch=675",
+        "sourcecountry": "Argentina",
+        "title": "Un tribunal australiano duplica la indemnizaci\u00f3n a una mujer trans excluida de una app para mujeres",
+        "url": "https://www.eldestapeweb.com/informacion-general/un-tribunal-australiano-duplica-la-indemnizacion-a-una-mujer-trans-excluida-de-una-app-para-mujeres-202651545515",
+        "url_mobile": "https://www.eldestapeweb.com/informacion-general/un-tribunal-australiano-duplica-la-indemnizacion-a-una-mujer-trans-excluida-de-una-app-para-mujeres-202651545515"
+      },
+      {
+        "domain": "perthnow.com.au",
+        "language": "English",
+        "seendate": "20260517T203000Z",
+        "socialimage": "https://images.perthnow.com.au/publication/C-22297652/4529550286104dd84e04cb9a4954b7570d1e604f-16x9-x0y0w1280h720.jpg?imwidth=1200",
+        "sourcecountry": "Australia",
+        "title": "Aussie artificial intelligence may give robots a leg up",
+        "url": "https://www.perthnow.com.au/news/technology/aussie-artificial-intelligence-may-give-robots-a-leg-up-c-22297652",
+        "url_mobile": ""
+      },
+      {
+        "domain": "examiner.com.au",
+        "language": "English",
+        "seendate": "20260516T194500Z",
+        "socialimage": "https://www.examiner.com.au/images/transform/v1/crop/frm/silverstone-feed-data/39fedc1b-0824-45d4-a690-8e0f8757ff0b.jpg/r0_90_800_510_w1200_h630_fmax.jpg",
+        "sourcecountry": "Australia",
+        "title": "Finger to the wind on extending fuel excise discount",
+        "url": "https://www.examiner.com.au/story/9247959/finger-to-the-wind-on-extending-fuel-excise-discount/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "smh.com.au",
+        "language": "English",
+        "seendate": "20260516T200000Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_0.2486%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_0%2C$y_78/t_crop_custom/q_86%2Cf_auto/b68dacaf2b33d5ed92d5ac695efe86388fa5a67d",
+        "sourcecountry": "Australia",
+        "title": "Roblox gambling risks : University of Sydney study reveals how children are being exposed to predatory spending tactics",
+        "url": "https://www.smh.com.au/politics/nsw/nearly-every-kid-had-been-scammed-inside-roblox-s-predatory-economy-for-children-20260415-p5zo32.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "theage.com.au",
+        "language": "English",
+        "seendate": "20260516T201500Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_0.2486%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_0%2C$y_78/t_crop_custom/q_86%2Cf_auto/b68dacaf2b33d5ed92d5ac695efe86388fa5a67d",
+        "sourcecountry": "Australia",
+        "title": "Roblox gambling risks : University of Sydney study reveals how children are being exposed to predatory spending tactics",
+        "url": "https://www.theage.com.au/politics/nsw/nearly-every-kid-had-been-scammed-inside-roblox-s-predatory-economy-for-children-20260415-p5zo32.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "brisbanetimes.com.au",
+        "language": "English",
+        "seendate": "20260516T200000Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_0.2486%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_0%2C$y_78/t_crop_custom/q_86%2Cf_auto/b68dacaf2b33d5ed92d5ac695efe86388fa5a67d",
+        "sourcecountry": "Australia",
+        "title": "Roblox gambling risks : University of Sydney study reveals how children are being exposed to predatory spending tactics",
+        "url": "https://www.brisbanetimes.com.au/politics/nsw/nearly-every-kid-had-been-scammed-inside-roblox-s-predatory-economy-for-children-20260415-p5zo32.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "finanznachrichten.de",
+        "language": "German",
+        "seendate": "20260517T043000Z",
+        "socialimage": "https://www.finanznachrichten.de/chart-agnico-eagle-mines-limited-aktie-intraklein-tradegate.png",
+        "sourcecountry": "Germany",
+        "title": "Die Goldrally st\u00e4rkt die gro\u00dfen Produzenten - und lenkt neue Aufmerksamkeit auf Tesoro Gold",
+        "url": "https://www.finanznachrichten.de/nachrichten-2026-05/68516049-die-goldrally-staerkt-die-grossen-produzenten-und-lenkt-neue-aufmerksamkeit-auf-tesoro-gold-176.htm",
+        "url_mobile": ""
+      },
+      {
+        "domain": "watoday.com.au",
+        "language": "English",
+        "seendate": "20260517T054500Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_0.2486%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_0%2C$y_78/t_crop_custom/q_86%2Cf_auto/b68dacaf2b33d5ed92d5ac695efe86388fa5a67d",
+        "sourcecountry": "Australia",
+        "title": "Roblox gambling risks : University of Sydney study reveals how children are being exposed to predatory spending tactics",
+        "url": "https://www.watoday.com.au/politics/nsw/nearly-every-kid-had-been-scammed-inside-roblox-s-predatory-economy-for-children-20260415-p5zo32.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "boerse-express.com",
+        "language": "German",
+        "seendate": "20260518T051500Z",
+        "socialimage": "https://www.boerse-express.com/assets/78350d06c3/european-lithium-aktie-058-dollar-fuer-critical-metals-deal-906320__FillWzEyMDAsMTIwMF0.jpg",
+        "sourcecountry": "Austria",
+        "title": "European Lithium Aktie : 0 , 58 Dollar f\u00fcr Critical - Metals - Deal",
+        "url": "https://www.boerse-express.com/news/articles/european-lithium-aktie-058-dollar-fuer-critical-metals-deal-906320",
+        "url_mobile": ""
+      },
+      {
+        "domain": "illawarramercury.com.au",
+        "language": "English",
+        "seendate": "20260516T214500Z",
+        "socialimage": "https://www.illawarramercury.com.au/images/transform/v1/crop/frm/silverstone-feed-data/39fedc1b-0824-45d4-a690-8e0f8757ff0b.jpg/r0_90_800_510_w1200_h630_fmax.jpg",
+        "sourcecountry": "Australia",
+        "title": "Finger to the wind on extending fuel excise discount",
+        "url": "https://www.illawarramercury.com.au/story/9247959/finger-to-the-wind-on-extending-fuel-excise-discount/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "thepeninsulaqatar.com",
+        "language": "English",
+        "seendate": "20260518T120000Z",
+        "socialimage": "http://thepeninsulaqatar.com/get/maximage/20260518_1779099915-389.JPG",
+        "sourcecountry": "Qatar",
+        "title": "Anglo American to sell Australian coal mines for $3 . 9 bn",
+        "url": "http://thepeninsulaqatar.com/article/18/05/2026/anglo-american-to-sell-australian-coal-mines-for-39-bn",
+        "url_mobile": ""
+      },
+      {
+        "domain": "illawarramercury.com.au",
+        "language": "English",
+        "seendate": "20260517T211500Z",
+        "socialimage": "https://www.illawarramercury.com.au/images/transform/v1/crop/frm/silverstone-feed-data/fb21c4af-18d6-44c8-8872-098869127ef6.jpg/r0_90_800_510_w1200_h630_fmax.jpg",
+        "sourcecountry": "Australia",
+        "title": "Aussie artificial intelligence may give robots a leg up",
+        "url": "https://www.illawarramercury.com.au/story/9248393/aussie-artificial-intelligence-may-give-robots-a-leg-up/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "smh.com.au",
+        "language": "English",
+        "seendate": "20260517T094500Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_0.20547147846332944%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_0%2C$y_54/t_crop_custom/q_86%2Cf_auto/d19677cb65d770512a3c1eeaa35030785d007c37",
+        "sourcecountry": "Australia",
+        "title": "Former top medical officer calls for cut to tobacco taxes",
+        "url": "https://www.smh.com.au/national/former-top-medical-officer-calls-for-cut-to-tobacco-taxes-20260517-p5zxv8.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "theage.com.au",
+        "language": "English",
+        "seendate": "20260517T100000Z",
+        "socialimage": "https://static.ffx.io/images/$zoom_0.20547147846332944%2C$multiply_0.7554%2C$ratio_1.777778%2C$width_1059%2C$x_0%2C$y_54/t_crop_custom/q_86%2Cf_auto/d19677cb65d770512a3c1eeaa35030785d007c37",
+        "sourcecountry": "Australia",
+        "title": "Former top medical officer calls for cut to tobacco taxes",
+        "url": "https://www.theage.com.au/national/former-top-medical-officer-calls-for-cut-to-tobacco-taxes-20260517-p5zxv8.html",
+        "url_mobile": ""
+      }
+    ]
+  },
+  "gdelt:CAD:72": {
+    "timestamp": 1779125119.93368,
+    "value": [
+      {
         "domain": "zonebourse.com",
         "language": "French",
-        "seendate": "20260515T080000Z",
-        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2020-09/2020-09-18T071208Z_2_LYNXMPEG8H0D3_RTROPTP_3_INPEX-C-AUSTRALIA.JPG",
+        "seendate": "20260518T133000Z",
+        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2018-10/2018-10-24T132906Z_1_LYNXNPEE9N178-OCABS_RTROPTP_3_CBUSINESS-US-CANADA-FOREX.JPG",
         "sourcecountry": "France",
-        "title": "Le japonais Inpex va racheter \u00e0 PetroChina sa participation dans le champ gazier australien Browse",
-        "url": "https://www.zonebourse.com/actualite-bourse/le-japonais-inpex-va-racheter-la-participation-de-petrochina-dans-le-champ-gazier-australien-browse-ce7f5bd2dd8ef325",
+        "title": "DEVISES / TAUX CANADA - Le dollar canadien se raffermit , le rendement de r\u00e9f\u00e9rence progresse",
+        "url": "https://www.zonebourse.com/actualite-bourse/devises-taux-canada-le-dollar-canadien-se-raffermit-le-rendement-de-reference-progresse-ce7f5adadc8af32d",
+        "url_mobile": ""
+      },
+      {
+        "domain": "tvazteca.com",
+        "language": "Spanish",
+        "seendate": "20260518T143000Z",
+        "socialimage": "http://tv-azteca-brightspot.s3.amazonaws.com/2e/de/df92db914937bf3be968365fe42a/fina-may-18.jpg",
+        "sourcecountry": "Mexico",
+        "title": "Precio del d\u00f3lar en M\u00e9xico HOY 18 de mayo 2026 : Tipo de cambio para este lunes",
+        "url": "https://www.tvazteca.com/aztecanoticias/precio-dolar-mexico-hoy-18-mayo-2026-tipo-cambio-lunes-a-cuanto-esta-banco-azteca-dolar-canadiense/",
+        "url_mobile": "https://www.tvazteca.com/aztecanoticias/precio-dolar-mexico-hoy-18-mayo-2026-tipo-cambio-lunes-a-cuanto-esta-banco-azteca-dolar-canadiense/?_amp=true"
+      },
+      {
+        "domain": "albeu.com",
+        "language": "Albanian",
+        "seendate": "20260517T070000Z",
+        "socialimage": "https://albeu.com/wp-content/uploads/2025/07/kembimi.jpg",
+        "sourcecountry": "Albania",
+        "title": "K\u00ebmbimi valutor / \u00c7far\u00eb po ndodh sot me monedhat e huaja ? Me sa po blihen dhe shiten dollari dhe euro",
+        "url": "https://albeu.com/lajme/kembimi-valutor-cfare-po-ndodh-sot-me-monedhat-e-huaja-me-sa-po-blihen-dhe-shiten-dollari-dhe-euro-347/879676/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "albeu.com",
+        "language": "Albanian",
+        "seendate": "20260518T070000Z",
+        "socialimage": "https://albeu.com/wp-content/uploads/2025/08/kembimi-valutor.webp",
+        "sourcecountry": "Albania",
+        "title": "K\u00ebmbimi valutor / \u00c7far\u00eb po ndodh sot me monedhat e huaja ? Me sa po blihen dhe shiten dollari dhe euro",
+        "url": "https://albeu.com/lajme/kembimi-valutor-cfare-po-ndodh-sot-me-monedhat-e-huaja-me-sa-po-blihen-dhe-shiten-dollari-dhe-euro-348/879864/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "nypost.com",
+        "language": "English",
+        "seendate": "20260516T153000Z",
+        "socialimage": "https://nypost.com/wp-content/uploads/sites/2/2026/05/2022-air-canada-canadas-largest-127849371.jpg?quality=75&strip=all",
+        "sourcecountry": "United States",
+        "title": "Canadian travel to US picks up for first time since trade war started",
+        "url": "https://nypost.com/2026/05/16/world-news/canadian-travel-to-us-picks-up-for-first-time-since-trade-war-started/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "marketscreener.com",
+        "language": "English",
+        "seendate": "20260518T133000Z",
+        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2018-10/2018-10-24T132906Z_1_LYNXNPEE9N178-OCABS_RTROPTP_3_CBUSINESS-US-CANADA-FOREX.JPG",
+        "sourcecountry": "",
+        "title": "CANADA FX DEBT - Canadian dollar strengthens , benchmark yield climbs",
+        "url": "https://www.marketscreener.com/news/canada-fx-debt-canadian-dollar-strengthens-benchmark-yield-climbs-ce7f5adadc8af32d",
+        "url_mobile": ""
+      },
+      {
+        "domain": "theglobeandmail.com",
+        "language": "English",
+        "seendate": "20260515T184500Z",
+        "socialimage": "https://www.theglobeandmail.com/resizer/v2/H3WS74E3OZBIDIFYD2EC6CRD2U.JPG?auth=deed49f364214573783faa166197d44f27f9352159e4b67de2c485cd44bd4212&quality=80&smart=true",
+        "sourcecountry": "Canada",
+        "title": "Canadian dollar hits one - month low as greenback shines",
+        "url": "https://www.theglobeandmail.com/investing/article-canadian-dollar-hits-one-month-low-as-greenback-shines/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "marketscreener.com",
+        "language": "English",
+        "seendate": "20260515T181500Z",
+        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2026-05/2026-05-15T130130Z_1_LYNXMPEM4E0ZZ_RTROPTP_3_CANADA-ECONOMY-GDP.JPG",
+        "sourcecountry": "",
+        "title": "Canadian dollar hits one - month low as greenback shines",
+        "url": "https://www.marketscreener.com/news/canadian-dollar-hits-one-month-low-as-greenback-shines-ce7f5bd3d88ff621",
+        "url_mobile": ""
+      },
+      {
+        "domain": "coinnews.net",
+        "language": "English",
+        "seendate": "20260515T231500Z",
+        "socialimage": "",
+        "sourcecountry": "United States",
+        "title": "Royal Canadian Mint Launches FIFA World Cup 2026 $1 Coin",
+        "url": "https://www.coinnews.net/2026/05/15/mint-launches-fifa-world-cup-1-coin/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "en.dailypakistan.com.pk",
+        "language": "English",
+        "seendate": "20260517T080000Z",
+        "socialimage": "https://en.dailypakistan.com.pk/wp-content/uploads/2024/08/today-currency-rates-in-pakistan-rupee-to-us-dollar-euro-pound-dirham-riyal-4-august-2024-1722743309-8290.jpg",
+        "sourcecountry": "Pakistan",
+        "title": "Currency Rates in Pakistan - Today Open Market Rates for Dollar , Euro , Pound , Riyal",
+        "url": "https://en.dailypakistan.com.pk/17-May-2026/currency-rates-in-pakistan-today-open-market-rates-for-dollar-euro-pound-riyal-17-may-2026",
+        "url_mobile": ""
+      },
+      {
+        "domain": "aktiencheck.de",
+        "language": "German",
+        "seendate": "20260516T010000Z",
+        "socialimage": "",
+        "sourcecountry": "Germany",
+        "title": "Intellistake Aktie : 1 , 573 Millionen f\u00fcr Gravity - Plattform () ",
+        "url": "https://www.aktiencheck.de/news/Artikel-Intellistake_Aktie_1_573_Millionen_fuer_Gravity_Plattform-19769813",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bnnbloomberg.ca",
+        "language": "English",
+        "seendate": "20260515T190000Z",
+        "socialimage": "https://www.bnnbloomberg.ca/resizer/v2/H6JO7B73DJF6ZDJKWMKVHFTBQI.JPG?smart=true&auth=0de317d480ec9ab4c9b78301bce6eceb7909b42932b2e3ca66ac8d9577737a5f",
+        "sourcecountry": "Canada",
+        "title": "TSX today : S & P / TSX composite down more than 400 points",
+        "url": "https://www.bnnbloomberg.ca/markets/2026/05/15/sptsx-composite-down-more-than-400-points-us-stock-markets-also-fall/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bramptonguardian.com",
+        "language": "English",
+        "seendate": "20260516T154500Z",
+        "socialimage": "https://bloximages.chicago2.vip.townnews.com/bramptonguardian.com/content/tncms/assets/v3/editorial/c/76/c768ad0b-e448-5f2b-9a9f-a73f825fdf3e/6a0788abae555.image.jpg?crop=1763%2C926%2C0%2C124",
+        "sourcecountry": "Canada",
+        "title": "New FIFA World Cup 2026 loonies released in Canada",
+        "url": "https://www.bramptonguardian.com/news/canada-world-cup-loonie/article_d49f3109-481b-5e93-b92f-858aced6b6e4.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "niagarafallsreview.ca",
+        "language": "English",
+        "seendate": "20260515T180000Z",
+        "socialimage": "https://bloximages.chicago2.vip.townnews.com/niagarafallsreview.ca/content/tncms/assets/v3/editorial/b/3c/b3c471f7-b9d3-5209-93c8-45904b86ae1a/68430f6c001ad.image.jpg?crop=1501%2C788%2C0%2C145",
+        "sourcecountry": "Canada",
+        "title": "S & P / TSX composite down more than 400 points , U . S . stock markets also fall",
+        "url": "https://www.niagarafallsreview.ca/business/sptsx-composite-down-more-than-400-points-us-stock-markets-also-fall/article_39d541c4-3da6-58d1-a97e-35fb3dac46b6.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "yorkregion.com",
+        "language": "English",
+        "seendate": "20260516T011500Z",
+        "socialimage": "https://bloximages.chicago2.vip.townnews.com/yorkregion.com/content/tncms/assets/v3/editorial/b/f5/bf58eaf2-82e7-5e32-8554-c5c1c702b59a/6a0788abdfa2a.image.jpg?crop=1763%2C926%2C0%2C124",
+        "sourcecountry": "Canada",
+        "title": "New FIFA World Cup 2026 loonies released in Canada",
+        "url": "https://www.yorkregion.com/news/canada-world-cup-loonie/article_d1b44942-c487-547e-97d1-e6a5f08d97c2.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "orangeville.com",
+        "language": "English",
+        "seendate": "20260516T071500Z",
+        "socialimage": "https://bloximages.chicago2.vip.townnews.com/orangeville.com/content/tncms/assets/v3/editorial/9/b3/9b3c52af-08b1-5405-83a1-0a712426ef14/6a0788abae190.image.jpg?crop=1763%2C926%2C0%2C124",
+        "sourcecountry": "Canada",
+        "title": "New FIFA World Cup 2026 loonies released in Canada",
+        "url": "https://www.orangeville.com/news/canada-world-cup-loonie/article_ea746b4d-39b7-5502-bbd2-f2c67bb38ce6.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "albayan.ae",
+        "language": "Arabic",
+        "seendate": "20260516T214500Z",
+        "socialimage": "https://www.albayan.ae/assets/images/2026/05/16/5190916.jpg",
+        "sourcecountry": "United Arab Emirates",
+        "title": "\u0645\u0648\u062c\u0629 \u0627\u0642\u062a\u0631\u0627\u0636 \u0639\u0627\u0644\u0645\u064a\u0629 \u0644\u0634\u0631\u0643\u0627\u062a \u0627\u0644\u062a\u0643\u0646\u0648\u0644\u0648\u062c\u064a\u0627 \u0627\u0644\u0643\u0628\u0631\u0649 \u0644\u0644\u062a\u0648\u0633\u0639 \u0628\u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064a",
+        "url": "https://www.albayan.ae/financial-times/1288672",
+        "url_mobile": "https://www.albayan.ae/amp/financial-times/1288672"
+      },
+      {
+        "domain": "alfapress.al",
+        "language": "Albanian",
+        "seendate": "20260518T074500Z",
+        "socialimage": "https://cdnimpuls.com/alfapress.al/media3/-1200-630-img-4121-457.png",
+        "sourcecountry": "",
+        "title": "\u00c7far\u00eb po ndodh me monedhat e huaja ? Ja sa shitet dhe blihet euro dhe dollari p\u00ebr dit\u00ebn e sotme",
+        "url": "https://alfapress.al/ekonomi/fare-po-ndodh-me-monedhat-e-huaja-ja-sa-shitet-dhe-blihet-euro-dhe-dolla-i193913",
+        "url_mobile": ""
+      },
+      {
+        "domain": "theglobeandmail.com",
+        "language": "English",
+        "seendate": "20260517T204500Z",
+        "socialimage": "https://www.theglobeandmail.com/resizer/v2/JK5Z6EQP5JG5ZKXCDUOQIZ5E3M.jpg?auth=63a81e4f35970962ea50d47949549bc6ec9e7c24e78a2b69e6f0691de208fe73&quality=80&smart=true",
+        "sourcecountry": "Canada",
+        "title": "Canada OG mining financiers are pushing to develop new national champions",
+        "url": "https://www.theglobeandmail.com/business/article-canadas-og-mining-financiers-are-pushing-to-develop-new-national/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "english.news.cn",
+        "language": "English",
+        "seendate": "20260515T223000Z",
+        "socialimage": "",
+        "sourcecountry": "",
+        "title": "Canada , Alberta province reach implementation agreement involving new pipeline - Xinhua",
+        "url": "https://english.news.cn/northamerica/20260516/6170d8f3fa72427bb0f5a9fe13c69e7d/c.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "english.news.cn",
+        "language": "English",
+        "seendate": "20260515T223000Z",
+        "socialimage": "",
+        "sourcecountry": "",
+        "title": "Canada , Alberta province reach implementation agreement involving new pipeline - Xinhua",
+        "url": "https://english.news.cn/20260516/1a07b00086414225aabc7b20fce3c492/c.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "theglobeandmail.com",
+        "language": "English",
+        "seendate": "20260516T140000Z",
+        "socialimage": "https://www.theglobeandmail.com/resizer/v2/Z6YQWDQA6FDM3CF6AI3QEMC5UU.JPG?auth=fad24681e7ca9768c83b5e96200d18fe1e2f53ec81c6ad1999cda495b1535b87&quality=80&smart=true",
+        "sourcecountry": "Canada",
+        "title": "Alphabet Canadian bond deal , Honda suspends Ontario EV project and a summer of travel chaos : Business and investing stories for the week of May 16",
+        "url": "https://www.theglobeandmail.com/business/article-alphabet-bond-deal-honda-ev-travel-flights-gas-prices-may-16/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "stockhouse.com",
+        "language": "English",
+        "seendate": "20260515T204500Z",
+        "socialimage": "",
+        "sourcecountry": "United States",
+        "title": " @ the Bell : Markets fall under global bond rout & geopolitical tensions | 2026 - 05 - 15 | Investing News",
+        "url": "https://stockhouse.com/news/market-updates/2026/05/15/-bell-markets-fall-under-global-bond-rout-geopolitical-tensions",
+        "url_mobile": ""
+      },
+      {
+        "domain": "thepeninsulaqatar.com",
+        "language": "English",
+        "seendate": "20260518T120000Z",
+        "socialimage": "http://thepeninsulaqatar.com/get/maximage/20260518_1779099915-389.JPG",
+        "sourcecountry": "Qatar",
+        "title": "Anglo American to sell Australian coal mines for $3 . 9 bn",
+        "url": "http://thepeninsulaqatar.com/article/18/05/2026/anglo-american-to-sell-australian-coal-mines-for-39-bn",
+        "url_mobile": ""
+      },
+      {
+        "domain": "boerse-express.com",
+        "language": "German",
+        "seendate": "20260516T111500Z",
+        "socialimage": "https://www.boerse-express.com/assets/5e323938e2/almonty-aktie-sphene-verdoppelt-kursziel-auf-3740-dollar-905697__FillWzEyMDAsMTIwMF0.jpg",
+        "sourcecountry": "Austria",
+        "title": "Almonty Aktie : Sphene verdoppelt Kursziel auf 37 , 40 Dollar",
+        "url": "https://www.boerse-express.com/news/articles/almonty-aktie-sphene-verdoppelt-kursziel-auf-3740-dollar-905697",
+        "url_mobile": ""
+      }
+    ]
+  },
+  "gdelt:CHF:72": {
+    "timestamp": 1779128814.788874,
+    "value": [
+      {
+        "domain": "money.pl",
+        "language": "Polish",
+        "seendate": "20260518T174500Z",
+        "socialimage": "https://v.wpimg.pl/ZDdiMGFkdSUFCzt0aRB4MEZTby4vSXZmEUt3ZWlaY3ZUEWIhLwc_NgEZImkhGS80BR49aTYHdSUUAGIxd0Q-LRcZISY_RD8pBgwpaCRaOXRQDH4ha1w4JwFEeSR1XncmVFouanEKYiBTC30mIghscUYU",
+        "sourcecountry": "Poland",
+        "title": "Ile kosztuje frank szwajcarski ? Kurs franka do z\u0142otego PLN / CHF 18 . 05 . 2026",
+        "url": "https://www.money.pl/pieniadze/ile-kosztuje-frank-szwajcarski-kurs-franka-do-zlotego-pln-chf-18-05-2026-7287277996226592a.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "en.dailypakistan.com.pk",
+        "language": "English",
+        "seendate": "20260517T080000Z",
+        "socialimage": "https://en.dailypakistan.com.pk/wp-content/uploads/2024/08/today-currency-rates-in-pakistan-rupee-to-us-dollar-euro-pound-dirham-riyal-4-august-2024-1722743309-8290.jpg",
+        "sourcecountry": "Pakistan",
+        "title": "Currency Rates in Pakistan - Today Open Market Rates for Dollar , Euro , Pound , Riyal",
+        "url": "https://en.dailypakistan.com.pk/17-May-2026/currency-rates-in-pakistan-today-open-market-rates-for-dollar-euro-pound-riyal-17-may-2026",
+        "url_mobile": ""
+      },
+      {
+        "domain": "raya.com",
+        "language": "Arabic",
+        "seendate": "20260517T091500Z",
+        "socialimage": "https://www.raya.com/alraya/uploads/images/2026/05/17/310462.webp",
+        "sourcecountry": "Qatar",
+        "title": "\u0623\u0633\u0639\u0627\u0631 \u0627\u0644\u0639\u0645\u0644\u0627\u062a \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u0631\u064a\u0627\u0644 \u0627\u0644\u0642\u0637\u0631\u064a",
+        "url": "https://www.raya.com/2026/05/17/%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84%D8%A7%D8%AA-%D9%85%D9%82%D8%A7%D8%A8%D9%84-%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D9%84-%D8%A7%D9%84%D9%82%D8%B7%D8%B1%D9%8A",
+        "url_mobile": "https://www.raya.com/2026/05/17/\u00d8\u00a3\u00d8\u00b3\u00d8\u00b9\u00d8\u00a7\u00d8\u00b1-\u00d8\u00a7\u00d9\u0084\u00d8\u00b9\u00d9\u0085\u00d9\u0084\u00d8\u00a7\u00d8\u00aa-\u00d9\u0085\u00d9\u0082\u00d8\u00a7\u00d8\u00a8\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d8\u00b1\u00d9\u008a\u00d8\u00a7\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d9\u0082\u00d8\u00b7\u00d8\u00b1\u00d9\u008a/amp"
+      },
+      {
+        "domain": "kathimerini.gr",
+        "language": "Greek",
+        "seendate": "20260515T204500Z",
+        "socialimage": "https://www.kathimerini.gr/wp-content/uploads/2026/05/swm-ab8ce92051cbebb1aec709e053676c81_UPOIK-1-1-1-1200x630.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u0391\u03c0\u03ac\u03bd\u03c4\u03b7\u03c3\u03b7 \u03a5\u03a0\u039f\u0399\u039a \u03c3\u03b5 \u03a4\u03c3\u03af\u03c0\u03c1\u03b1 \u03b3\u03b9\u03b1 \u03c4\u03b1 \u03ba\u03cc\u03ba\u03ba\u03b9\u03bd\u03b1 \u03b4\u03ac\u03bd\u03b5\u03b9\u03b1",
+        "url": "https://www.kathimerini.gr/politics/564229384/apantisi-ypoik-se-tsipra-gia-ta-kokkina-daneia/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "albayan.ae",
+        "language": "Arabic",
+        "seendate": "20260516T214500Z",
+        "socialimage": "https://www.albayan.ae/assets/images/2026/05/16/5190916.jpg",
+        "sourcecountry": "United Arab Emirates",
+        "title": "\u0645\u0648\u062c\u0629 \u0627\u0642\u062a\u0631\u0627\u0636 \u0639\u0627\u0644\u0645\u064a\u0629 \u0644\u0634\u0631\u0643\u0627\u062a \u0627\u0644\u062a\u0643\u0646\u0648\u0644\u0648\u062c\u064a\u0627 \u0627\u0644\u0643\u0628\u0631\u0649 \u0644\u0644\u062a\u0648\u0633\u0639 \u0628\u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064a",
+        "url": "https://www.albayan.ae/financial-times/1288672",
+        "url_mobile": "https://www.albayan.ae/amp/financial-times/1288672"
+      },
+      {
+        "domain": "inewsgr.com",
+        "language": "Greek",
+        "seendate": "20260515T183000Z",
+        "socialimage": "https://images32.inewsgr.com/5937/59376305/1.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u03a5\u03c0\u03bf\u03c5\u03c1\u03b3\u03b5\u03af\u03bf \u039f\u03b9\u03ba\u03bf\u03bd\u03bf\u03bc\u03af\u03b1\u03c2 \u03ba\u03b1\u03b9 \u039f\u03b9\u03ba\u03bf\u03bd\u03bf\u03bc\u03b9\u03ba\u03ce\u03bd : \u00ab \u0397 \u03b5\u03b9\u03ba\u03cc\u03bd\u03b1 \u03c4\u03b7\u03c2 \u03c7\u03ce\u03c1\u03b1\u03c2 \u03b4\u03b5\u03bd \u03ad\u03c7\u03b5\u03b9 \u03c3\u03c7\u03ad\u03c3\u03b7 \u03bc\u03b5 \u03cc\u03c4\u03b9 \u03c0\u03b1\u03c1\u03ad\u03b4\u03c9\u03c3\u03b5 \u03bf \u0391\u03bb\u03ad\u03be\u03b7\u03c2 \u03a4\u03c3\u03af\u03c0\u03c1\u03b1\u03c2 \u00bb ",
+        "url": "https://www.inewsgr.com/182/ypourgeio-oikonomias-kai-oikonomikon-i-eikona-tis-choras-den-echei-schesi-me-oti-paredose-o-alexis-tsipras.htm",
+        "url_mobile": "https://www.inewsgr.com/182/ypourgeio-oikonomias-kai-oikonomikon-i-eikona-tis-choras-den-echei-schesi-me-oti-paredose-o-alexis-tsipras.htm.amp"
+      },
+      {
+        "domain": "inewsgr.com",
+        "language": "Greek",
+        "seendate": "20260518T163000Z",
+        "socialimage": "https://images32.inewsgr.com/5939/59396522/1.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u03a0\u0391\u03a3\u039f\u039a \u03ba\u03b1\u03c4\u03ac \u03a5\u03a0\u039f\u0399\u039a \u03b3\u03b9\u03b1 \u03b9\u03b4\u03b9\u03c9\u03c4\u03b9\u03ba\u03cc \u03c7\u03c1\u03ad\u03bf\u03c2 : \u00ab \u03a0\u03b1\u03c1\u03b1\u03b4\u03ce\u03c3\u03b1\u03c4\u03b5 \u03c4\u03b7 \u03c7\u03ce\u03c1\u03b1 \u03c3\u03c4\u03b1 \u03be\u03ad\u03bd\u03b1 funds , \u03b8\u03ad\u03bb\u03b5\u03b9 \u03b8\u03c1\u03ac\u03c3\u03bf\u03c2 \u03bd\u03b1 \u03ba\u03bf\u03c5\u03bd\u03ac\u03c2 \u03c4\u03bf \u03b4\u03ac\u03c7\u03c4\u03c5\u03bb\u03bf \u00bb ",
+        "url": "https://www.inewsgr.com/93/pasok-kata-ypoik-gia-idiotiko-chreos-paradosate-ti-chora-sta-xena-funds-thelei-thrasos-na-kounas-to-dachtylo.htm",
+        "url_mobile": "https://www.inewsgr.com/93/pasok-kata-ypoik-gia-idiotiko-chreos-paradosate-ti-chora-sta-xena-funds-thelei-thrasos-na-kounas-to-dachtylo.htm.amp"
+      },
+      {
+        "domain": "manager.bg",
+        "language": "Bulgarian",
+        "seendate": "20260518T154500Z",
+        "socialimage": "https://manager.bg/media/293/shutterstock_2421795855~2.og.jpg",
+        "sourcecountry": "Bulgaria",
+        "title": "\u0428\u0432\u0435\u0439\u0446\u0430\u0440\u0441\u043a\u0430\u0442\u0430 \u0438\u043a\u043e\u043d\u043e\u043c\u0438\u043a\u0430 \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u0430 \u043d\u043e\u0432 \u0440\u044a\u0441\u0442 \u043f\u0440\u0435\u0437 \u043f\u044a\u0440\u0432\u043e\u0442\u043e \u043f\u043e\u043b\u0443\u0433\u043e\u0434\u0438\u0435",
+        "url": "https://manager.bg/%D0%B8%D0%BA%D0%BE%D0%BD%D0%BE%D0%BC%D0%B8%D0%BA%D0%B0/shveicarskata-ikonomika-registrira-nov-rast-prez-parvoto-polugodie",
+        "url_mobile": ""
+      },
+      {
+        "domain": "investinglive.com",
+        "language": "English",
+        "seendate": "20260518T013000Z",
+        "socialimage": "https://images.investinglive.com/images/eurusd%20faltering%2018%20May%202026_id_3feae92e-2ef8-4d2d-abbf-46c3b74cd243_size975.jpg",
+        "sourcecountry": "",
+        "title": "US net oil exporter status shields dollar from energy shock hitting peers",
+        "url": "https://investinglive.com:443/forex/us-net-oil-exporter-status-shields-dollar-from-energy-shock-hitting-peers-20260517/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "protagon.gr",
+        "language": "Greek",
+        "seendate": "20260515T193000Z",
+        "socialimage": "https://www.protagon.gr/wp-content/uploads/2026/05/photo_22-04-26_13_36_491776859861-e1778867980610-1024x616.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u03a5\u03c0 . \u0395\u03b8\u03bd\u03b9\u03ba\u03ae\u03c2 \u039f\u03b9\u03ba\u03bf\u03bd\u03bf\u03bc\u03af\u03b1\u03c2 \u03b3\u03b9\u03b1 \u03a4\u03c3\u03af\u03c0\u03c1\u03b1 \u03ba\u03b1\u03b9 \u03ba\u03cc\u03ba\u03ba\u03b9\u03bd\u03b1 \u03b4\u03ac\u03bd\u03b5\u03b9\u03b1 : \u00ab \u03a0\u03c5\u03c1\u03bf\u03c3\u03b2\u03ad\u03c3\u03c4\u03b7\u03c2 \u03c3\u03c4\u03b7 \u03c6\u03c9\u03c4\u03b9\u03ac \u03c0\u03bf\u03c5 \u03bf \u03af\u03b4\u03b9\u03bf\u03c2 \u03ac\u03bd\u03b1\u03c8\u03b5 \u00bb ",
+        "url": "https://www.protagon.gr/epikairotita/yp-ethnikis-oikonomias-gia-tsipra-kai-kokkina-daneia-pyrosvestis-sti-fwtia-pou-o-idios-anapse-44343370120",
+        "url_mobile": "https://www.protagon.gr/epikairotita/yp-ethnikis-oikonomias-gia-tsipra-kai-kokkina-daneia-pyrosvestis-sti-fwtia-pou-o-idios-anapse-44343370120?amp=1"
+      },
+      {
+        "domain": "capital.gr",
+        "language": "Greek",
+        "seendate": "20260518T121500Z",
+        "socialimage": "https://www.capital.gr/Content/ImagesDatabase/fb/1000x523/crop/both/4f/4f1587e19a064ff4907550382d61a60c.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u039d . \u0391\u03bd\u03b4\u03c1\u03bf\u03c5\u03bb\u03ac\u03ba\u03b7\u03c2 : \u039a\u03b1\u03c4\u03b1\u03b8\u03ad\u03c4\u03c9 \u03b4\u03b7\u03bc\u03cc\u03c3\u03b9\u03b1 \u03c4\u03b9\u03c2 \u03b4\u03b5\u03c3\u03bc\u03b5\u03cd\u03c3\u03b5\u03b9\u03c2 \u03bc\u03b1\u03c2 \u03b3\u03b9\u03b1 \u03c4\u03b7\u03bd \u03b5\u03c0\u03cc\u03bc\u03b5\u03bd\u03b7 ... ",
+        "url": "https://www.capital.gr/politiki/3992805/n-androulakis-katatheto-dimosia-tis-desmeuseis-mas-gia-tin-epomeni-diakubernisi-bazoume-telos-stin-asudosia-ton-funds/",
+        "url_mobile": "https://www.capital.gr/politiki/3992805/n-androulakis-katatheto-dimosia-tis-desmeuseis-mas-gia-tin-epomeni-diakubernisi-bazoume-telos-stin-asudosia-ton-funds/?amp=true"
+      },
+      {
+        "domain": "naftemporiki.gr",
+        "language": "Greek",
+        "seendate": "20260515T190000Z",
+        "socialimage": "https://www.naftemporiki.gr/wp-content/uploads/2026/03/tsipras_ithaki_alexandroupoli.jpg",
+        "sourcecountry": "Greece",
+        "title": " \u00ab \u039c\u03b9\u03c3\u03ae \u03b1\u03bb\u03ae\u03b8\u03b5\u03b9\u03b1 \u03cc\u03c4\u03b9 \u03c4\u03bf \u03c0\u03c1\u03cc\u03b2\u03bb\u03b7\u03bc\u03b1 \u03bc\u03b5 \u03c4\u03b1 \u03ba\u03cc\u03ba\u03ba\u03b9\u03bd\u03b1 \u03b4\u03ac\u03bd\u03b5\u03b9\u03b1 \u03bb\u03cd\u03b8\u03b7\u03ba\u03b5 \u00bb - \u039a\u03cc\u03bd\u03c4\u03c1\u03b1 \u03a4\u03c3\u03af\u03c0\u03c1\u03b1",
+        "url": "https://www.naftemporiki.gr/politics/2110911/i-misi-alitheia-oti-to-provlima-me-ta-kokkina-daneia-lythike-kontra-tsipra-ypoyrgeioy-oikonomikon/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "protothema.gr",
+        "language": "Greek",
+        "seendate": "20260518T151500Z",
+        "socialimage": "",
+        "sourcecountry": "Greece",
+        "title": "\u03a5\u03a0\u0395\u0398\u039f\u039f : \u00ab \u0391\u03bd\u03ad\u03be\u03bf\u03b4\u03b5\u03c2 \u03c5\u03c0\u03bf\u03c3\u03c7\u03ad\u03c3\u03b5\u03b9\u03c2 \u00bb \u03c4\u03bf\u03c5 \u03ba . \u0391\u03bd\u03b4\u03c1\u03bf\u03c5\u03bb\u03ac\u03ba\u03b7 \u03b3\u03b9\u03b1 \u03c4\u03bf \u03b9\u03b4\u03b9\u03c9\u03c4\u03b9\u03ba\u03cc \u03c7\u03c1\u03ad\u03bf\u03c2",
+        "url": "https://www.protothema.gr/politics/article/1820624/upethoo-anexodes-uposheseis-tou-k-androulaki-gia-to-idiotiko-hreos/",
+        "url_mobile": "https://www.protothema.gr/politics/article/1820624/upethoo-anexodes-uposheseis-tou-k-androulaki-gia-to-idiotiko-hreos/AMP/"
+      },
+      {
+        "domain": "inewsgr.com",
+        "language": "Greek",
+        "seendate": "20260518T104500Z",
+        "socialimage": "https://images32.inewsgr.com/5939/59393162/1.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u039f \u0391\u03bd\u03b4\u03c1\u03bf\u03c5\u03bb\u03ac\u03ba\u03b7\u03c2 \u03c0\u03b1\u03c1\u03bf\u03c5\u03c3\u03b9\u03ac\u03b6\u03b5\u03b9 \u03c4\u03bf \u03c3\u03c7\u03ad\u03b4\u03b9\u03bf \u03c4\u03bf\u03c5 \u03a0\u0391\u03a3\u039f\u039a \u03b3\u03b9\u03b1 \u03b4\u03ac\u03bd\u03b5\u03b9\u03b1 \u03ba\u03b1\u03b9 \u03c0\u03bb\u03b5\u03b9\u03c3\u03c4\u03b7\u03c1\u03b9\u03b1\u03c3\u03bc\u03bf\u03cd\u03c2 \u2013 \u00ab \u03a4\u03ad\u03bb\u03bf\u03c2 \u03c3\u03c4\u03b7\u03bd \u03b1\u03c3\u03c5\u03b4\u03bf\u03c3\u03af\u03b1 \u03c4\u03c9\u03bd funds \u00bb ",
+        "url": "https://www.inewsgr.com/438/o-androulakis-parousiazei-to-schedio-tou-pasok-gia-daneia-kai-pleistiriasmous--telos-stin-asydosia-ton-funds.htm",
+        "url_mobile": "https://www.inewsgr.com/438/o-androulakis-parousiazei-to-schedio-tou-pasok-gia-daneia-kai-pleistiriasmous--telos-stin-asydosia-ton-funds.htm.amp"
+      },
+      {
+        "domain": "financy.24tv.ua",
+        "language": "Ukrainian",
+        "seendate": "20260516T131500Z",
+        "socialimage": "https://financy.24tv.ua/resources/photos/news/202605/3066154.jpg?v=1778570554000",
+        "sourcecountry": "",
+        "title": "\u0421\u0442\u0430\u0431\u0456\u043b\u044c\u043d\u0456 \u0432\u0430\u043b\u044e\u0442\u0438 \u0441\u0432\u0456\u0442\u0443 2026 - \u044f\u043a \u0431\u0435\u0437\u043f\u0435\u0447\u043d\u043e \u0437\u0431\u0435\u0440\u0456\u0433\u0430\u0442\u0438 \u0433\u0440\u043e\u0448\u0456 , \u044f\u043a \u0440\u043e\u0431\u043b\u044f\u0442\u044c \u0456\u043d\u0432\u0435\u0441\u0442\u043e\u0440\u0438",
+        "url": "https://financy.24tv.ua/stabilni-valyuti-svitu-2026-yak-bezpechno-zberigati-groshi-yak_n3066154",
+        "url_mobile": "https://financy.24tv.ua/stabilni-valyuti-svitu-2026-yak-bezpechno-zberigati-groshi-yak_n3066154/amp"
+      },
+      {
+        "domain": "alquds.com",
+        "language": "Arabic",
+        "seendate": "20260517T023000Z",
+        "socialimage": "https://cdn.alquds.com/uploads/45e63da6f6411c7f12ee68ee96d91ffd.avif",
+        "sourcecountry": "Israel",
+        "title": "\u062c\u0631\u064a\u062f\u0629 \u0627\u0644\u0642\u062f\u0633",
+        "url": "https://www.alquds.com/ar/posts/240049",
+        "url_mobile": ""
+      },
+      {
+        "domain": "efsyn.gr",
+        "language": "Greek",
+        "seendate": "20260518T163000Z",
+        "socialimage": "https://www.efsyn.gr/wp-content/uploads/2026/05/Pierrakakis_1020-3.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u0391\u03c0\u03ac\u03bd\u03c4\u03b7\u03c3\u03b7 \u03c5\u03c0\u03bf\u03c5\u03c1\u03b3\u03b5\u03af\u03bf\u03c5 \u039f\u03b9\u03ba\u03bf\u03bd\u03bf\u03bc\u03b9\u03ba\u03ce\u03bd \u03c3\u03c4\u03b9\u03c2 8 \u03c0\u03c1\u03bf\u03c4\u03ac\u03c3\u03b5\u03b9\u03c2 \u0391\u03bd\u03b4\u03c1\u03bf\u03c5\u03bb\u03ac\u03ba\u03b7 \u03b3\u03b9\u03b1 \u03c4\u03bf \u03b9\u03b4\u03b9\u03c9\u03c4\u03b9\u03ba\u03cc \u03c7\u03c1\u03ad\u03bf\u03c2 : \u00ab \u0391\u03bd\u03ad\u03be\u03bf\u03b4\u03b5\u03c2 \u03bf\u03b9 \u03c5\u03c0\u03bf\u03c3\u03c7\u03ad\u03c3\u03b5\u03b9\u03c2 \u00bb ",
+        "url": "https://www.efsyn.gr/oikonomia/elliniki-oikonomia/1386392/apantisi-ypoyrgeioy-oikonomikon-stis-8-protaseis-androylaki-gia-to-idiotiko-hreos-anexodes-oi-yposheseis/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bursa.ro",
+        "language": "Romanian",
+        "seendate": "20260517T220000Z",
+        "socialimage": "https://www.bursa.ro/_img/articole/mare/591082.jpg",
+        "sourcecountry": "Romania",
+        "title": "PIA\u0162A VALUTAR\u0102 Euro s - a apreciat la 5 , 2088 lei",
+        "url": "https://www.bursa.ro/piata-valutara-euro-s-a-apreciat-la-5-2088-lei-02801955",
+        "url_mobile": ""
+      },
+      {
+        "domain": "mikrometoxos.gr",
+        "language": "Greek",
+        "seendate": "20260518T131500Z",
+        "socialimage": "https://www.mikrometoxos.gr/wp-content/uploads/2026/05/androulakis-1200x630.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u0391\u03bd\u03b4\u03c1\u03bf\u03c5\u03bb\u03ac\u03ba\u03b7\u03c2 :  \u0392\u03ac\u03b6\u03bf\u03c5\u03bc\u03b5 \u03c4\u03ad\u03bb\u03bf\u03c2 \u03c3\u03c4\u03b7\u03bd \u03b1\u03c3\u03c5\u03b4\u03bf\u03c3\u03af\u03b1 \u03c4\u03c9\u03bd funds  - \u039f\u03b9 \u03bf\u03ba\u03c4\u03ce \u03b4\u03b5\u03c3\u03bc\u03b5\u03cd\u03c3\u03b5\u03b9\u03c2 \u03b3\u03b9\u03b1 \u03c4\u03b7\u03bd \u03b5\u03c0\u03cc\u03bc\u03b5\u03bd\u03b7 \u03bc\u03ad\u03c1\u03b1",
+        "url": "https://www.mikrometoxos.gr/androulakis-vazoume-telos-stin-asydosia-ton-funds-oi-okto-desmefseis-gia-tin-epomeni-mera/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "travel.24tv.ua",
+        "language": "Ukrainian",
+        "seendate": "20260518T120000Z",
+        "socialimage": "https://travel.24tv.ua/resources/photos/news/202605/3069946.jpg?v=1779097659000",
+        "sourcecountry": "",
+        "title": "\u0422\u0440\u0430\u0441\u0430 \u0427\u043e\u0440\u043d\u0430 \u0441\u0442\u0456\u043d\u0430 \u0443 \u0428\u0432\u0435\u0439\u0446\u0430\u0440\u0456\u0457 - \u044f\u043a \u0432\u0438\u0433\u043b\u044f\u0434\u0430\u0454 \u043e\u0434\u043d\u0430 \u0437 \u043d\u0430\u0439\u0435\u043a\u0441\u0442\u0440\u0435\u043c\u0430\u043b\u044c\u043d\u0456\u0448\u0438\u0445 \u043b\u0438\u0436\u043d\u0438\u0445 \u0442\u0440\u0430\u0441 \u0441\u0432\u0456\u0442\u0443",
+        "url": "https://travel.24tv.ua/trasa-chorna-stina-shveytsariyi-yak-viglyadaye-odna-nayekstremalnishih_n3069946",
+        "url_mobile": "https://travel.24tv.ua/trasa-chorna-stina-shveytsariyi-yak-viglyadaye-odna-nayekstremalnishih_n3069946/amp"
+      },
+      {
+        "domain": "athina984.gr",
+        "language": "Greek",
+        "seendate": "20260515T184500Z",
+        "socialimage": "https://athina984.gr/wp-content/uploads/2023/01/%CE%A5%CF%80%CE%BF%CF%85%CF%81%CE%B3%CE%B5%CE%B9%CE%BF-%CE%9F%CE%B9%CE%BA%CE%BF%CE%BD%CE%BF%CE%BC%CE%B9%CE%BA%CF%89%CE%BD-1024x639.jpg",
+        "sourcecountry": "Greece",
+        "title": "Y\u03c0\u03bf\u03c5\u03c1\u03b3\u03b5\u03af\u03bf \u0395\u03b8\u03bd\u03b9\u03ba\u03ae\u03c2 \u039f\u03b9\u03ba\u03bf\u03bd\u03bf\u03bc\u03af\u03b1\u03c2 \u03ba\u03b1\u03b9 \u039f\u03b9\u03ba\u03bf\u03bd\u03bf\u03bc\u03b9\u03ba\u03ce\u03bd : \u039f \u03ba . \u03a4\u03c3\u03af\u03c0\u03c1\u03b1\u03c2 \u03b5\u03bc\u03c6\u03b1\u03bd\u03af\u03b6\u03b5\u03c4\u03b1\u03b9 \u03c3\u03b1\u03bd \u03c0\u03c5\u03c1\u03bf\u03c3\u03b2\u03ad\u03c3\u03c4\u03b7\u03c2 \u03c3\u03c4\u03b7 \u03c6\u03c9\u03c4\u03b9\u03ac \u03c0\u03bf\u03c5 \u03bf \u03af\u03b4\u03b9\u03bf\u03c2 \u03ac\u03bd\u03b1\u03c8\u03b5",
+        "url": "https://athina984.gr/2026/05/15/ypoyrgeio-ethnikis-oikonomias-kai-oikonomikon-o-k-tsipras-emfanizetai-san-pyrosvestis-sti-fotia-poy-o-idios-anapse/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "sever.bg",
+        "language": "Bulgarian",
+        "seendate": "20260517T091500Z",
+        "socialimage": "",
+        "sourcecountry": "Bulgaria",
+        "title": "\u0412\u0430\u043b\u0443\u0442\u043d\u0438 \u043a\u0443\u0440\u0441\u043e\u0432\u0435",
+        "url": "https://sever.bg/%D0%9B%D0%BE%D0%B2%D0%B5%D1%87/%D0%92%D0%B0%D0%BB%D1%83%D1%82%D0%BD%D0%B8-%D0%BA%D1%83%D1%80%D1%81%D0%BE%D0%B2%D0%B5_l.er_r.2522+yave+@abv.bg+C.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bilanz.ch",
+        "language": "German",
+        "seendate": "20260517T121500Z",
+        "socialimage": "https://www.bilanz.ch/fp/1200/630/960/550/pulscms/MDA_/f03830b3-5a77-453e-9048-b0aa384140c9.jpeg",
+        "sourcecountry": "Switzerland",
+        "title": "Mid - Caps schlagen SMI : Innovationskraft treibt B\u00f6rsenerfolg",
+        "url": "https://www.bilanz.ch/invest/aktien/mid-caps-schlagen-smi-innovationskraft-treibt-boersenerfolg/hf331zn",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bankingnews.gr",
+        "language": "Greek",
+        "seendate": "20260515T193000Z",
+        "socialimage": "https://www.bankingnews.gr/media/k2/items/cache/1d6f4e531c5b24f0138ef73e24c4a0d0_XL.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u0391\u03c0\u03ac\u03bd\u03c4\u03b7\u03c3\u03b7 \u03b1\u03c0\u03cc \u03a5\u03a0\u0395\u0398\u039f : \u039f \u03a4\u03c3\u03af\u03c0\u03c1\u03b1\u03c2 \u03b5\u03c0\u03b5\u03bd\u03b4\u03cd\u03b5\u03b9 \u03c3\u03c4\u03b1 \u03c0\u03c1\u03bf\u03b2\u03bb\u03ae\u03bc\u03b1\u03c4\u03b1 \u03c0\u03bf\u03c5 \u03bf \u03af\u03b4\u03b9\u03bf\u03c2 \u03b4\u03b7\u03bc\u03b9\u03bf\u03cd\u03c1\u03b3\u03b7\u03c3\u03b5",
+        "url": "https://www.bankingnews.gr/politiki/articles/875435/apantisi-apo-ypetho-o-tsipras-ependyei-sta-provlimata-pou-o-idios-dimioyrgise",
+        "url_mobile": ""
+      },
+      {
+        "domain": "newsbeast.gr",
+        "language": "Greek",
+        "seendate": "20260518T154500Z",
+        "socialimage": "https://www.newsbeast.gr/image/s1200x762/fill/file/files/1/2026/05/OIKONOMIKON.jpg",
+        "sourcecountry": "Greece",
+        "title": "To \u03c5\u03c0\u03bf\u03c5\u03c1\u03b3\u03b5\u03af\u03bf \u0395\u03b8\u03bd\u03b9\u03ba\u03ae\u03c2 \u039f\u03b9\u03ba\u03bf\u03bd\u03bf\u03bc\u03af\u03b1\u03c2 \u03b1\u03c0\u03b1\u03bd\u03c4\u03ac \u03c3\u03c4\u03bf\u03bd \u039d\u03af\u03ba\u03bf \u0391\u03bd\u03b4\u03c1\u03bf\u03c5\u03bb\u03ac\u03ba\u03b7 \u03b3\u03b9\u03b1 \u03c4\u03bf \u03b9\u03b4\u03b9\u03c9\u03c4\u03b9\u03ba\u03cc \u03c7\u03c1\u03ad\u03bf\u03c2",
+        "url": "https://www.newsbeast.gr/politiki/arthro/13105990/to-ypourgeio-ethnikis-oikonomias-apanta-ston-niko-androulaki-gia-to-idiotiko-chreos",
+        "url_mobile": ""
+      }
+    ]
+  },
+  "gdelt:EUR:72": {
+    "timestamp": 1779124280.7131197,
+    "value": [
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260517T084500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0623\u0633\u0639\u0627\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 17 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0648\u0634\u0631\u0643\u0627\u062a \u0627\u0644\u0635\u0631\u0627\u0641\u0629",
+        "url": "https://www.dostor.org/5558252",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260517T153000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u062c\u0646\u064a\u0647 \u0627\u0644\u0645\u0635\u0631\u064a \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0623\u062d\u062f 17 \u0645\u0627\u064a\u0648 2026 \u0628\u064a\u0639\u064b\u0627 \u0648\u0634\u0631\u0627\u0621\u064b",
+        "url": "https://www.dostor.org/5559281",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260517T084500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0627\u0639\u0631\u0641 \u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u064a\u0648\u0645 17 \u0645\u0627\u064a\u0648 2026",
+        "url": "https://www.dostor.org/5558466",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260517T164500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0623\u062d\u062f 17 - 5 - 2026 \u0623\u0645\u0627\u0645 \u0627\u0644\u062c\u0646\u064a\u0647 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643",
+        "url": "https://www.dostor.org/5559241",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260515T181500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u062c\u0645\u0639\u0629 15 - 5 - 2026 \u0623\u0645\u0627\u0645 \u0627\u0644\u062c\u0646\u064a\u0647",
+        "url": "https://www.dostor.org/5556389",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T190000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0633\u0628\u062a 16 - 5 - 2026 \u0623\u0645\u0627\u0645 \u0627\u0644\u062c\u0646\u064a\u0647 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u0645\u062d\u0644\u064a\u0629",
+        "url": "https://www.dostor.org/5557943",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260517T204500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0622\u062e\u0631 \u062a\u062d\u062f\u064a\u062b \u0644\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0623\u062d\u062f 17 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0645\u0635\u0631",
+        "url": "https://www.dostor.org/5559775",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260517T201500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0623\u062d\u062f 17 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0627\u0644\u0633\u0648\u0642 \u0627\u0644\u0645\u0635\u0631\u0641\u064a",
+        "url": "https://www.dostor.org/5559742",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T184500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0633\u0628\u062a 16 - 5 - 2026 \u0623\u0645\u0627\u0645 \u0627\u0644\u062c\u0646\u064a\u0647 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u0645\u062d\u0644\u064a\u0629",
+        "url": "https://www.dostor.org/5557893",
+        "url_mobile": ""
+      },
+      {
+        "domain": "vetogate.com",
+        "language": "Arabic",
+        "seendate": "20260517T091500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0627\u0644\u0642\u0627\u0647\u0631\u0629 \u062a\u0633\u062a\u0636\u064a\u0641 \u0648\u0631\u0634\u0629 \u0623\u0648\u0631\u0648\u0645\u062a\u0648\u0633\u0637\u064a\u0629 \u0644\u062f\u0639\u0645 \u0627\u0644\u062a\u0635\u0646\u064a\u0639 \u0645\u0646\u062e\u0641\u0636 \u0627\u0644\u0627\u0646\u0628\u0639\u0627\u062b\u0627\u062a \u0627\u0644\u0643\u0631\u0628\u0648\u0646\u064a\u0629 \u0641\u064a \u0627\u0644\u0633\u064a\u0631\u0627\u0645\u064a\u0643",
+        "url": "https://www.vetogate.com/5656813",
+        "url_mobile": ""
+      },
+      {
+        "domain": "blic.rs",
+        "language": "Serbian",
+        "seendate": "20260517T071500Z",
+        "socialimage": "https://ocdn.eu/pulscms-transforms/1/3g6ktkpTURBXy9iZWI3ZGIyYjFkYWZjZDNkNzUxMTlhYmNmOWEzODFhZi5qcGeRkwXNBLDNAqM",
+        "sourcecountry": "Serbia",
+        "title": "Ovo \u0107e biti sutra\u0161nji kurs dinara prema evru",
+        "url": "https://www.blic.rs/biznis/vesti/ovo-ce-biti-sutrasnji-kurs-dinara-prema-evru/byz1xgx",
+        "url_mobile": ""
+      },
+      {
+        "domain": "politika.rs",
+        "language": "Serbian",
+        "seendate": "20260518T094500Z",
+        "socialimage": "https://www.politika.rs/thumbs/upload/Article/Image/2026_05/757z468_cb_904z509_cb_904z509_Centralna.jpg",
+        "sourcecountry": "Serbia",
+        "title": "\u0414\u0438\u043d\u0430\u0440 \u0441\u0442\u0430\u0431\u0438\u043b\u0430\u043d \u043f\u0440\u0435\u043c\u0430 \u0435\u0432\u0440\u0443 , \u0431\u043b\u0430\u0433\u043e \u0441\u043b\u0430\u0431\u0438\u0458\u0438 \u043f\u0440\u0435\u043c\u0430 \u0434\u043e\u043b\u0430\u0440\u0443",
+        "url": "https://www.politika.rs/scc/clanak/756008/dinar-stabilan-prema-evru-blago-slabiji-prema-dolaru",
+        "url_mobile": "https://www.politika.rs/sr/articles/amp/756008"
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T150000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0633\u0628\u062a 16 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u0645\u0635\u0631\u064a\u0629 \u2013 \u062a\u062d\u062f\u064a\u062b \u0627\u0644\u0634\u0631\u0627\u0621 \u0648\u0627\u0644\u0628\u064a\u0639",
+        "url": "https://www.dostor.org/5557612",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260515T181500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u062c\u0646\u064a\u0647 \u0641\u064a \u0628\u0646\u0643 \u0645\u0635\u0631 \u0648\u0627\u0644\u0628\u0646\u0643 \u0627\u0644\u0623\u0647\u0644\u064a",
+        "url": "https://www.dostor.org/5556395",
+        "url_mobile": ""
+      },
+      {
+        "domain": "blic.rs",
+        "language": "Serbian",
+        "seendate": "20260518T080000Z",
+        "socialimage": "https://ocdn.eu/pulscms-transforms/1/LjjktkpTURBXy9mY2ExYjM3Y2ZiYzIzMmYzODQ5ODJjMGY0NDgxODYwNS5qcGeRkwXNBLDNAqM",
+        "sourcecountry": "Serbia",
+        "title": "Srednji kurs dinara za evro danas 117 , 3945",
+        "url": "https://www.blic.rs/biznis/vesti/srednji-kurs-dinara-za-evro-danas-1173945/f9tqftr",
+        "url_mobile": ""
+      },
+      {
+        "domain": "topky.sk",
+        "language": "Slovak",
+        "seendate": "20260517T114500Z",
+        "socialimage": "https://static-images.zoznam.sk/image/fetch/q_92,w_1200,h_630,c_fill/h_108,g_north_east,x_0,y_30,l_topky_watermark/https://img.topky.sk/1280px/6491271.jpg",
+        "sourcecountry": "Slovak Republic",
+        "title": "Prekvapiv\u00fd v\u00fdvoj cien pohonn\u00fdch hm\u00f4t na Slovensku",
+        "url": "https://www.topky.sk/cl/10/9398365/Prekvapivy-vyvoj-cien-pohonnych-hmot-na-Slovensku--Vyrazne-zlacnenie-TOHTO-paliva--Co-nas-caka-",
+        "url_mobile": ""
+      },
+      {
+        "domain": "baomoi.com",
+        "language": "Vietnamese",
+        "seendate": "20260516T001500Z",
+        "socialimage": "",
+        "sourcecountry": "Vietnam",
+        "title": "Chu k\u1ef3 th\u1ed1ng tr\u1ecb m\u1edbi",
+        "url": "https://baomoi.com/chu-ky-thong-tri-moi-c55168326.epi",
+        "url_mobile": ""
+      },
+      {
+        "domain": "birgun.net",
+        "language": "Turkish",
+        "seendate": "20260515T213000Z",
+        "socialimage": "",
+        "sourcecountry": "Turkey",
+        "title": "Avrupa \u00fclkeleri aras\u0131ndaki maa\u015f verileri : \u0130svi\u00e7re birinci , T\u00fcrkiye sonuncu",
+        "url": "https://www.birgun.net/haber/avrupa-ulkeleri-arasindaki-maas-verileri-isvicre-birinci-turkiye-sonuncu-712837",
+        "url_mobile": ""
+      },
+      {
+        "domain": "n-tv.de",
+        "language": "German",
+        "seendate": "20260516T094500Z",
+        "socialimage": "https://www.n-tv.de/img/30826848/1778925406/Img_16_9/1200/Ein-Millionengewinn-geht-nach-Sachsen.jpg",
+        "sourcecountry": "Germany",
+        "title": "Sachsen : Millionengewinn im Eurojackpot geht nach Sachsen",
+        "url": "https://www.n-tv.de/regionales/sachsen/Millionengewinn-im-Eurojackpot-geht-nach-Sachsen-id30826849.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "news.de",
+        "language": "German",
+        "seendate": "20260515T194500Z",
+        "socialimage": "https://media.news.de/images/857734194/images/f7/d0/e45c274151b9fe274a741747b742/nopic/no_pic/1200/675/1/1/-/4/1024/576/-/-/die-eurojackpot-kugeln-woche-millionengewinner_857734194_1200x675_ff704f165af2f74cc2c14b87250f090f.jpg",
+        "sourcecountry": "Germany",
+        "title": "Eurojackpot am 15 . 05 . 2026 : Die Gewinnzahlen und Quoten zur Ziehung im Eurolotto am Freitag",
+        "url": "https://www.news.de/wirtschaft/856688022/eurojackpot-gewinnzahlen-und-quoten-heute-vom-15-05-2026-eurolotto-zahlen-mit-gewinnquoten-akuell-fuer-102-mio-euro-jackpot-am-freitag/1/",
+        "url_mobile": "https://www.news.de/amp/wirtschaft/856688022/eurojackpot-gewinnzahlen-und-quoten-heute-vom-15-05-2026-eurolotto-zahlen-mit-gewinnquoten-akuell-fuer-102-mio-euro-jackpot-am-freitag/1/"
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260515T171500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0635\u0631\u0641 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u062c\u0645\u0639\u0629 15 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0627\u0644\u0628\u0646\u0643 \u0627\u0644\u0645\u0631\u0643\u0632\u064a",
+        "url": "https://www.dostor.org/5556039",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T144500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u064a\u0648\u0631\u0648 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0633\u0628\u062a 16 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0645\u0635\u0631 \u0628\u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u0631\u0633\u0645\u064a\u0629 \u0648\u0627\u0644\u062a\u062d\u0648\u064a\u0644\u0627\u062a",
+        "url": "https://www.dostor.org/5557509",
+        "url_mobile": ""
+      },
+      {
+        "domain": "finans.mynet.com",
+        "language": "Turkish",
+        "seendate": "20260517T084500Z",
+        "socialimage": "https://imgrosetta.mynet.com.tr/file/21123935/21123935-1200x675.jpg",
+        "sourcecountry": "Turkey",
+        "title": "Euro bug\u00fcn ka\u00e7 TL ? 17 May\u0131s Pazar 2026 euro ne kadar ? ",
+        "url": "https://finans.mynet.com/haber/detay/doviz/euro-bugun-kac-tl-17-mayis-pazar-2026-euro-ne-kadar/553817/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "web.de",
+        "language": "German",
+        "seendate": "20260515T220000Z",
+        "socialimage": "https://i0.web.de/image/220/36460220,pd=3,f=opengraph/lottoschein-eurojackpot-ausgefuellt.jpg",
+        "sourcecountry": "Germany",
+        "title": "Aktuelle Eurojackpot - Zahlen vom Freitag , den 15 . Mai 2026",
+        "url": "https://web.de/magazine/panorama/lotto/eurojackpot-freitag-aktuelle-gewinnzahlen-15-mai-2026-42269036",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T140000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0643\u0631\u064a\u0633\u062a\u064a\u0646 \u0644\u0627\u062c\u0627\u0631\u062f \u062a\u0634\u0627\u0631\u0643 \u0641\u064a \u062d\u0641\u0644 \u062c\u0627\u0626\u0632\u0629 \u0634\u0627\u0631\u0644\u0645\u0627\u0646 \u0627\u0644\u062f\u0648\u0644\u064a\u0629 \u0648\u062a\u0624\u0643\u062f \u0639\u0644\u0649 \u0642\u0648\u0629 \u0648\u0645\u0643\u0627\u0646\u0629 \u0627\u0644\u064a\u0648\u0631\u0648",
+        "url": "https://www.dostor.org/5557385",
+        "url_mobile": ""
+      }
+    ]
+  },
+  "gdelt:GBP:72": {
+    "timestamp": 1779124606.5897512,
+    "value": [
+      {
+        "domain": "money.pl",
+        "language": "Polish",
+        "seendate": "20260515T200000Z",
+        "socialimage": "https://v.wpimg.pl/NTliNDdkYTUNCzh3SxBsIE5TbC0NSWJ2GUt0Zktad2ZcEWEiDQcrJgkZIWoDGTskDR4-ahQHYTUcAGEyVUQqPR8ZIiUdRCs5DgwqawdYeWAJDCgnSVIrbA5EenZQCmM1DQh5aV1aeWFVC3pzAFp_Yk4U",
+        "sourcecountry": "Poland",
+        "title": "Ile kosztuje funt ? Kurs funta do z\u0142otego PLN / GBP 15 . 05 . 2026",
+        "url": "https://www.money.pl/pieniadze/ile-kosztuje-funt-kurs-funta-do-zlotego-pln-gbp-15-05-2026-7286215214463040a.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T150000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u062c\u0646\u064a\u0647 \u0627\u0644\u0625\u0633\u062a\u0631\u0644\u064a\u0646\u064a \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u064a\u0648\u0645 16 \u0645\u0627\u064a\u0648 2026 .. \u062a\u062d\u062f\u064a\u062b \u0641\u0648\u0631\u064a",
+        "url": "https://www.dostor.org/5557611",
+        "url_mobile": ""
+      },
+      {
+        "domain": "alwasat.ly",
+        "language": "Arabic",
+        "seendate": "20260517T141500Z",
+        "socialimage": "https://cdn-ar-1.alwasat.ly/uploads/articles/ZiLIQvEtwtIJtN5Uy1nk.jpg",
+        "sourcecountry": "Libya",
+        "title": "\u0623\u0633\u0639\u0627\u0631 \u0635\u0631\u0641 \u0627\u0644\u0639\u0645\u0644\u0627\u062a \u0627\u0644\u0623\u062c\u0646\u0628\u064a\u0629 \u0623\u0645\u0627\u0645 \u0627\u0644\u062f\u064a\u0646\u0627\u0631 \u0641\u064a \u0627\u0644\u0633\u0648\u0642 \u0627\u0644\u0645\u0648\u0627\u0632\u064a\u0629 ( \u0627\u0644\u0623\u062d\u062f 17 \u0645\u0627\u064a\u0648 2026 ) ",
+        "url": "https://alwasat.ly/news/libya/518534",
+        "url_mobile": ""
+      },
+      {
+        "domain": "libyaakhbar.com",
+        "language": "Arabic",
+        "seendate": "20260516T181500Z",
+        "socialimage": "https://www.libyaakhbar.com/wp-content/uploads/2025/10/1759757168_PSD%D8%A7%D9%84%D8%B9%D9%86%D9%88%D8%A7%D9%86-2024-08-16T100534.240-1-5-2-1-1-6.webp.webp",
+        "sourcecountry": "Libya",
+        "title": "\u062a\u0631\u0627\u062c\u0639 \u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0648\u0627\u0644\u064a\u0648\u0631\u0648 \u0648\u0627\u0644\u0625\u0633\u062a\u0631\u0644\u064a\u0646\u064a \u0641\u064a \u0627\u0644\u0633\u0648\u0642 \u0627\u0644\u0645\u0648\u0627\u0632\u064a\u0629",
+        "url": "https://www.libyaakhbar.com/business-news/2793357.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "bloomberght.com",
+        "language": "Turkish",
+        "seendate": "20260518T073000Z",
+        "socialimage": "",
+        "sourcecountry": "Turkey",
+        "title": "Dolar ne kadar oldu ? 18 May\u0131s 2026 , Dolar kurunda son durum ne ? ",
+        "url": "https://www.bloomberght.com/dolar-ne-kadar-oldu-18-mayis-2026-dolar-kurunda-son-durum-ne-pkh2-3777937",
+        "url_mobile": ""
+      },
+      {
+        "domain": "alwasat.ly",
+        "language": "Arabic",
+        "seendate": "20260517T093000Z",
+        "socialimage": "https://cdn-ar-1.alwasat.ly/uploads/articles/OXzy6dF8sUzYwkeOkVXX.jpg",
+        "sourcecountry": "Libya",
+        "title": "\u0623\u0633\u0639\u0627\u0631 \u0635\u0631\u0641 \u0627\u0644\u0639\u0645\u0644\u0627\u062a \u0627\u0644\u0623\u062c\u0646\u0628\u064a\u0629 \u0623\u0645\u0627\u0645 \u0627\u0644\u062f\u064a\u0646\u0627\u0631 \u0641\u064a \u0627\u0644\u0633\u0648\u0642 \u0627\u0644\u0631\u0633\u0645\u064a\u0629 ( \u0627\u0644\u0623\u062d\u062f 17 \u0645\u0627\u064a\u0648 2026 ) ",
+        "url": "https://alwasat.ly/news/libya/518493",
+        "url_mobile": ""
+      },
+      {
+        "domain": "libyaakhbar.com",
+        "language": "Arabic",
+        "seendate": "20260516T134500Z",
+        "socialimage": "https://www.libyaakhbar.com/wp-content/uploads/2026/01/dollar2026.webp.webp",
+        "sourcecountry": "Libya",
+        "title": "\u062a\u063a\u064a\u064a\u0631 \u062c\u062f\u064a\u062f .. \u062a\u0631\u0627\u062c\u0639 \u0623\u0633\u0639\u0627\u0631 \u0635\u0631\u0641 \u0627\u0644\u0639\u0645\u0644\u0627\u062a \u0627\u0644\u0623\u062c\u0646\u0628\u064a\u0629 \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u062f\u064a\u0646\u0627\u0631 \u0641\u064a \u0627\u0644\u0633\u0648\u0642 \u0627\u0644\u0645\u0648\u0627\u0632\u064a ( \u0627\u0644\u0633\u0628\u062a 16 \u0645\u0627\u064a\u0648 2026 ) ",
+        "url": "https://www.libyaakhbar.com/business-news/2793154.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T203000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u0631\u064a\u0627\u0644 \u0627\u0644\u0633\u0639\u0648\u062f\u064a \u0627\u0644\u064a\u0648\u0645 16 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0645\u0635\u0631 .. \u062a\u062d\u062f\u064a\u062b \u0644\u062d\u0638\u064a",
+        "url": "https://www.dostor.org/5558045",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T200000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u0631\u064a\u0627\u0644 \u0627\u0644\u0633\u0639\u0648\u062f\u064a \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u0645\u0635\u0631\u064a\u0629 \u0627\u0644\u064a\u0648\u0645 16 \u0645\u0627\u064a\u0648 2026",
+        "url": "https://www.dostor.org/5558003",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T210000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0641\u064a \u0645\u0635\u0631 \u0627\u0644\u0622\u0646 .. \u062a\u062d\u062f\u064a\u062b \u0633\u0639\u0631 \u0627\u0644\u0635\u0631\u0641 \u0627\u0644\u064a\u0648\u0645",
+        "url": "https://www.dostor.org/5558063",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T203000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0643\u0645 \u0633\u0639\u0631 \u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0633\u0628\u062a 16 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u061f ",
+        "url": "https://www.dostor.org/5558039",
+        "url_mobile": ""
+      },
+      {
+        "domain": "libyaakhbar.com",
+        "language": "Arabic",
+        "seendate": "20260517T211500Z",
+        "socialimage": "https://www.libyaakhbar.com/wp-content/uploads/2026/02/1771861627_102711150-472516078.jpg",
+        "sourcecountry": "Libya",
+        "title": "\u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0648\u0627\u0644\u0639\u0645\u0644\u0627\u062a \u062a\u0633\u062c\u0644 \u0645\u0633\u062a\u0648\u064a\u0627\u062a \u062c\u062f\u064a\u062f\u0629 \u0641\u064a \u0627\u0644\u0633\u0648\u0642 \u0627\u0644\u0645\u0648\u0627\u0632\u064a\u0629 \u0641\u064a \u0644\u064a\u0628\u064a\u0627",
+        "url": "https://www.libyaakhbar.com/business-news/2794331.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260517T190000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0622\u062e\u0631 \u062a\u062d\u062f\u064a\u062b \u0644\u0640 \u0633\u0639\u0631 \u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u062c\u0646\u064a\u0647 \u0627\u0644\u0645\u0635\u0631\u064a \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0623\u062d\u062f",
+        "url": "https://www.dostor.org/5559631",
+        "url_mobile": ""
+      },
+      {
+        "domain": "hedgeweek.com",
+        "language": "English",
+        "seendate": "20260518T101500Z",
+        "socialimage": "",
+        "sourcecountry": "United Kingdom",
+        "title": "Hedge funds pile into bearish sterling options as united kingdom political risk drives volatility",
+        "url": "https://www.hedgeweek.com/hedge-funds-pile-into-bearish-sterling-options-as-uk-political-risk-drives-volatility/",
+        "url_mobile": ""
+      },
+      {
+        "domain": "en.dailypakistan.com.pk",
+        "language": "English",
+        "seendate": "20260517T080000Z",
+        "socialimage": "https://en.dailypakistan.com.pk/wp-content/uploads/2024/08/today-currency-rates-in-pakistan-rupee-to-us-dollar-euro-pound-dirham-riyal-4-august-2024-1722743309-8290.jpg",
+        "sourcecountry": "Pakistan",
+        "title": "Currency Rates in Pakistan - Today Open Market Rates for Dollar , Euro , Pound , Riyal",
+        "url": "https://en.dailypakistan.com.pk/17-May-2026/currency-rates-in-pakistan-today-open-market-rates-for-dollar-euro-pound-riyal-17-may-2026",
+        "url_mobile": ""
+      },
+      {
+        "domain": "ratopati.com",
+        "language": "Nepali",
+        "seendate": "20260516T021500Z",
+        "socialimage": "https://rpcdn.ratopati.com/media/albums/forex_FMYjdGPO4Y.jpg",
+        "sourcecountry": "Nepal",
+        "title": "\u0936\u0928\u093f\u092c\u093e\u0930 \u092f\u0938\u094d\u0924\u094b \u091b \u0935\u093f\u0926\u0947\u0936\u0940 \u092e\u0941\u0926\u094d\u0930\u093e\u0915\u094b \u0935\u093f\u0928\u093f\u092e\u092f \u0926\u0930 | Nepal first 24 - hour updated news portal",
+        "url": "https://www.ratopati.com/story/563523/this-is-the-foreign-exchange-rate-on-saturday",
+        "url_mobile": ""
+      },
+      {
+        "domain": "birminghammail.co.uk",
+        "language": "English",
+        "seendate": "20260518T134500Z",
+        "socialimage": "https://i2-prod.birminghammail.co.uk/article33966770.ece/ALTERNATES/s1200d/0_Shop-prices.jpg",
+        "sourcecountry": "United Kingdom",
+        "title": "UK household top financial concern is rising prices , survey finds",
+        "url": "https://www.birminghammail.co.uk/news/cost-of-living/uk-households-top-financial-concern-33966799",
+        "url_mobile": "https://www.birminghammail.co.uk/news/cost-of-living/uk-households-top-financial-concern-33966799.amp"
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260515T190000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u062c\u0646\u064a\u0647 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u062c\u0645\u0639\u0629 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u0645\u0635\u0631\u064a\u0629",
+        "url": "https://www.dostor.org/5556371",
+        "url_mobile": ""
+      },
+      {
+        "domain": "libyaakhbar.com",
+        "language": "Arabic",
+        "seendate": "20260516T004500Z",
+        "socialimage": "https://www.libyaakhbar.com/wp-content/uploads/2026/03/dollar2.webp.webp",
+        "sourcecountry": "Libya",
+        "title": "\u0623\u0633\u0639\u0627\u0631 \u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0648\u0627\u0644\u064a\u0648\u0631\u0648 \u0648\u0627\u0644\u0628\u0627\u0648\u0646\u062f \u0648\u0627\u0644\u0630\u0647\u0628 \u0641\u064a \u062e\u062a\u0627\u0645 \u0627\u0644\u0633\u0648\u0642 \u0627\u0644\u0645\u0648\u0627\u0632\u064a 15 \u0645\u0627\u064a\u0648 2026",
+        "url": "https://www.libyaakhbar.com/business-news/2792886.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "libyaakhbar.com",
+        "language": "Arabic",
+        "seendate": "20260516T134500Z",
+        "socialimage": "https://www.libyaakhbar.com/wp-content/uploads/2026/05/img-3853932020.jpg.webp",
+        "sourcecountry": "Libya",
+        "title": "\u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u064a\u062a\u0631\u0627\u062c\u0639 \u0623\u0645\u0627\u0645 \u0627\u0644\u062f\u064a\u0646\u0627\u0631 \u0641\u064a \u0623\u0633\u0648\u0627\u0642 \u0644\u064a\u0628\u064a\u0627 \u0627\u0644\u0645\u0648\u0627\u0632\u064a\u0629",
+        "url": "https://www.libyaakhbar.com/business-news/2793171.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "libyaakhbar.com",
+        "language": "Arabic",
+        "seendate": "20260516T004500Z",
+        "socialimage": "https://www.libyaakhbar.com/wp-content/uploads/2026/05/348778-19.jpg",
+        "sourcecountry": "Libya",
+        "title": "\u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u064a\u0648\u0627\u0635\u0644 \u0627\u0644\u0635\u0639\u0648\u062f \u0644\u0644\u064a\u0648\u0645 \u0627\u0644\u062e\u0627\u0645\u0633 \u0648\u0633\u0637 \u062a\u0648\u0642\u0639\u0627\u062a \u0628\u0631\u0641\u0639 \u0627\u0644\u0641\u0627\u0626\u062f\u0629 \u0627\u0644\u0623\u0645\u0631\u064a\u0643\u064a\u0629",
+        "url": "https://www.libyaakhbar.com/libya-news/2792883.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "libyaakhbar.com",
+        "language": "Arabic",
+        "seendate": "20260518T133000Z",
+        "socialimage": "https://www.libyaakhbar.com/wp-content/uploads/2026/03/dollar-up26.webp.webp",
+        "sourcecountry": "Libya",
+        "title": "\u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0648\u0627\u0644\u064a\u0648\u0631\u0648 \u062a\u0641\u062a\u062a\u062d \u062a\u0639\u0627\u0645\u0644\u0627\u062a \u0627\u0644\u0625\u062b\u0646\u064a\u0646 \u0639\u0644\u0649 \u0627\u0631\u062a\u0641\u0627\u0639 \u0641\u064a \u0644\u064a\u0628\u064a\u0627 \u0648\u0647\u0630\u0647 \u0627\u0644\u062a\u0648\u0642\u0639\u0627\u062a \u0627\u0644\u0642\u0627\u062f\u0645\u0629",
+        "url": "https://www.libyaakhbar.com/business-news/2794690.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260517T084500Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0623\u0633\u0639\u0627\u0631 \u0627\u0644\u0639\u0645\u0644\u0627\u062a \u0627\u0644\u0623\u062c\u0646\u0628\u064a\u0629 \u0648\u0627\u0644\u0639\u0631\u0628\u064a\u0629 \u0627\u0644\u064a\u0648\u0645 17 \u0645\u0627\u064a\u0648 2026 \u0628\u0627\u0644\u0628\u0646\u0643 \u0627\u0644\u0645\u0631\u0643\u0632\u064a",
+        "url": "https://www.dostor.org/5558386",
+        "url_mobile": ""
+      },
+      {
+        "domain": "currencynews.co.uk",
+        "language": "English",
+        "seendate": "20260517T161500Z",
+        "socialimage": "",
+        "sourcecountry": "United Kingdom",
+        "title": "Pound Sterling to Euro Forecast : Can GBP Recover After Breaking Below 1 . 15 ? ",
+        "url": "https://www.currencynews.co.uk/forecast/20260517-45932_pound-sterling-to-euro-forecast-can-gbp-recover-after-breaking-below-1-15.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "in.gr",
+        "language": "Greek",
+        "seendate": "20260516T110000Z",
+        "socialimage": "https://www.in.gr/wp-content/uploads/2026/05/2026-05-15T170710Z_1824813699_RC2CKJA1WGIJ_RTRMADP_5_BRITAIN-POLITICS-BURNHAM-LABOUR-620x350.jpg",
+        "sourcecountry": "Greece",
+        "title": "\u039f \u03b5\u03c0\u03af\u03b4\u03bf\u03be\u03bf\u03c2 ... \u03b4\u03b9\u03ac\u03b4\u03bf\u03c7\u03bf\u03c2 \u03c4\u03bf\u03c5 \u039a\u03b9\u03c1 \u03a3\u03c4\u03ac\u03c1\u03bc\u03b5\u03c1 \u03c4\u03c1\u03bf\u03bc\u03ac\u03b6\u03b5\u03b9 \u03c4\u03b9\u03c2 \u03b1\u03b3\u03bf\u03c1\u03ad\u03c2",
+        "url": "https://www.in.gr/2026/05/16/economy/diethnis-oikonomia/o-epidoksos-diadoxos-tou-kir-starmer-tromazei-tis-agores/",
+        "url_mobile": "https://www.in.gr/2026/05/16/economy/diethnis-oikonomia/o-epidoksos-diadoxos-tou-kir-starmer-tromazei-tis-agores/amp/"
+      }
+    ]
+  },
+  "gdelt:JPY:72": {
+    "timestamp": 1779124347.9506836,
+    "value": [
+      {
+        "domain": "vetogate.com",
+        "language": "Arabic",
+        "seendate": "20260517T190000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u0640 100 \u064a\u0646 \u0627\u0644\u064a\u0627\u0628\u0627\u0646\u064a \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u062c\u0646\u064a\u0647 \u0641\u064a \u0627\u0644\u0628\u0646\u0643 \u0627\u0644\u0645\u0631\u0643\u0632\u064a",
+        "url": "https://www.vetogate.com/5657140",
+        "url_mobile": ""
+      },
+      {
+        "domain": "zdnet.co.kr",
+        "language": "Korean",
+        "seendate": "20260517T040000Z",
+        "socialimage": "https://image.zdnet.co.kr/2026/05/17/81f29b1112b20b0e8c3b819faa03150e.jpg",
+        "sourcecountry": "South Korea",
+        "title": "  \uc77c\ubcf8 4\uc774\ud1b5  \ub77c\ucfe0\ud150\ubaa8\ubc14\uc77c , 1\ubd84\uae30 3439\uc5b5\uc6d0 \uc801\uc790",
+        "url": "https://zdnet.co.kr/view/?no=20260517103712",
+        "url_mobile": ""
+      },
+      {
+        "domain": "asiaone.com",
+        "language": "English",
+        "seendate": "20260518T094500Z",
+        "socialimage": "https://www.asiaone.com/sites/default/files/styles/article_top_image/public/original_images/May2026/asahi-nikka-rt.JPG?itok=94oujr2m",
+        "sourcecountry": "Singapore",
+        "title": "Japan Nikka bets Japanese whisky boom has room to run",
+        "url": "https://www.asiaone.com/lifestyle/japans-nikka-bets-japanese-whisky-boom-has-room-run",
         "url_mobile": ""
       },
       {
         "domain": "finance.yahoo.com",
         "language": "English",
-        "seendate": "20260515T070000Z",
-        "socialimage": "https://s.yimg.com/os/en/reuters.com/6365fa15d7795c063cfbb4196f095b87",
+        "seendate": "20260515T181500Z",
+        "socialimage": "https://s.yimg.com/ny/api/res/1.2/yGDAd5xRePPthvihs8L2mA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD0xMDMz/https://media.zenfs.com/en/bloomberg_holding_pen_162/008b28e7219f5c8f8d55a2b9b53c2953",
         "sourcecountry": "United States",
-        "title": "Dollar rides rising US yields to largest weekly gain in two months",
-        "url": "https://finance.yahoo.com/markets/currencies/articles/dollar-rides-rising-yields-largest-045936182.html",
+        "title": "Curious Yen Spikes Have Traders Gaming Japan  Warning Shots  ",
+        "url": "https://finance.yahoo.com/markets/currencies/articles/curious-yen-spikes-traders-gaming-054400158.html",
         "url_mobile": ""
       },
       {
-        "domain": "econotimes.com",
+        "domain": "dailypolitical.com",
         "language": "English",
-        "seendate": "20260513T064500Z",
-        "socialimage": "https://f1.econotimes.com/2026/05/i0gs73y66u.jpg",
+        "seendate": "20260517T193000Z",
+        "socialimage": "",
         "sourcecountry": "United States",
-        "title": "FxWirePro : AUD / USD eases slightly as focus shifts to US - China meeting",
-        "url": "http://www.econotimes.com/FxWirePro-AUD-USD-eases-slightly-as-focus-shifts-to-US-China-meeting-1741554",
+        "title": "Invesco CurrencyShares Japanese Yen Trust ( NYSEARCA : FXY ) Short Interest Up 143 . 8 % in April",
+        "url": "https://www.dailypolitical.com/2026/05/17/invesco-currencyshares-japanese-yen-trust-nysearcafxy-short-interest-up-143-8-in-april.html",
         "url_mobile": ""
       },
       {
-        "domain": "dunyanews.tv",
+        "domain": "focustaiwan.tw",
         "language": "English",
-        "seendate": "20260513T054500Z",
-        "socialimage": "https://img.dunyanews.tv/news/2026/May/05-13-26/news_big_images/951237_46998788.jpg",
-        "sourcecountry": "Pakistan",
-        "title": "Dollar near one - week high as hot US inflation fans Fed hike bets , peace talks stall",
-        "url": "https://dunyanews.tv/en/Business/951237-dollar-near-oneweek-high-as-hot-us-inflation-fans-fed-hike-bets-peac",
-        "url_mobile": "https://dunyanews.tv/amp/english/951237.php"
-      },
-      {
-        "domain": "drive.com.au",
-        "language": "English",
-        "seendate": "20260513T021500Z",
-        "socialimage": "https://media.drive.com.au/obj/tx_q:70,rs:auto:960:540:1/driveau/upload/vehicles/used/mitsubishi/asx/2025/0a348819-db3f-5f83-b138-e7b134e50000",
-        "sourcecountry": "Australia",
-        "title": "Demo 2025 Grey Mitsubishi ASX LS Wagon For Sale",
-        "url": "https://www.drive.com.au/cars-for-sale/car/970192976/",
+        "seendate": "20260516T121500Z",
+        "socialimage": "https://imgcdn.cna.com.tw/Eng/WebEngPhotos/WebOg/600/2026/20260516/960x504_229641822509.jpg",
+        "sourcecountry": "Taiwan",
+        "title": "Japan variety goods chain 3coins to open 1st shop in Taiwan in August",
+        "url": "https://focustaiwan.tw/business/202605160007",
         "url_mobile": ""
       },
       {
-        "domain": "econotimes.com",
+        "domain": "focustaiwan.tw",
         "language": "English",
-        "seendate": "20260515T083000Z",
-        "socialimage": "https://f1.econotimes.com/2025/01/64zxc0gbzp.jpg",
-        "sourcecountry": "United States",
-        "title": "Asian Currencies Slide as Strong U . S . Data Boosts Dollar and Fed Rate Hike Expectations",
-        "url": "http://www.econotimes.com/Asian-Currencies-Slide-as-Strong-US-Data-Boosts-Dollar-and-Fed-Rate-Hike-Expectations-1741790",
+        "seendate": "20260516T121500Z",
+        "socialimage": "https://imgcdn.cna.com.tw/Eng/WebEngPhotos/WebOg/600/2026/20260516/960x504_229641822509.jpg",
+        "sourcecountry": "Taiwan",
+        "title": "Japan variety goods chain 3coins to open 1st shop in Taiwan in August",
+        "url": "https://focustaiwan.tw:443/business/202605160007",
         "url_mobile": ""
       },
       {
-        "domain": "economictimes.indiatimes.com",
+        "domain": "businesstoday.in",
         "language": "English",
-        "seendate": "20260513T023000Z",
-        "socialimage": "https://img.etimg.com/thumb/msid-131052555,width-1200,height-630,imgsize-292332,overlay-etmarkets/articleshow.jpg",
+        "seendate": "20260518T051500Z",
+        "socialimage": "https://akm-img-a-in.tosshub.com/businesstoday/images/story/202605/6a09f0866b211-manish-kumar--who-runs-an-indian-restaurant-in-japans-saitama-prefecture--broke-down-during-a-prote-174448687-16x9.jpg",
         "sourcecountry": "India",
-        "title": "Dollar near one - week high as hot U . S . inflation fans Fed hike bets , peace talks stall",
-        "url": "https://economictimes.indiatimes.com/markets/forex/dollar-near-one-week-high-as-hot-u-s-inflation-fans-fed-hike-bets-peace-talks-stall/articleshow/131052553.cms",
-        "url_mobile": "https://m.economictimes.com/markets/forex/dollar-near-one-week-high-as-hot-u-s-inflation-fans-fed-hike-bets-peace-talks-stall/amp_articleshow/131052553.cms"
+        "title": "  What am I supposed to do ?: Japan visa crackdown threatens Indian restaurant owner after 30 years",
+        "url": "https://www.businesstoday.in/nri/visa/story/what-am-i-supposed-to-do-japans-visa-crackdown-threatens-indian-restaurant-owner-after-30-years-531886-2026-05-18",
+        "url_mobile": "https://www.businesstoday.in/amp/nri/visa/story/what-am-i-supposed-to-do-japans-visa-crackdown-threatens-indian-restaurant-owner-after-30-years-531886-2026-05-18"
       },
       {
-        "domain": "marketscreener.com",
+        "domain": "en.dailypakistan.com.pk",
         "language": "English",
-        "seendate": "20260513T021500Z",
-        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2026-03/2026-03-25T011928Z_1_LYNXMPEM2O01T_RTROPTP_4_GLOBAL-FOREX.JPG",
-        "sourcecountry": "",
-        "title": "Dollar near one - week high as hot U . S . inflation fans Fed hike bets , peace talks stall",
-        "url": "https://www.marketscreener.com/news/dollar-near-one-week-high-as-hot-u-s-inflation-fans-fed-hike-bets-peace-talks-stall-ce7f5bdfda81f625",
-        "url_mobile": ""
-      },
-      {
-        "domain": "arynews.tv",
-        "language": "English",
-        "seendate": "20260513T164500Z",
-        "socialimage": "https://static.arynews.tv/zip-archives/wp-content/uploads/2026/05/currency-rates-pakistan.jpg",
+        "seendate": "20260517T080000Z",
+        "socialimage": "https://en.dailypakistan.com.pk/wp-content/uploads/2024/08/today-currency-rates-in-pakistan-rupee-to-us-dollar-euro-pound-dirham-riyal-4-august-2024-1722743309-8290.jpg",
         "sourcecountry": "Pakistan",
-        "title": "Currency Rates Today in Pakistan",
-        "url": "https://arynews.tv/dollar-currency-rates-today-in-pakistan-may-13-2026",
-        "url_mobile": "https://arynews.tv/dollar-currency-rates-today-in-pakistan-may-13-2026.amp"
-      },
-      {
-        "domain": "canberratimes.com.au",
-        "language": "English",
-        "seendate": "20260513T221500Z",
-        "socialimage": "https://www.canberratimes.com.au/images/transform/v1/crop/frm/230199405/2faca258-ff0d-427a-afed-b01994326dde.jpg/r0_105_5760_3129_w1200_h630_fmax.jpg",
-        "sourcecountry": "Australia",
-        "title": "Australian Federal Police : HQ listed for sale with 13 - year lease | The Canberra Times",
-        "url": "https://www.canberratimes.com.au/story/9245838/australian-federal-police-hq-listed-for-sale-with-13-year-lease/",
+        "title": "Currency Rates in Pakistan - Today Open Market Rates for Dollar , Euro , Pound , Riyal",
+        "url": "https://en.dailypakistan.com.pk/17-May-2026/currency-rates-in-pakistan-today-open-market-rates-for-dollar-euro-pound-riyal-17-may-2026",
         "url_mobile": ""
       },
       {
-        "domain": "thehindubusinessline.com",
+        "domain": "finance.yahoo.com",
         "language": "English",
-        "seendate": "20260515T083000Z",
-        "socialimage": "https://bl-i.thgim.com/public/incoming/6ae72l/article70979662.ece/alternates/LANDSCAPE_1200/2025-02-27T185919Z_424006808_RC253DAB1XHI_RTRMADP_3_USA-JUNKBONDS-PRIVATEEQUITY.JPG",
+        "seendate": "20260517T233000Z",
+        "socialimage": "https://s.yimg.com/ny/api/res/1.2/UmB_aC3TaxWAYvVe8qWmgA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA-/https://media.zenfs.com/en/fortune_175/cc8e89d447899f85a5536ebfdae1c117",
+        "sourcecountry": "United States",
+        "title": "The top foreign holders of U . S . debt may soon dump Treasury bonds and bring their money back home , potentially spiking borrowing costs",
+        "url": "https://finance.yahoo.com/economy/policy/articles/top-foreign-holders-u-debt-172313041.html",
+        "url_mobile": ""
+      },
+      {
+        "domain": "ipc.digital",
+        "language": "Portuguese",
+        "seendate": "20260518T080000Z",
+        "socialimage": "https://japonsamourai.fr/wp-content/uploads/2026/05/Le-Premier-ministre-japonais-envisage-un-budget-supplementaire-pour-lexercice.jpg",
+        "sourcecountry": "Japan",
+        "title": "O primeiro - ministro japon\u00eas est\u00e1 considerando um or\u00e7amento suplementar para o ano fiscal de 2026 a fim de mitigar o impacto dos pre\u00e7os do petr\u00f3leo",
+        "url": "https://ipc.digital/O-primeiro-ministro-japon%C3%AAs-est%C3%A1-considerando-um-or%C3%A7amento-suplementar-para-o-ano-fiscal-de-2026-a-fim-de-mitigar-o-impacto-dos-pre%C3%A7os-do-petr%C3%B3leo./",
+        "url_mobile": ""
+      },
+      {
+        "domain": "raya.com",
+        "language": "Arabic",
+        "seendate": "20260517T091500Z",
+        "socialimage": "https://www.raya.com/alraya/uploads/images/2026/05/17/310462.webp",
+        "sourcecountry": "Qatar",
+        "title": "\u0623\u0633\u0639\u0627\u0631 \u0627\u0644\u0639\u0645\u0644\u0627\u062a \u0645\u0642\u0627\u0628\u0644 \u0627\u0644\u0631\u064a\u0627\u0644 \u0627\u0644\u0642\u0637\u0631\u064a",
+        "url": "https://www.raya.com/2026/05/17/%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84%D8%A7%D8%AA-%D9%85%D9%82%D8%A7%D8%A8%D9%84-%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D9%84-%D8%A7%D9%84%D9%82%D8%B7%D8%B1%D9%8A",
+        "url_mobile": "https://www.raya.com/2026/05/17/\u00d8\u00a3\u00d8\u00b3\u00d8\u00b9\u00d8\u00a7\u00d8\u00b1-\u00d8\u00a7\u00d9\u0084\u00d8\u00b9\u00d9\u0085\u00d9\u0084\u00d8\u00a7\u00d8\u00aa-\u00d9\u0085\u00d9\u0082\u00d8\u00a7\u00d8\u00a8\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d8\u00b1\u00d9\u008a\u00d8\u00a7\u00d9\u0084-\u00d8\u00a7\u00d9\u0084\u00d9\u0082\u00d8\u00b7\u00d8\u00b1\u00d9\u008a/amp"
+      },
+      {
+        "domain": "frognews.bg",
+        "language": "Bulgarian",
+        "seendate": "20260517T084500Z",
+        "socialimage": "https://frognews.bg/images2/Krasen/1779000272_6a0963d0ea2be.webp",
+        "sourcecountry": "Bulgaria",
+        "title": "\u0421\u043a\u044a\u043f\u0438\u044f\u0442 \u043e\u0440\u0438\u0437 \u043d\u0430\u0441\u043e\u0447\u0438 \u044f\u043f\u043e\u043d\u0446\u0438\u0442\u0435 \u043a\u044a\u043c \u0434\u0440\u0443\u0433\u0438 \u0445\u0440\u0430\u043d\u0438",
+        "url": "https://frognews.bg/novini/skapiiat-oriz-nasochi-iapontsite-kam-drugi-hrani.html",
+        "url_mobile": "https://mobile.frognews.bg/article/333065/"
+      },
+      {
+        "domain": "telecom.economictimes.indiatimes.com",
+        "language": "English",
+        "seendate": "20260516T031500Z",
+        "socialimage": "https://etimg.etb2bimg.com/thumb/msid-131130654,imgsize-79104,width-1200,height=627,overlay-ettelecom,resizemode-75/devices/kioxia-reports-record-82-billion-q1-profit-fueled-by-ai-demand.jpg",
         "sourcecountry": "India",
-        "title": "Dollar rides rising yields to largest weekly gain in two months",
-        "url": "https://www.thehindubusinessline.com/markets/forex/dollar-rides-rising-yields-to-largest-weekly-gain-in-two-months/article70981604.ece",
-        "url_mobile": "https://www.thehindubusinessline.com/markets/forex/dollar-rides-rising-yields-to-largest-weekly-gain-in-two-months/article70981604.ece/amp/"
+        "title": "Kioxia Reports Record $8 . 2 Billion Q1 Profit , Fueled by AI Demand , ETTelecom",
+        "url": "https://telecom.economictimes.indiatimes.com/news/devices/kioxia-reports-record-82-billion-q1-profit-fueled-by-ai-demand/131130654",
+        "url_mobile": "https://telecom.economictimes.indiatimes.com/amp/news/devices/kioxia-reports-record-82-billion-q1-profit-fueled-by-ai-demand/131130654"
       },
       {
-        "domain": "marketscreener.com",
-        "language": "English",
-        "seendate": "20260515T054500Z",
-        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2026-05/2026-05-14T144256Z_1_LYNXMPEM4D133_RTROPTP_3_GLOBAL-FOREX.JPG",
-        "sourcecountry": "",
-        "title": "Dollar rides rising yields to largest weekly gain in two months",
-        "url": "https://www.marketscreener.com/news/dollar-rides-rising-yields-to-largest-weekly-gain-in-two-months-ce7f5bd2da8bf422",
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T203000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u0631\u064a\u0627\u0644 \u0627\u0644\u0633\u0639\u0648\u062f\u064a \u0627\u0644\u064a\u0648\u0645 16 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0645\u0635\u0631 .. \u062a\u062d\u062f\u064a\u062b \u0644\u062d\u0638\u064a",
+        "url": "https://www.dostor.org/5558045",
         "url_mobile": ""
       },
       {
-        "domain": "marketscreener.com",
-        "language": "English",
-        "seendate": "20260515T014500Z",
-        "socialimage": "https://cdn.zonebourse.com/static/resize/0/0/images/reuters/2026-05/2026-05-14T144256Z_1_LYNXMPEM4D133_RTROPTP_3_GLOBAL-FOREX.JPG",
-        "sourcecountry": "",
-        "title": "Dollar poised for largest weekly rise in two months as Fed hike bets increase",
-        "url": "https://www.marketscreener.com/news/dollar-poised-for-largest-weekly-rise-in-two-months-as-fed-hike-bets-increase-ce7f5bd2db8bf023",
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T200000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u0631\u064a\u0627\u0644 \u0627\u0644\u0633\u0639\u0648\u062f\u064a \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u0627\u0644\u0645\u0635\u0631\u064a\u0629 \u0627\u0644\u064a\u0648\u0645 16 \u0645\u0627\u064a\u0648 2026",
+        "url": "https://www.dostor.org/5558003",
         "url_mobile": ""
       },
       {
-        "domain": "dunyanews.tv",
-        "language": "English",
-        "seendate": "20260514T050000Z",
-        "socialimage": "https://img.dunyanews.tv/news/2026/May/05-14-26/news_big_images/951453_31146943.jpg",
-        "sourcecountry": "Pakistan",
-        "title": "Dollar boosted by rate expectations , safe - haven flows as Trump , Xi meet",
-        "url": "https://dunyanews.tv/en/Business/951453-dollar-boosted-by-rate-expectations-safehaven-flows-as-trump-xi-mee",
-        "url_mobile": "https://dunyanews.tv/amp/english/951453.php"
+        "domain": "instalki.pl",
+        "language": "Polish",
+        "seendate": "20260516T121500Z",
+        "socialimage": "https://www.instalki.pl/wp-content/uploads/2026/05/gen-z-casio-zegarki-retro-apple-huawei.jpg",
+        "sourcecountry": "Poland",
+        "title": "Gen Z ratuje Casio . Zegarki za grosze rzuci\u0142y wyzwanie Apple i Huawei",
+        "url": "https://www.instalki.pl/news/hardware/gen-z-casio-zegarki-retro-apple-huawei/",
+        "url_mobile": ""
       },
       {
-        "domain": "scmp.com",
+        "domain": "jp.ibtimes.com",
         "language": "English",
-        "seendate": "20260513T013000Z",
-        "socialimage": "https://cdn.i-scmp.com/sites/default/files/styles/og_image_scmp_generic/public/d8/images/canvas/2026/05/12/7419285c-5b3e-4a9e-8d1f-7f5ba071be08_7d9fdda4.jpg?itok=PAql5gMW&v=1778577937",
+        "seendate": "20260516T153000Z",
+        "socialimage": "https://d.jp.ibtimes.com/en/full/1001896/fuji-chimera-sees-global-auto-ecu-market-378-trillion-yen-2035.jpg",
+        "sourcecountry": "United States",
+        "title": "Fuji Chimera Sees Auto ECU Market Reaching 37 . 8 Trillion Yen",
+        "url": "https://jp.ibtimes.com/fuji-chimera-sees-auto-ecu-market-reaching-378-trillion-yen-100969",
+        "url_mobile": ""
+      },
+      {
+        "domain": "hindi.moneycontrol.com",
+        "language": "Hindi",
+        "seendate": "20260517T063000Z",
+        "socialimage": "https://images.moneycontrol.com/static-hindinews/2026/05/Manish-Kumar-Japan.jpg",
+        "sourcecountry": "India",
+        "title": "Viral Video :  \u092d\u093e\u0930\u0924 \u0935\u093e\u092a\u0938 \u091c\u093e\u0913 ...; 18 \u0938\u093e\u0932 \u0938\u0947 \u091c\u093e\u092a\u093e\u0928 \u092e\u0947\u0902 \u0930\u0947\u0938\u094d\u091f\u094b\u0930\u0947\u0902\u091f \u091a\u0932\u093e \u0930\u0939\u0947 \u092e\u0928\u0940\u0937 \u0915\u0941\u092e\u093e\u0930 \u0915\u094b \u092c\u0902\u0926 \u0915\u0930\u0928\u093e \u092a\u0921\u093c\u093e \u092c\u093f\u091c\u0928\u0947\u0938 , \u092b\u093f\u0930 \u0935\u0947 \u092b\u092b\u0915 \u092a\u0921\u093c\u0947",
+        "url": "https://hindi.moneycontrol.com/world/go-back-to-india-indian-restaurant-owner-manish-kumar-shut-18-year-old-eatery-in-japan-rejected-business-manager-visa-renewal-article-2402918.html",
+        "url_mobile": "https://hindi.moneycontrol.com/world/go-back-to-india-indian-restaurant-owner-manish-kumar-shut-18-year-old-eatery-in-japan-rejected-business-manager-visa-renewal-article-2402918.html/amp"
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T210000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0633\u0639\u0631 \u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0641\u064a \u0645\u0635\u0631 \u0627\u0644\u0622\u0646 .. \u062a\u062d\u062f\u064a\u062b \u0633\u0639\u0631 \u0627\u0644\u0635\u0631\u0641 \u0627\u0644\u064a\u0648\u0645",
+        "url": "https://www.dostor.org/5558063",
+        "url_mobile": ""
+      },
+      {
+        "domain": "dostor.org",
+        "language": "Arabic",
+        "seendate": "20260516T203000Z",
+        "socialimage": "",
+        "sourcecountry": "Egypt",
+        "title": "\u0643\u0645 \u0633\u0639\u0631 \u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u0627\u0644\u064a\u0648\u0645 \u0627\u0644\u0633\u0628\u062a 16 \u0645\u0627\u064a\u0648 2026 \u0641\u064a \u0627\u0644\u0628\u0646\u0648\u0643 \u061f ",
+        "url": "https://www.dostor.org/5558039",
+        "url_mobile": ""
+      },
+      {
+        "domain": "jp.ibtimes.com",
+        "language": "English",
+        "seendate": "20260516T071500Z",
+        "socialimage": "https://d.jp.ibtimes.com/en/full/1001871/japan-machine-tool-orders-jump-45-april-extending-growth-streak.jpg",
+        "sourcecountry": "United States",
+        "title": "Japan machine tool orders rise for 10th straight month in April",
+        "url": "https://jp.ibtimes.com/japan-machine-tool-orders-rise-10th-straight-month-april-100953",
+        "url_mobile": ""
+      },
+      {
+        "domain": "leblogauto.com",
+        "language": "French",
+        "seendate": "20260518T080000Z",
+        "socialimage": "https://www.leblogauto.com/wp-content/uploads/2026/05/Screenshot-2026-05-14-07.11.19-1.png",
         "sourcecountry": "China",
-        "title": "How Australia mining giants are helping China to globalise the yuan",
-        "url": "https://www.scmp.com/economy/china-economy/article/3353274/how-australias-mining-giants-are-helping-china-globalise-yuan",
-        "url_mobile": "https://amp.scmp.com/economy/china-economy/article/3353274/how-australias-mining-giants-are-helping-china-globalise-yuan"
+        "title": "Toyota plomb\u00e9 par le conflit en Iran : b\u00e9n\u00e9fices en chute libre",
+        "url": "https://www.leblogauto.com/actualites/toyota-plombe-par-le-conflit-en-iran-benefices-en-chute-libre/",
+        "url_mobile": ""
       },
       {
-        "domain": "freemalaysiatoday.com",
-        "language": "English",
-        "seendate": "20260514T030000Z",
-        "socialimage": "https://www.freemalaysiatoday.com/cdn-cgi/image/quality=80,format=auto,fit=cover,dpr=1,width=1200,height=630,gravity=center/https://media.freemalaysiatoday.com/wp-content/uploads/2025/05/60cdceff-us-dollar.jpg",
-        "sourcecountry": "Malaysia",
-        "title": "Dollar boosted by rate expectations , safe - haven flows as Trump , Xi meet",
-        "url": "https://www.freemalaysiatoday.com/category/business/2026/05/14/dollar-boosted-by-rate-expectations-safe-haven-flows-as-trump-xi-meet",
+        "domain": "dnes.bg",
+        "language": "Bulgarian",
+        "seendate": "20260517T071500Z",
+        "socialimage": "https://www.dnes.bg/media/files/resized/article/1280x720/63e/acde937c5fb5784d4bc215a7633e263e-tranduyet-terraces-5568679.jpg",
+        "sourcecountry": "Bulgaria",
+        "title": "\u0421\u043a\u044a\u043f\u0438\u044f\u0442 \u043e\u0440\u0438\u0437 \u043d\u0430\u0441\u043e\u0447\u0438 \u044f\u043f\u043e\u043d\u0446\u0438\u0442\u0435 \u043a\u044a\u043c \u0434\u0440\u0443\u0433\u0438 \u0445\u0440\u0430\u043d\u0438 - \u041d\u043e\u0432\u0438\u043d\u0438 \u043e\u0442 Dnes . bg",
+        "url": "https://www.dnes.bg/a/2-svyat/721649-skapiyat-oriz-nasochi-yapontsite-kam-drugi-hrani",
+        "url_mobile": ""
+      },
+      {
+        "domain": "jugantor.com",
+        "language": "Bengali",
+        "seendate": "20260517T080000Z",
+        "socialimage": "https://cdn.jugantor.com/assets/news_photos/2026/05/17/social-thumbnail/Doller-69eda7e04cd22-69f8204739963-69fc2ac0921b9-69fd5eabea04e-6a095b8378b23.jpg",
+        "sourcecountry": "Bangladesh",
+        "title": "\u0986\u099c\u0995\u09c7\u09b0 \u09ae\u09c1\u09a6\u09cd\u09b0\u09be\u09b0 \u09b0\u09c7\u099f : \u09e7\u09ed \u09ae\u09c7 \u09e8\u09e6\u09e8\u09ec",
+        "url": "https://www.jugantor.com/economics/1103001",
         "url_mobile": ""
       }
     ]
