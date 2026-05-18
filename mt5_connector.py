@@ -308,6 +308,23 @@ class MT5Broker:
             "price_current": float(position.price_current),
         }
 
+    def open_positions(self):
+        positions = mt5.positions_get()
+        if not positions:
+            return []
+        rows = []
+        for position in positions:
+            rows.append({
+                "ticket": int(position.ticket),
+                "symbol": position.symbol,
+                "side": "BUY" if position.type == mt5.POSITION_TYPE_BUY else "SELL",
+                "volume": float(position.volume),
+                "price_open": float(position.price_open),
+                "price_current": float(position.price_current),
+                "profit": float(position.profit),
+            })
+        return rows
+
     def contract_size(self, symbol):
         self.ensure_symbol(symbol)
         info = mt5.symbol_info(symbol)

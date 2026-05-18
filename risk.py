@@ -217,6 +217,31 @@ def live_spread_percent(symbol):
     return (float(tick.ask) - float(tick.bid)) / mid * 100.0
 
 
+def live_volume_blocker(symbol, amount):
+    if symbol is None or BROKER != "exness_mt5" or mt5 is None:
+        return None
+    mt5.symbol_select(symbol, True)
+    info = mt5.symbol_info(symbol)
+    if info is None:
+        return None
+
+    volume_min = float(getattr(info, "volume_min", 0.0) or 0.0)
+    volume_max = float(getattr(info, "volume_max", 0.0) or 0.0)
+    volume_step = float(getattr(info, "volume_step", 0.0) or 0.0)
+    tolerance = 1e-9
+
+    if volume_min > 0 and amount + tolerance < volume_min:
+        return f"trade volume {amount:.2f} below broker minimum {volume_min:.2f}"
+    if volume_max > 0 and amount - tolerance > volume_max:
+        return f"trade volume {amount:.2f} above broker maximum {volume_max:.2f}"
+    if volume_step > 0 and volume_min > 0:
+        steps = round((amount - volume_min) / volume_step)
+        valid_amount = volume_min + steps * volume_step
+        if abs(valid_amount - amount) > tolerance:
+            return f"trade volume {amount:.2f} does not match broker step {volume_step:.2f}"
+    return None
+
+
 def entry_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE, symbol=None, side="BUY"):
     price = float(df.iloc[-1]["close"])
     side = (side or "BUY").upper()
@@ -249,6 +274,9 @@ def entry_blockers(state, df, quote_balance, amount, contract_size=CONTRACT_SIZE
     spread_percent = live_spread_percent(symbol)
     if spread_percent is not None and spread_percent > MAX_LIVE_SPREAD_PERCENT:
         blockers.append(f"live spread {spread_percent:.4f}% above max {MAX_LIVE_SPREAD_PERCENT:.4f}%")
+    volume_blocker = live_volume_blocker(symbol, amount)
+    if volume_blocker:
+        blockers.append(volume_blocker)
     if TAKE_PROFIT_PERCENT <= round_trip_cost_percent() + MIN_PROFIT_PERCENT:
         blockers.append("take-profit target does not clear fees/slippage plus minimum profit")
 

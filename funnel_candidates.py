@@ -54,7 +54,7 @@ def _float_from_row(row: dict[str, str], key: str, default: float) -> float:
 
 USE_FUNNEL_CANDIDATES = _bool("USE_FUNNEL_CANDIDATES", True)
 FUNNEL_OUTPUT_PATH = Path(os.getenv("FUNNEL_OUTPUT_PATH", "data/layer1_candidates.csv"))
-FUNNEL_TOP_N = _int("FUNNEL_TOP_N", 5)
+FUNNEL_TOP_N = _int("FUNNEL_TOP_N", 50)
 FUNNEL_FALLBACK_TO_WATCHLIST = _bool("FUNNEL_FALLBACK_TO_WATCHLIST", False)
 FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT = _float("FUNNEL_MAX_SCALPER_SIDE_DISAGREEMENT", 15.0)
 FUNNEL_CANDIDATE_MAX_AGE_SECONDS = _float("FUNNEL_CANDIDATE_MAX_AGE_SECONDS", 300.0)
@@ -84,7 +84,7 @@ def load_funnel_candidates(
     limit: int | None = None,
 ) -> list[FunnelCandidate]:
     csv_path = path or FUNNEL_OUTPUT_PATH
-    threshold = minimum_score if minimum_score is not None else _float("SCORER_MIN_COMPOSITE_SCORE", 65.0)
+    threshold = minimum_score if minimum_score is not None else _float("FUNNEL_HANDOFF_MIN_COMPOSITE_SCORE", 0.0)
     max_items = limit if limit is not None else FUNNEL_TOP_N
 
     if not csv_path.exists():

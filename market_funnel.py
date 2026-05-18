@@ -1655,7 +1655,7 @@ def layer_scores(candidate: Candidate) -> dict[str, float]:
     }
 
 
-def finalize_candidate(candidate: Candidate) -> Candidate | None:
+def finalize_candidate(candidate: Candidate, *, enforce_min_score: bool = True) -> Candidate | None:
     if not is_tier1_or_validated(candidate.symbol):
         candidate.composite_reason = "blocked by Tier 1 symbol quality gate"
         return None
@@ -1702,7 +1702,7 @@ def finalize_candidate(candidate: Candidate) -> Candidate | None:
     candidate.composite_reason = ", ".join(f"{key}={scores[key]:.1f}" for key in weights)
 
     threshold = env_float("SCORER_MIN_COMPOSITE_SCORE", 65.0)
-    if candidate.composite_score < threshold:
+    if enforce_min_score and candidate.composite_score < threshold:
         return None
     spread_percent = current_spread_percent(candidate.symbol)
     candidate.live_spread_percent = spread_percent
@@ -2241,7 +2241,7 @@ def main() -> int:
             layer5_processed += 1
             layer5_candidate = apply_layer5(local_candidate)
             if layer5_candidate is not None:
-                final_candidate = finalize_candidate(layer5_candidate)
+                final_candidate = finalize_candidate(layer5_candidate, enforce_min_score=False)
                 if final_candidate is not None:
                     candidates.append(final_candidate)
                     layer5_confirmed += 1
@@ -2275,7 +2275,7 @@ def main() -> int:
             layer5_processed += 1
             layer5_candidate = apply_layer5(candidate)
             if layer5_candidate is not None:
-                final_candidate = finalize_candidate(layer5_candidate)
+                final_candidate = finalize_candidate(layer5_candidate, enforce_min_score=False)
                 if final_candidate is not None:
                     candidates.append(final_candidate)
                     layer5_confirmed += 1
@@ -2306,7 +2306,7 @@ def main() -> int:
                     layer4_processed += 1
                     layer4_candidate = apply_layer4(layer3_candidate)
                     if layer4_candidate is not None:
-                        final_candidate = finalize_candidate(layer4_candidate)
+                        final_candidate = finalize_candidate(layer4_candidate, enforce_min_score=False)
                         if final_candidate is None:
                             print(f"{symbol}: Scorer FAIL composite below threshold")
                             continue
@@ -2320,8 +2320,31 @@ def main() -> int:
                         print(f"{symbol}: Layer4 FAIL {layer3_candidate.layer4_reason}")
                 else:
                     print(f"{symbol}: Layer3 FAIL {layer2_candidate.layer3_reason}")
+                    if env_bool("FUNNEL_KEEP_LAYER3_FAIL_CANDIDATES", True):
+                        layer4_processed += 1
+                        fallback_candidate = apply_layer4(layer2_candidate)
+                        if fallback_candidate is not None:
+                            final_candidate = finalize_candidate(fallback_candidate, enforce_min_score=False)
+                            if final_candidate is not None:
+                                candidates.append(final_candidate)
+                                if final_candidate.layer4_state == PULLBACK_CONFIRMED:
+                                    layer4_confirmed += 1
+                                elif final_candidate.layer4_state == PULLBACK_WAIT:
+                                    layer4_wait += 1
+                                print(
+                                    f"{symbol}: Layer4 {final_candidate.layer4_state} "
+                                    f"score={final_candidate.composite_score:.2f} kept after Layer3 fail"
+                                )
             else:
                 print(f"{symbol}: Layer2 FAIL {candidate.layer2_reason}")
+                if env_bool("FUNNEL_KEEP_LAYER2_FAIL_CANDIDATES", True):
+                    fallback_candidate = finalize_candidate(candidate, enforce_min_score=False)
+                    if fallback_candidate is not None:
+                        candidates.append(fallback_candidate)
+                        print(
+                            f"{symbol}: Funnel handoff kept after Layer2 fail "
+                            f"score={fallback_candidate.composite_score:.2f}"
+                        )
 
     output = Path(os.getenv("FUNNEL_OUTPUT_PATH", "data/layer1_candidates.csv"))
     candidates = rank_candidates_by_expected_value(candidates)

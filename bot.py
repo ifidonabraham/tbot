@@ -30,6 +30,7 @@ from risk import (
     active_entry_threshold_for_state,
     calculate_trade_amount,
     entry_blockers,
+    estimate_entry_required_quote,
     position_pnl,
     sell_reason_for_position,
 )
@@ -70,6 +71,54 @@ def _broker_position_exists(exchange, position):
     except Exception as exc:
         logging.warning("Broker position existence check failed for %s ticket %s: %s", position["symbol"], ticket, exc)
         return True
+
+
+def _sync_broker_positions(exchange, state):
+    if PAPER_TRADING or not hasattr(exchange, "open_positions"):
+        return
+
+    broker_positions = exchange.open_positions()
+    tracked_tickets = {
+        int(position.get("broker_ticket"))
+        for position in state.positions
+        if position.get("broker_ticket")
+    }
+    changed = False
+    for broker_position in broker_positions:
+        ticket = int(broker_position["ticket"])
+        if ticket in tracked_tickets:
+            continue
+        symbol = broker_position["symbol"]
+        side = broker_position["side"]
+        amount = float(broker_position["volume"])
+        entry_price = float(broker_position["price_open"])
+        contract_size = exchange.contract_size(symbol) if hasattr(exchange, "contract_size") else 1.0
+        entry_total_cost = entry_price * amount * contract_size
+        if entry_total_cost <= 0:
+            entry_total_cost = estimate_entry_required_quote(entry_price, amount, contract_size, side)
+        state.open_position(
+            symbol,
+            entry_price,
+            amount,
+            entry_total_cost,
+            entry_score=0.0,
+            contract_size=contract_size,
+            broker_ticket=ticket,
+            strategy_type="SYNCED_MT5",
+            metadata={"synced_from_mt5": True},
+            side=side,
+        )
+        logging.warning(
+            "Synced untracked MT5 position | %s %s %.8f @ %.5f ticket %s",
+            side,
+            symbol,
+            amount,
+            entry_price,
+            ticket,
+        )
+        changed = True
+    if changed:
+        state.save()
 
 
 def _position_snapshot(position, price, broker_profit=None):
@@ -183,7 +232,10 @@ def _scan_markets(exchange, state, quote_balance):
         funnel_candidates = load_funnel_candidates(limit=FUNNEL_TOP_N)
         funnel_by_symbol = {candidate.symbol: candidate for candidate in funnel_candidates}
         if funnel_candidates:
-            symbols = [candidate.symbol for candidate in funnel_candidates]
+            symbols = list(dict.fromkeys(
+                [candidate.symbol for candidate in funnel_candidates]
+                + (WATCHLIST if FUNNEL_FALLBACK_TO_WATCHLIST else [])
+            ))
             logging.info(
                 "Funnel handoff active | Candidates: %s",
                 ", ".join(f"{item.symbol}:{item.side}:{item.composite_score:.2f}" for item in funnel_candidates),
@@ -247,7 +299,7 @@ def _scan_markets(exchange, state, quote_balance):
             item["side"] = "BUY"
             directional_candidates.append(item)
             continue
-        allowed_sides = (item["funnel_side"],) if item.get("funnel_side") else ("BUY", "SELL")
+        allowed_sides = ("BUY", "SELL")
         for side in allowed_sides:
             details = item["buy_details"] if side == "BUY" else item["sell_details"]
             score = item["buy_score"] if side == "BUY" else item["sell_score"]
@@ -321,6 +373,7 @@ def run_bot():
     while True:
         try:
             state.reset_daily_if_needed()
+            _sync_broker_positions(exchange, state)
 
             if state.positions:
                 _manage_positions(exchange, state)

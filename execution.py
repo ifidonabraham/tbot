@@ -21,8 +21,11 @@ def _append_trade(row):
     if TRADE_LOG.exists():
         with TRADE_LOG.open("r", newline="", encoding="utf-8-sig") as file:
             reader = csv.DictReader(file)
-            existing_fields = list(reader.fieldnames or [])
-            existing_rows = list(reader)
+            existing_fields = [field for field in list(reader.fieldnames or []) if field is not None]
+            existing_rows = [
+                {key: value for key, value in existing_row.items() if key is not None}
+                for existing_row in reader
+            ]
 
     fieldnames = existing_fields + [key for key in row if key not in existing_fields]
     with TRADE_LOG.open("w", newline="", encoding="utf-8") as file:
@@ -181,12 +184,23 @@ def open_trade(
 def sell_position(exchange, state, position, price, reason):
     amount = position["amount"]
     contract_size = position["entry_contract_size"]
-    proceeds = estimate_close_value(position, price)
+    symbol = position["symbol"]
+    entry_side = position.get("side", "BUY")
+    ticket = position.get("broker_ticket")
+    broker_profit = None
+    if not PAPER_TRADING and ticket and hasattr(exchange, "position_profit"):
+        broker_snapshot = exchange.position_profit(ticket)
+        if broker_snapshot is not None:
+            broker_profit = float(broker_snapshot.get("profit", 0.0))
+
+    proceeds = (
+        position["entry_total_cost"] + broker_profit
+        if broker_profit is not None
+        else estimate_close_value(position, price)
+    )
     gross = price * amount * contract_size
     pnl_usdt = proceeds - position["entry_total_cost"]
     pnl_percent = net_profit_percent(position["entry_total_cost"], proceeds)
-    symbol = position["symbol"]
-    entry_side = position.get("side", "BUY")
     close_side = "BUY" if entry_side == "SELL" else "SELL"
     if entry_side == "SELL":
         fee_slippage = estimate_buy_total(price, amount, contract_size) - gross
@@ -203,7 +217,6 @@ def sell_position(exchange, state, position, price, reason):
     if not live_trading_unlocked():
         raise RuntimeError("Live trading is locked. Enable PAPER_TRADING=false and set LIVE_TRADING_CONFIRMATION.")
 
-    ticket = position.get("broker_ticket")
     if hasattr(exchange, "close_position") and ticket:
         order = exchange.close_position(symbol, amount, ticket, entry_side)
     else:
