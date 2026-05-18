@@ -38,6 +38,17 @@ def ai_provider() -> str:
     return os.getenv("AI_PROVIDER", "nvidia").strip().lower()
 
 
+def fallback_ai_provider(primary: str) -> str:
+    configured = os.getenv("AI_FALLBACK_PROVIDER", "").strip().lower()
+    if configured:
+        return configured
+    if primary == "nvidia":
+        return "gemini"
+    if primary == "gemini":
+        return "nvidia"
+    return ""
+
+
 def ai_enabled() -> bool:
     if not env_bool("AI_ENABLED", False):
         return False
@@ -62,6 +73,14 @@ def ai_call_allowed() -> bool:
 
 def gemini_enabled() -> bool:
     return ai_enabled()
+
+
+def provider_has_key(provider: str) -> bool:
+    if provider == "nvidia":
+        return bool(os.getenv("NVIDIA_API_KEY", "").strip())
+    if provider == "gemini":
+        return bool(os.getenv("GEMINI_API_KEY", "").strip())
+    return False
 
 
 def _extract_text(payload: dict[str, Any]) -> str:
@@ -139,11 +158,29 @@ def call_ai_json(system_instruction: str, prompt: str) -> dict[str, Any]:
     if not ai_call_allowed():
         raise RuntimeError("AI_MAX_CALLS_PER_RUN reached")
     provider = ai_provider()
-    if provider == "nvidia":
-        return call_nvidia_json(system_instruction, prompt)
-    if provider == "gemini":
-        return call_gemini_json(system_instruction, prompt)
-    raise ValueError(f"Unsupported AI_PROVIDER={provider}")
+    errors: list[str] = []
+
+    providers = [provider]
+    fallback_provider = fallback_ai_provider(provider)
+    if (
+        env_bool("AI_ENABLE_FALLBACK", True)
+        and fallback_provider
+        and fallback_provider not in providers
+        and provider_has_key(fallback_provider)
+    ):
+        providers.append(fallback_provider)
+
+    for item in providers:
+        try:
+            if item == "nvidia":
+                return call_nvidia_json(system_instruction, prompt)
+            if item == "gemini":
+                return call_gemini_json(system_instruction, prompt)
+            raise ValueError(f"Unsupported AI_PROVIDER={item}")
+        except Exception as exc:
+            errors.append(f"{item}: {exc}")
+
+    raise RuntimeError("AI providers failed: " + " | ".join(errors))
 
 
 def evaluate_candle_pattern(context: dict[str, Any]) -> GeminiResult:

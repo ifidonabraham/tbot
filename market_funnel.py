@@ -279,8 +279,11 @@ def unique_symbols(groups: Iterable[Iterable[str]], limit: int) -> list[str]:
 def mt5_rates(symbol: str, timeframe: int, count: int = 260) -> pd.DataFrame:
     if mt5 is None:
         return pd.DataFrame()
-    mt5.symbol_select(symbol, True)
-    rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, count)
+    try:
+        mt5.symbol_select(symbol, True)
+        rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, count)
+    except Exception:
+        return pd.DataFrame()
     if rates is None or len(rates) == 0:
         return pd.DataFrame()
     frame = pd.DataFrame(rates)
@@ -302,8 +305,12 @@ def alpha_rates(symbol: str, interval: str = "60min") -> pd.DataFrame:
         "outputsize": "full",
         "apikey": key,
     }
-    response = requests.get("https://www.alphavantage.co/query", params=params, timeout=http_timeout())
-    response.raise_for_status()
+    try:
+        response = requests.get("https://www.alphavantage.co/query", params=params, timeout=http_timeout())
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        print(f"{symbol}: Alpha Vantage rates unavailable: {safe_http_error(exc)}")
+        return pd.DataFrame()
     payload = response.json()
     series_key = next((k for k in payload if k.startswith("Time Series")), "")
     if not series_key:
@@ -545,19 +552,25 @@ def externally_confirm_candidate(candidate: Candidate, use_alpha: bool, use_mass
 
 def support_resistance_frame(symbol: str) -> pd.DataFrame:
     lookback = env_int("LAYER2_LOOKBACK_CANDLES", 200)
+    if mt5 is not None:
+        frame = mt5_rates(symbol, mt5.TIMEFRAME_H1, max(lookback + 20, 260))
+        if not frame.empty:
+            return frame.tail(lookback).reset_index(drop=True)
+
     if env_bool("LAYER2_USE_DUKASCOPY", False):
         frame = dukascopy_rates(symbol, lookback)
         if not frame.empty:
             return frame.tail(lookback).reset_index(drop=True)
 
-    if mt5 is not None:
-        frame = mt5_rates(symbol, mt5.TIMEFRAME_H1, max(lookback + 20, 260))
+    if env_bool("LAYER2_USE_EXTERNAL_OHLC_FALLBACK", False):
+        frame = massive_rates(symbol)
         if not frame.empty:
             return frame.tail(lookback).reset_index(drop=True)
-    frame = massive_rates(symbol)
-    if not frame.empty:
-        return frame.tail(lookback).reset_index(drop=True)
-    return alpha_rates(symbol).tail(lookback).reset_index(drop=True)
+        frame = alpha_rates(symbol)
+        if not frame.empty:
+            return frame.tail(lookback).reset_index(drop=True)
+
+    return pd.DataFrame()
 
 
 def dukascopy_rates(symbol: str, hours: int) -> pd.DataFrame:
@@ -1010,6 +1023,21 @@ def apply_layer3(candidate: Candidate) -> Candidate | None:
     if not closed_beyond:
         candidate.layer3_state = NO_BREAKOUT
         candidate.layer3_reason = "eliminated: price did not close beyond breakout level"
+        near_wait_distance = env_float("LAYER3_NEAR_BREAKOUT_WAIT_DISTANCE_PERCENT", 0.15)
+        if (
+            env_bool("LAYER3_ALLOW_NEAR_BREAKOUT_WAIT", True)
+            and candidate.breakout_distance_percent is not None
+            and candidate.breakout_distance_percent <= near_wait_distance
+            and volume_ratio >= env_float("LAYER3_NEAR_BREAKOUT_MIN_VOLUME_RATIO", 0.80)
+            and candle_ratio >= env_float("LAYER3_NEAR_BREAKOUT_MIN_CANDLE_RATIO", 0.80)
+        ):
+            candidate.layer3_state = WAIT
+            candidate.layer3_reason = (
+                "near breakout level; waiting for scalper timing "
+                f"distance={candidate.breakout_distance_percent:.4f}%, "
+                f"volume={volume_ratio:.2f}, candle={candle_ratio:.2f}"
+            )
+            return candidate
         if env_bool("AI_ALLOW_LAYER3_FLEXIBLE_WAIT", True) and ai_enabled():
             near_distance = env_float("AI_LAYER3_NEAR_BREAKOUT_DISTANCE_PERCENT", 0.08)
             if candidate.breakout_distance_percent is not None and candidate.breakout_distance_percent <= near_distance:
@@ -1320,6 +1348,64 @@ def range_frame(symbol: str) -> pd.DataFrame:
     return mt5_rates(symbol, timeframe, count)
 
 
+def single_level_scalp_candidate(candidate: Candidate, current: float, reason: str) -> Candidate | None:
+    if not env_bool("LAYER5_ALLOW_SINGLE_LEVEL_SCALP", True):
+        candidate.layer5_reason = reason
+        return None
+
+    max_distance = env_float("LAYER5_SINGLE_LEVEL_MAX_DISTANCE_PERCENT", 0.25)
+    min_tests = env_int("LAYER5_SINGLE_LEVEL_MIN_TESTS", 3)
+    max_spread = env_float("LAYER5_SINGLE_LEVEL_MAX_SPREAD_PERCENT", env_float("LAYER5_MAX_SPREAD_PERCENT", 0.06))
+    spread = current_spread_percent(candidate.symbol)
+    if spread is not None and spread > max_spread:
+        candidate.layer5_reason = f"{reason}; single-level fallback blocked: spread {spread:.4f}% above {max_spread:.4f}%"
+        return None
+
+    support_ok = (
+        candidate.nearest_support is not None
+        and candidate.support_distance_percent is not None
+        and candidate.support_distance_percent <= max_distance
+        and candidate.support_tests >= min_tests
+    )
+    resistance_ok = (
+        candidate.nearest_resistance is not None
+        and candidate.resistance_distance_percent is not None
+        and candidate.resistance_distance_percent <= max_distance
+        and candidate.resistance_tests >= min_tests
+    )
+    if not support_ok and not resistance_ok:
+        candidate.layer5_reason = (
+            f"{reason}; single-level fallback blocked: no tested level within {max_distance:.2f}%"
+        )
+        return None
+
+    support_distance = candidate.support_distance_percent if support_ok else float("inf")
+    resistance_distance = candidate.resistance_distance_percent if resistance_ok else float("inf")
+    if support_distance <= resistance_distance:
+        candidate.layer5_state = RANGE_BUY
+        candidate.range_support = candidate.nearest_support
+        candidate.range_support_touches = candidate.support_tests
+        candidate.range_resistance = candidate.nearest_resistance
+        candidate.range_resistance_touches = candidate.resistance_tests
+        candidate.layer5_reason = (
+            "single-level scalp: buy near tested support "
+            f"tests={candidate.support_tests} distance={candidate.support_distance_percent:.4f}%"
+        )
+    else:
+        candidate.layer5_state = RANGE_SELL
+        candidate.range_support = candidate.nearest_support
+        candidate.range_support_touches = candidate.support_tests
+        candidate.range_resistance = candidate.nearest_resistance
+        candidate.range_resistance_touches = candidate.resistance_tests
+        candidate.layer5_reason = (
+            "single-level scalp: sell near tested resistance "
+            f"tests={candidate.resistance_tests} distance={candidate.resistance_distance_percent:.4f}%"
+        )
+    candidate.range_width_pips = 0.0
+    candidate.range_width_atr = env_float("LAYER5_SINGLE_LEVEL_ATR_SCORE", 1.0)
+    return candidate
+
+
 def apply_layer5(candidate: Candidate) -> Candidate | None:
     if not env_bool("LAYER5_ENABLE_RANGE_FILTER", True):
         candidate.layer5_state = "NOT_CHECKED"
@@ -1349,8 +1435,11 @@ def apply_layer5(candidate: Candidate) -> Candidate | None:
     support_candidates = [level for level in support_levels if level.price < current and level.tests >= min_touches]
     resistance_candidates = [level for level in resistance_levels if level.price > current and level.tests >= min_touches]
     if not support_candidates or not resistance_candidates:
-        candidate.layer5_reason = "eliminated: no tested swing support/resistance range boundaries"
-        return None
+        return single_level_scalp_candidate(
+            candidate,
+            current,
+            "eliminated: no tested swing support/resistance range boundaries",
+        )
     support_level = max(support_candidates, key=lambda level: level.price)
     resistance_level = min(resistance_candidates, key=lambda level: level.price)
     support = float(support_level.price)
@@ -1378,8 +1467,11 @@ def apply_layer5(candidate: Candidate) -> Candidate | None:
     width_pips = width / pip_size(candidate.symbol)
     min_width_pips = env_float("LAYER5_MIN_RANGE_WIDTH_PIPS", 30.0)
     if width_pips < min_width_pips:
-        candidate.layer5_reason = f"eliminated: range width {width_pips:.1f} pips below {min_width_pips:.1f}"
-        return None
+        return single_level_scalp_candidate(
+            candidate,
+            current,
+            f"eliminated: range width {width_pips:.1f} pips below {min_width_pips:.1f}",
+        )
 
     period = env_int("LAYER5_ATR_PERIOD", 14)
     recent["atr"] = atr(recent, period)
@@ -1387,8 +1479,11 @@ def apply_layer5(candidate: Candidate) -> Candidate | None:
     width_atr = width / max(current_atr, 1e-12)
     min_width_atr = env_float("LAYER5_MIN_RANGE_WIDTH_ATR", 2.0)
     if width_atr < min_width_atr:
-        candidate.layer5_reason = f"eliminated: range width {width_atr:.2f} ATR below {min_width_atr:.2f}"
-        return None
+        return single_level_scalp_candidate(
+            candidate,
+            current,
+            f"eliminated: range width {width_atr:.2f} ATR below {min_width_atr:.2f}",
+        )
 
     touch_tolerance = width * env_float("LAYER5_TOUCH_TOLERANCE_FRACTION", 0.12)
     support_touches = int((recent["low"] <= support + touch_tolerance).sum())
@@ -1421,7 +1516,7 @@ def apply_layer5(candidate: Candidate) -> Candidate | None:
         return candidate
 
     candidate.layer5_reason = "eliminated: clean range but price is not near either boundary"
-    return None
+    return single_level_scalp_candidate(candidate, current, candidate.layer5_reason)
 
 
 def price_action_frame(symbol: str) -> pd.DataFrame:

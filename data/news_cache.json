@@ -194,8 +194,65 @@
     ]
   },
   "alpha_news:CAD:72": {
-    "timestamp": 1778892243.0670576,
-    "value": []
+    "timestamp": 1779114616.3689518,
+    "value": [
+      {
+        "authors": [],
+        "banner_image": "https://app.accessnewswire.com/imagelibrary/2d918015-11db-4814-a811-db145275aaf0/1167715/1fa33ec7-6963-4b6d-822b-3d420b64746e.png",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Bullish",
+        "overall_sentiment_score": 0.490231,
+        "source": "ACCESS Newswire",
+        "source_domain": "ACCESS Newswire",
+        "summary": "This article shares the inspiring story of Bill Allison, an 81-year-old military veteran who received a heart transplant in 2009 after decades of smoking and two heart attacks. It highlights his life-changing decision to quit smoking and drinking, emphasizing the critical role of ongoing medical care and medication adherence, supported by CVS Specialty and his pharmacist, Amy Guard. The piece also underscores the profound impact of organ donation and encourages others to consider becoming donors and to listen to their healthcare teams.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "CVS",
+            "ticker_sentiment_label": "Bullish",
+            "ticker_sentiment_score": "0.462966"
+          }
+        ],
+        "time_published": "20260518T130800",
+        "title": "CVS Health: A Second Chance at Life Through Heart Transplant and Ongoing Care",
+        "topics": [
+          {
+            "relevance_score": "1.000000",
+            "topic": "life_sciences"
+          }
+        ],
+        "url": "https://www.accessnewswire.com/newsroom/en/healthcare-and-pharmaceutical/cvs-health-a-second-chance-at-life-through-heart-transplant-and-ongoi-1167715"
+      },
+      {
+        "authors": [
+          "Karina Ioffee"
+        ],
+        "banner_image": "https://i0.wp.com/richmondside.org/wp-content/uploads/2026/05/webimage-apen_050626-3-XeBLOw.jpg.jpeg?fit=780%2C520&quality=100&ssl=1",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Somewhat-Bearish",
+        "overall_sentiment_score": -0.317207,
+        "source": "Richmondside",
+        "source_domain": "Richmondside",
+        "summary": "The Asian Pacific Environmental Network (APEN), founded in Richmond three decades ago, has grown into a formidable three-office organization with 40 staff and nearly 1,000 members. APEN has achieved significant victories against Chevron, including a $550 million settlement for Richmond in 2024, and has been instrumental in advocating for environmental justice for historically marginalized communities like Laotian refugees. With new co-director Michelle Chan, APEN is now focusing on helping Richmond transition to a cleaner economy by collaborating with city leaders to wisely spend settlement funds and develop contingency plans for the eventual closure of fossil fuel refineries.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "0.996518",
+            "ticker": "CVX",
+            "ticker_sentiment_label": "Somewhat-Bearish",
+            "ticker_sentiment_score": "-0.331478"
+          }
+        ],
+        "time_published": "20260518T130023",
+        "title": "From helping Laotian refugees to fighting Chevron: How APEN became a Richmond environmental powerhouse",
+        "topics": [
+          {
+            "relevance_score": "0.939967",
+            "topic": "energy_transportation"
+          }
+        ],
+        "url": "https://richmondside.org/2026/05/18/richmond-environmental-powerhouse-apen/"
+      }
+    ]
   },
   "alpha_news:CHF:72": {
     "timestamp": 1778892303.3326182,
@@ -206,11 +263,88 @@
     "value": []
   },
   "alpha_news:EUR:72": {
-    "timestamp": 1778892816.351993,
-    "value": []
+    "timestamp": 1779114602.9867241,
+    "value": [
+      {
+        "authors": [],
+        "banner_image": null,
+        "category_within_source": "General",
+        "overall_sentiment_label": "Neutral",
+        "overall_sentiment_score": 0.01535,
+        "source": "TradingView",
+        "source_domain": "TradingView",
+        "summary": "Nordex SE has issued a notification of major holdings, as required by Article 40, Section 1 of the WpHG, announcing that BlackRock, Inc. has acquired/disposed of shares with voting rights. The notification details BlackRock's new total holding of 4.52% of voting rights in Nordex SE as of May 13, 2026, which includes direct shares and various financial instruments. The announcement provides a full chain of controlled undertakings under BlackRock, Inc.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "0.982841",
+            "ticker": "BLK",
+            "ticker_sentiment_label": "Neutral",
+            "ticker_sentiment_score": "0.018570"
+          }
+        ],
+        "time_published": "20260518T135000",
+        "title": "Nordex SE: Release according to Article 40, Section 1 of the WpHG [the German Securities Trading Act] with the objective of Europe-wide distribution",
+        "topics": [
+          {
+            "relevance_score": "0.921818",
+            "topic": "financial_markets"
+          }
+        ],
+        "url": "https://www.tradingview.com/news/eqs:138f91ae4094b:0-nordex-se-release-according-to-article-40-section-1-of-the-wphg-the-german-securities-trading-act-with-the-objective-of-europe-wide-distribution/"
+      },
+      {
+        "authors": [
+          "Investing.com"
+        ],
+        "banner_image": "https://i-invdn-com.investing.com/news/LYNXNPEC0K08U_L.jpg",
+        "category_within_source": "General",
+        "overall_sentiment_label": "Bullish",
+        "overall_sentiment_score": 0.366613,
+        "source": "Investing.com",
+        "source_domain": "Investing.com",
+        "summary": "Citigroup Inc. and HPS Investment Partners have launched a \u20ac15 billion Private Capital Program to offer private financing solutions for corporate and sponsor-owned borrowers across the EMEA region. This five-year initiative will leverage Citi's origination capabilities and HPS's capital and structuring expertise to address the increasing demand for private credit. The program aims to serve borrowers in Continental Europe, the UK, and eventually the Middle East, focusing on sub-investment grade debt instruments.",
+        "ticker_sentiment": [
+          {
+            "relevance_score": "1.000000",
+            "ticker": "C",
+            "ticker_sentiment_label": "Bullish",
+            "ticker_sentiment_score": "0.401600"
+          },
+          {
+            "relevance_score": "0.734461",
+            "ticker": "BLK",
+            "ticker_sentiment_label": "Somewhat-Bullish",
+            "ticker_sentiment_score": "0.332064"
+          },
+          {
+            "relevance_score": "0.603710",
+            "ticker": "WFC",
+            "ticker_sentiment_label": "Somewhat-Bullish",
+            "ticker_sentiment_score": "0.307076"
+          }
+        ],
+        "time_published": "20260518T132610",
+        "title": "Citi, HPS launch \u20ac15 billion private capital program for EMEA",
+        "topics": [
+          {
+            "relevance_score": "0.910548",
+            "topic": "finance"
+          },
+          {
+            "relevance_score": "0.835454",
+            "topic": "financial_markets"
+          },
+          {
+            "relevance_score": "0.601965",
+            "topic": "earnings"
+          }
+        ],
+        "url": "https://www.investing.com/news/company-news/citi-hps-launch-15-billion-private-capital-program-for-emea-93CH-4695937"
+      }
+    ]
   },
   "alpha_news:JPY:72": {
-    "timestamp": 1778892357.161515,
+    "timestamp": 1779114745.969693,
     "value": []
   },
   "alpha_news:MXN:72": {

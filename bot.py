@@ -299,7 +299,8 @@ def _scan_markets(exchange, state, quote_balance):
             item["side"] = "BUY"
             directional_candidates.append(item)
             continue
-        allowed_sides = ("BUY", "SELL")
+        funnel_side = item.get("funnel_side")
+        allowed_sides = (funnel_side,) if funnel_side in {"BUY", "SELL"} else ("BUY", "SELL")
         for side in allowed_sides:
             details = item["buy_details"] if side == "BUY" else item["sell_details"]
             score = item["buy_score"] if side == "BUY" else item["sell_score"]
@@ -335,7 +336,7 @@ def _scan_markets(exchange, state, quote_balance):
                     side_item["blockers"] = [
                         *side_item["blockers"],
                         (
-                            f"funnel side {side} conflicts with scalper score "
+                            f"funnel side {funnel_side or side} conflicts with scalper score "
                             f"by {opposite_score - score:.2f}"
                         ),
                     ]
@@ -351,6 +352,20 @@ def _scan_markets(exchange, state, quote_balance):
         and not item["blockers"]
         and item["amount"] > 0
     ]
+    for item in directional_candidates:
+        if item.get("strategy_type") == "STAT_ARB":
+            continue
+        if item["score"] >= active_threshold or item.get("funnel_score") is not None:
+            logging.info(
+                "Entry gate %s %s | Score: %.2f/%.2f | Confirmed: %s | Amount: %.8f | Blockers: %s",
+                item["symbol"],
+                item["side"],
+                item["score"],
+                active_threshold,
+                item["details"].get("confirmed", True),
+                item["amount"],
+                "; ".join(item["blockers"]) if item["blockers"] else "none",
+            )
     return sorted(tradable, key=lambda item: item["score"], reverse=True)
 
 
