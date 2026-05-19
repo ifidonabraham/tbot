@@ -2,6 +2,7 @@ import logging
 import os
 import subprocess
 import time
+import atexit
 from pathlib import Path
 
 from config import (
@@ -71,6 +72,37 @@ FUNNEL_REFRESH_TIMEOUT_SECONDS = _env_float("FUNNEL_REFRESH_TIMEOUT_SECONDS", 60
 FUNNEL_LIVE_MIN_SCORE = _env_float("FUNNEL_LIVE_MIN_SCORE", 57.0)
 FUNNEL_HARD_SIDE_CONFLICT = _env_float("FUNNEL_HARD_SIDE_CONFLICT", 15.0)
 _last_funnel_refresh_attempt = 0.0
+
+
+def _acquire_bot_lock():
+    lock_path = Path(os.getenv("BOT_RUN_LOCK_PATH", "data/bot_run.lock"))
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    stale_seconds = _env_float("BOT_RUN_LOCK_STALE_SECONDS", 3600.0)
+    if lock_path.exists() and stale_seconds > 0:
+        try:
+            if time.time() - lock_path.stat().st_mtime > stale_seconds:
+                lock_path.unlink()
+        except OSError:
+            pass
+    try:
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError:
+        logging.error("Another bot runner is already active: %s", lock_path)
+        return None, lock_path
+    os.write(fd, str(os.getpid()).encode("ascii", errors="ignore"))
+    return fd, lock_path
+
+
+def _release_bot_lock(fd, lock_path):
+    if fd is not None:
+        try:
+            os.close(fd)
+        except OSError:
+            pass
+    try:
+        lock_path.unlink()
+    except OSError:
+        pass
 
 
 def _refresh_funnel_candidates_if_needed(reason):
@@ -443,6 +475,10 @@ def _scan_markets(exchange, state, quote_balance):
 
 
 def run_bot():
+    lock_fd, lock_path = _acquire_bot_lock()
+    if lock_fd is None:
+        return
+    atexit.register(_release_bot_lock, lock_fd, lock_path)
     exchange = get_exchange()
     state = TradingState.load()
     mode = "PAPER" if PAPER_TRADING else "LIVE"
@@ -527,6 +563,8 @@ def run_bot():
         except Exception as exc:
             logging.exception("Error: %s", exc)
             time.sleep(30)
+    _release_bot_lock(lock_fd, lock_path)
+    atexit.unregister(_release_bot_lock)
 
 
 if __name__ == "__main__":
